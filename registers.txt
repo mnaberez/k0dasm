@@ -1,0 +1,14 @@
+PDF page 40
+
+
+Registers       Register Pairs      Register Banks
+(r)             (rp)                (rb)
+
+0  R0  X        0  RP0  AX          0  RB0
+1  R1  A        1  RP1  BC          1  RB1
+2  R2  C        2  RP2  DE          2  RB2
+3  R3  B        3  RP3  HL          3  RB3
+4  R4  E
+5  R5  D
+6  R6  L
+7  R7  H
