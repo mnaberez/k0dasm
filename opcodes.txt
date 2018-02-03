@@ -208,7 +208,7 @@ NOT1 CY                     0b00000001                            1
 
 CALL !addr16                0b10011010                            3
 CALLF !{addr11}             0b0fff1100         0bffffffff         2
-CALLT [{addr5}]             0b11ttttt0                            1
+CALLT [{addr5}]             0b11ttttt1                            1
 
 BRK                         0b10111111                            1
 RET                         0b10101111                            1
