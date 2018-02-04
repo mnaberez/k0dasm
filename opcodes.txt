@@ -97,7 +97,7 @@ AND A,#byte                 0b01011101                            2
 AND saddr,#byte             0b11011000                            3
 AND A,{reg}                 0b01100001          0b01011rrr        2
 AND {reg},A                 0b01100001          0b01010rrr        2
-AND A,saddrp                0b01011110                            2
+AND A,saddr                 0b01011110                            2
 AND A,!addr16               0b01011000                            3
 AND A,[HL]                  0b01011111                            1
 AND A,[HL+byte]             0b01011001                            2
