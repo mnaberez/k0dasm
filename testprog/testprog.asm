@@ -14,12 +14,12 @@
     ADD A,[HL+0abh]     ;09 AB
     ;callf !0           ;0c         TODO
     ADD A,#0abh         ;0D AB
-    ;ADD A,saddr         0E         TODO
+    ADD A,0fe20h        ;0E 20      ADD A,saddr     (saddr = FE20H to FF1FH)
     ADD A,[HL]          ;0F
     MOVW AX,#0abcdh     ;10 CD AB
                         ;11         TODO
     MOVW BC,#0abcdh     ;12 CD AB
-    ;MOV sfr,#byte      ;13         TODO
+    MOV 0fffeh, #0abh   ;13 FE AB   MOV sfr, #byte  (sfr = FF00H to FFFFH)
     MOVW DE,#0abcdh     ;14 CD AB
                         ;15         15 is Illegal
     MOVW HL,#0abcdh     ;16 CD AB
@@ -30,7 +30,7 @@
                         ;1B         TODO
     ;0x1c: 'CALLF !1'   ;1C         TODO
     SUB A,#0abh         ;1D AB
-    ; 0x1e: 'SUB A,saddr'           TODO
+    SUB A,0fe20h        ;1E 20      SUB A,saddr     (saddr = FE20H to FF1FH)
     SUB A,[HL]          ;1F
     SET1 CY             ;20
     CLR1 CY             ;21
@@ -44,7 +44,7 @@
     ADDC A,[HL+0abh]    ;29 AB
     ;0x2c: 'CALLF !2'   ;           TODO
     ADDC A,#0abh        ;2D AB
-    ;0x2e: 'ADDC A,saddr'           TODO
+    ADDC A,0fe20h       ;2E 20      ADDC A,0fe20h   (saddr = FE20H to FF1FH)
     ADDC A,[HL]         ;2F
     XCH A,X             ;30
                         ;31         TODO
@@ -60,7 +60,7 @@
                         ;3B         TODO
     ; 0x3c: 'CALLF !3'              TODO
     SUBC A,#0abh        ;3D AB
-    ; 0x3e: 'SUBC A,saddr'          TODO
+    SUBC A,0fe20h       ;3E 20      SUBC A,saddr    (saddr = FE20H to FF1FH)
     SUBC A,[HL]         ;3F
     INC X               ;40
     INC A               ;41
@@ -76,7 +76,7 @@
                         ;4B         TODO
     ;CALLF !4           ;4C         TODO
     CMP A,#0abh         ;4D AB
-    ;CMP A,saddr        ;4E         TODO
+    CMP A,0fe20h        ;4E 20      CMP A,0fe20h    (saddr = FE20H to FF1FH)
     CMP A,[HL]          ;4F
     DEC X               ;50
     DEC A               ;51
@@ -92,7 +92,7 @@
                         ;5B         TODO
     ; 0x5c: 'CALLF !5'  TODO
     AND A,#0abh         ;5D AB
-    ; 0x5e: 'AND A,saddrp'          TODO
+    AND A,0fe20h        ;5E 20       AND A,saddr   (saddr = FE20H to FF1FH)
     AND A,[HL]          ;5F
     MOV A,X             ;60
                         ;61         TODO
@@ -108,7 +108,7 @@
                         ;6B         TODO
     ; 0x6c: 'CALLF !6'  ;6C
     OR A,#0abh          ;6D AB
-    ; 0x6e: 'OR A,saddr'            TODO
+    OR A,0fe20h         ;6E 20      OR A,saddr     (saddr = FE20H to FF1FH)
     OR A,[HL]           ;6F
     MOV X,A             ;70
                         ;71         TODO
@@ -124,17 +124,17 @@
                         ;7b         TODO
     ; 0x7c: 'CALLF !7'              TODO
     XOR A,#0abh         ;7D AB
-    ; 0x7e: 'XOR A,saddr'           TODO
+    XOR A,0fe20h        ;7E 20      XOR A,saddr     (saddr = FE20H to FF1FH)
     XOR A,[HL]          ;7F
     INCW AX             ;80
-    ; 0x81: 'INC saddr'
+    INC 0fe20h          ;81 20      INC saddr       (saddr = FE20H to FF1FH)
     INCW BC             ;82
-    ; 0x83: 'XCH A,saddr'           TODO
+    XCH A,0fe20h        ;83 20      XCH A,saddr     (saddr = FE20H to FF1FH)
     INCW DE             ;84
     MOV A,[DE]          ;85
     INCW HL             ;86
     MOV A,[HL]          ;87
-    ; 0x88: 'ADD saddr,#byte'       TODO
+    ADD 0fe20h,#0abh    ;88 20 AB   ADD saddr,#byte (saddr = FE20H to FF1FH)
     ; 0x8a: DBNZ C,$addr16          TODO
     ; 0x8b: 'DBNZ B,$addr16'        TODO
     ; 0x8c:                         TODO
@@ -142,14 +142,14 @@
     MOV A,!0abcdh       ;8E CD AB
     RETI                ;8F
     DECW AX             ;90
-    ; 0x91: 'DEC saddr'             TODO
+    DEC 0fe20h          ;91 20      DEC saddr       (saddr = FE20H to FF1FH)
     DECW BC             ;92
-    ; 0x93: 'XCH A,sfr'             TODO
+    XCH A,0fffeh        ;93 FE      XCH A,sfr       (sfr = FF00H to FFFFH)
     DECW DE             ;94
     MOV [DE],A          ;95
     DECW HL             ;96
     MOV [HL],A          ;97
-    ; 0x98: 'SUB saddr,#byte'       TODO
+    SUB 0fe20h,#0abh    ;98 20 AB   SUB saddr,#byte (saddr = FE20H to FF1FH)
     CALL !0abcdh        ;9A CD AB
     BR !0abcdh          ;9B CD AB
                         ;9C         TODO
@@ -164,8 +164,9 @@
     MOV D,#0abh         ;A5 AB
     MOV L,#0abh         ;A6 AB
     MOV H,#0abh         ;A7 AB
-    ; 0xa8: 'ADDC saddr,#byte'      TODO
-    ; 0xa9: 'MOVW AX,sfrp'          TODO
+    ADDC 0fe20h,#0abh   ;A8 20 AB   ADDC saddr,#byte (saddr = FE20H to FF1FH)
+    MOVW AX,0fffeh      ;A9 FE      MOVW AX,sfrp    (sfrp = FF00H to FFFFH, evens only)
+    ;MOVW AX,0ffffh     ;           TODO RA78K0 error E2317: Even expression expected
     MOV A,[HL+C]        ;AA
     MOV A,[HL+B]        ;AB
     ; 0xad: 'BZ $addr16'            TODO
@@ -179,8 +180,9 @@
     PUSH DE             ;B5
     POP HL              ;B6
     PUSH HL             ;B7
-    ; 0xb8: 'SUBC saddr,#byte'      TODO
-    ; 0xb9: 'MOVW sfrp,AX'          TODO
+    SUBC 0fe20h,#0abh   ;B8 20 AB   SUBC saddr,#byte (saddr = FE20H to FF1FH)
+    MOVW 0fffeh,AX      ;B9 FE      MOVW sfrp,AX (sfrp = FF00H to FFFFH, evens only)
+    ;MOVW 0ffffh,AX     ;           TODO RA78K0 error E2317: Even expression expected
     MOV [HL+C],A        ;BA
     MOV [HL+B],A        ;BB
     ; 0xbd: 'BNZ $addr16'           TODO
@@ -194,7 +196,7 @@
     ; 0xc5: 'CALLT [2]'             TODO
     MOVW AX,HL          ;C6
     ; 0xc7: 'CALLT [3]'             TODO
-    ; 0xc8: 'CMP saddr,#byte'       TODO
+    CMP 0fe20h,#0abh    ;C8 20 AB   CMP saddr,#byte (saddr = FE20H to FF1FH)
     ; 0xc9: 'CALLT [4]'             TODO
     ADDW AX,#0abcdh     ;CA CD AB
     ; 0xcb: 'CALLT [5]'             TODO
@@ -209,7 +211,7 @@
     ; 0xd5: 'CALLT [10]'            TODO
     MOVW HL,AX          ;D6
     ; 0xd7: 'CALLT [11]'            TODO
-    ; 0xd8: 'AND saddr,#byte'       TODO
+    AND 0fe20h,#0abh    ;D8 20 AB   AND saddr,#byte (saddr = FE20H to FF1FH)
     ; 0xd9: 'CALLT [12]'            TODO
     SUBW AX,#0abcdh     ;DA CD AB
     ; 0xdb: 'CALLT [13]'            TODO
@@ -224,7 +226,7 @@
     ; 0xe5: 'CALLT [18]'            TODO
     XCHW AX,HL          ;E6
     ; 0xe7: 'CALLT [19]'            TODO
-    ; 0xe8: 'OR saddr,#byte'        TODO
+    OR 0fe20h,#0abh     ;E8 20 AB
     ; 0xe9: 'CALLT [20]'            TODO
     CMPW AX,#0abcdh     ;EA CD AB
     ;0xeb: 'CALLT [21]'             TODO
@@ -232,16 +234,18 @@
     ;0xef: 'CALLT [23]'             TODO
     ;0xf1: 'CALLT [24]'             TODO
     ;0xf3: 'CALLT [25]'             TODO
-    ; 0xf4: 'MOV A,sfr'             TODO
+    MOV A,0fffeh        ;F4 FF      MOV A,sfr (sfr = FF00H to FFFFH)
     ; 0xf5: 'CALLT [26]'            TODO
     ; 0xf6: 'MOV sfr,A'             TODO
+    MOV 0fffeh,A        ;F6 FE      MOV sfr,A (sfr = FF00H to FFFFH)
     ; 0xf7: 'CALLT [27]'            TODO
-    ; 0xf8: 'XOR saddr,#byte'       TODO
+    XOR 0fe20h,#0abh    ;F8 20 AB   XOR saddr,#byte (saddr = FE20H to FF1FH)
     ; 0xf9: 'CALLT [28]'            TODO
     ; 0xfa: 'BR $addr16'            TODO
     ; 0xfb: 'CALLT [29]'            TODO
     ; 0xfd: 'CALLT [30]'            TODO
-    ; 0xfe: 'MOVW sfrp,#word'       TODO
+    MOVW 0fffeh,#0abcdh ;FE FE CD AB    MOVW sfrp,#word (sfrp = FF00H to FFFFH, evens only)
+    ;MOVW 0ffffh,#0abcdh ;FE FE CD AB   TODO RA78K0 error E2317: Even expression expected
     ; 0xff: 'CALLT [31]'            TODO
 
 
