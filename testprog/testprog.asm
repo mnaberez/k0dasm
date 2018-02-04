@@ -12,7 +12,10 @@
     XCH A,[HL]          ;07
     ADD A,!0abcdh       ;08 CD AB
     ADD A,[HL+0abh]     ;09 AB
-    ;callf !0           ;0c         TODO
+
+    callf !0800h        ;0C 00      0c = callf 0800h-08ffh
+    callf !08ffh        ;0C FF
+
     ADD A,#0abh         ;0D AB
     ADD A,0fe20h        ;0E 20      ADD A,saddr     (saddr = FE20H to FF1FH)
     ADD A,[HL]          ;0F
@@ -28,7 +31,10 @@
     SUB A,[HL+0abh]     ;19 AB
                         ;1A         TODO
                         ;1B         TODO
-    ;0x1c: 'CALLF !1'   ;1C         TODO
+
+    callf !0900h        ;1C 00      1c = callf 0900h-09ffh
+    callf !09ffh        ;1C FF
+
     SUB A,#0abh         ;1D AB
     SUB A,0fe20h        ;1E 20      SUB A,saddr     (saddr = FE20H to FF1FH)
     SUB A,[HL]          ;1F
@@ -42,7 +48,10 @@
     ROLC A,1            ;27
     ADDC A,!0abcdh      ;28 CD AB
     ADDC A,[HL+0abh]    ;29 AB
-    ;0x2c: 'CALLF !2'   ;           TODO
+
+    callf !0a00h        ;2C 00      2c = callf 0a00h-0affh
+    callf !0affh        ;2C FF
+
     ADDC A,#0abh        ;2D AB
     ADDC A,0fe20h       ;2E 20      ADDC A,0fe20h   (saddr = FE20H to FF1FH)
     ADDC A,[HL]         ;2F
@@ -58,7 +67,10 @@
     SUBC A,[HL+0abh]    ;39 AB
                         ;3A         TODO
                         ;3B         TODO
-    ; 0x3c: 'CALLF !3'              TODO
+
+    callf !0b00h        ;3C 00      3c = callf 0b00h-0bffh
+    callf !0bffh        ;3C FF
+
     SUBC A,#0abh        ;3D AB
     SUBC A,0fe20h       ;3E 20      SUBC A,saddr    (saddr = FE20H to FF1FH)
     SUBC A,[HL]         ;3F
@@ -74,7 +86,10 @@
     CMP A,[HL+0abh]     ;49 AB
                         ;4A         TODO
                         ;4B         TODO
-    ;CALLF !4           ;4C         TODO
+
+    callf !0c00h        ;4C 00      4c = callf 0c00h-0cffh
+    callf !0cffh        ;4C FF
+
     CMP A,#0abh         ;4D AB
     CMP A,0fe20h        ;4E 20      CMP A,0fe20h    (saddr = FE20H to FF1FH)
     CMP A,[HL]          ;4F
@@ -90,7 +105,10 @@
     AND A,[HL+0abh]     ;59 AB
                         ;5A         TODO
                         ;5B         TODO
-    ; 0x5c: 'CALLF !5'  TODO
+
+    callf !0d00h        ;5C 00      5c = callf 0d00h-0dffh
+    callf !0dffh        ;5C FF
+
     AND A,#0abh         ;5D AB
     AND A,0fe20h        ;5E 20       AND A,saddr   (saddr = FE20H to FF1FH)
     AND A,[HL]          ;5F
@@ -106,7 +124,10 @@
     OR A,[HL+0abh]      ;69 AB
                         ;6A         TODO
                         ;6B         TODO
-    ; 0x6c: 'CALLF !6'  ;6C
+
+    callf !0e00h        ;6C 00      6c = callf 0e00h-0effh
+    callf !0effh        ;6C FF
+
     OR A,#0abh          ;6D AB
     OR A,0fe20h         ;6E 20      OR A,saddr     (saddr = FE20H to FF1FH)
     OR A,[HL]           ;6F
@@ -122,7 +143,10 @@
     XOR A,[HL+0abh]     ;79 AB
                         ;7a         TODO
                         ;7b         TODO
-    ; 0x7c: 'CALLF !7'              TODO
+
+    callf !0f00h        ;7C 00      7c = callf 0f00h-0fffh
+    callf !0fffh        ;7C FF
+
     XOR A,#0abh         ;7D AB
     XOR A,0fe20h        ;7E 20      XOR A,saddr     (saddr = FE20H to FF1FH)
     XOR A,[HL]          ;7F
