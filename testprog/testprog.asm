@@ -213,64 +213,67 @@
     MOV [HL+0abh],A     ;BE AB
     BRK
     ; 0xc0: 'MOVW AX,AX'             TODO RA78K0 error E2202: Illegal operand
-    ; 0xc1: 'CALLT [0]'              TODO RA78K0 error E2313: Operand out of range (addr5)
+    callt [0040H]       ;C1
     MOVW AX,BC          ;C2
-    ; 0xc3: 'CALLT [1]'             TODO
+    callt [0042H]       ;C3
     MOVW AX,DE          ;C4
-    ; 0xc5: 'CALLT [2]'             TODO
+    callt [0044H]       ;C5
     MOVW AX,HL          ;C6
-    ; 0xc7: 'CALLT [3]'             TODO
+    callt [0046H]       ;C7
     CMP 0fe20h,#0abh    ;C8 20 AB   CMP saddr,#byte (saddr = FE20H to FF1FH)
-    ; 0xc9: 'CALLT [4]'             TODO
+    callt [0048H]       ;C9
     ADDW AX,#0abcdh     ;CA CD AB
-    ; 0xcb: 'CALLT [5]'             TODO
-    ; 0xcd: 'CALLT [6]'             TODO
+    callt [004aH]       ;CB
+
+    callt [004cH]       ;CD
     XCH A,!0abcdh       ;CE CD AB
-    ; 0xcf: 'CALLT [7]'             TODO
+    callt [004eH]       ;CF
     ; 0xd0: 'MOVW AX,AX'            TODO RA78K0 error E2202: Illegal operand
-    ; 0xd1: 'CALLT [8]'             TODO
+    callt [0050H]       ;D1
     MOVW BC,AX          ;D2
-    ; 0xd3: 'CALLT [9]'             TODO
+    callt [0052H]       ;D3
     MOVW DE,AX          ;D4
-    ; 0xd5: 'CALLT [10]'            TODO
+    callt [0054H]       ;D5
     MOVW HL,AX          ;D6
-    ; 0xd7: 'CALLT [11]'            TODO
+    callt [0056H]       ;D7
     AND 0fe20h,#0abh    ;D8 20 AB   AND saddr,#byte (saddr = FE20H to FF1FH)
-    ; 0xd9: 'CALLT [12]'            TODO
+    callt [0058H]       ;D9
     SUBW AX,#0abcdh     ;DA CD AB
-    ; 0xdb: 'CALLT [13]'            TODO
-    ; 0xdd: 'CALLT [14]'            TODO
+    callt [005AH]       ;DB
+    callt [005CH]       ;DD
     XCH A,[HL+0abh]     ;DE AB
-    ; 0xdf: 'CALLT [15]'            TODO
+    callt [005eh]       ;DF
+
     ; 0xe0: 'XCHW AX,AX'            TODO RA78K0 error E2202: Illegal operand
-    ; 0xe1: 'CALLT [16]'            TODO
+
+    callt [0060h]       ;E1
     XCHW AX,BC          ;E2
-    ; 0xe3: 'CALLT [17]'            TODO
+    callt [0062h]       ;E3
     XCHW AX,DE          ;E4
-    ; 0xe5: 'CALLT [18]'            TODO
+    callt [0064h]       ;E5
     XCHW AX,HL          ;E6
-    ; 0xe7: 'CALLT [19]'            TODO
+    callt [0066h]       ;E7
     OR 0fe20h,#0abh     ;E8 20 AB
-    ; 0xe9: 'CALLT [20]'            TODO
+    callt [0068h]       ;E9
     CMPW AX,#0abcdh     ;EA CD AB
-    ;0xeb: 'CALLT [21]'             TODO
-    ;0xed: 'CALLT [22]'             TODO
-    ;0xef: 'CALLT [23]'             TODO
-    ;0xf1: 'CALLT [24]'             TODO
-    ;0xf3: 'CALLT [25]'             TODO
+    callt [006ah]       ;EB
+    callt [006ch]       ;ED
+    callt [006eh]       ;EF
+    callt [0070h]       ;F1
+    callt [0072h]       ;F3
     MOV A,0fffeh        ;F4 FF      MOV A,sfr (sfr = FF00H to FFFFH)
-    ; 0xf5: 'CALLT [26]'            TODO
+    callt [0074h]       ;F5
     ; 0xf6: 'MOV sfr,A'             TODO
     MOV 0fffeh,A        ;F6 FE      MOV sfr,A (sfr = FF00H to FFFFH)
-    ; 0xf7: 'CALLT [27]'            TODO
+    callt [0076h]       ;F7
     XOR 0fe20h,#0abh    ;F8 20 AB   XOR saddr,#byte (saddr = FE20H to FF1FH)
-    ; 0xf9: 'CALLT [28]'            TODO
+    callt [0078h]       ;F9
     ; 0xfa: 'BR $addr16'            TODO
-    ; 0xfb: 'CALLT [29]'            TODO
-    ; 0xfd: 'CALLT [30]'            TODO
+    callt [007ah]       ;FB
+    callt [007ch]       ;FD
     MOVW 0fffeh,#0abcdh ;FE FE CD AB    MOVW sfrp,#word (sfrp = FF00H to FFFFH, evens only)
     ;MOVW 0ffffh,#0abcdh ;FE FE CD AB   TODO RA78K0 error E2317: Even expression expected
-    ; 0xff: 'CALLT [31]'            TODO
+    callt [007eh]       ;FF
 
 
     end
