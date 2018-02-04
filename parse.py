@@ -29,17 +29,16 @@ for l in lines:
         cols.insert(2, '')
 
     # remove 0b prefixes from numbers
-    for i in (1,2):
+    for i in (1, 2):
         if cols[i].startswith('0b'):
             cols[i] = cols[i][2:]
-        if cols[i]:
             assert len(cols[i]) == 8
 
     desc, byte0, byte1, numbytes = cols
     needs_expansion = re.sub('\d', '', byte0)
 
     if not needs_expansion:
-        inst = {'desc': desc}
+        inst = {'desc': desc, 'byte1': byte1}
         opcodes[int(byte0, 2)].append(inst)
     else:
         nondigits = set()
@@ -56,7 +55,7 @@ for l in lines:
 
         count = len(nondigit_indexes)
         for i in range(2 ** count):
-            inst = {'desc': desc}
+            inst = {'desc': desc, 'byte1': byte1}
             inst[template_key] = i
 
             if template_key in ALIASES:
@@ -76,7 +75,7 @@ for l in lines:
 
 for opcode in range(0x100):
     if opcode not in opcodes:
-        print('0x%02x: ILLEGAL' % opcode)
+        pass #print('0x%02x: ILLEGAL' % opcode)
     else:
         instructions = opcodes[opcode]
         for inst in instructions:
@@ -87,5 +86,10 @@ for opcode in range(0x100):
                     desc = desc.replace(template, str(inst[templatekey]))
                 inst['expanded_desc'] = desc
             # print('0x%02x: %s' % (opcode, inst.get('expanded_desc', inst['desc'])))
-        if len(instructions) == 1:
-            print('0x%02x: %r' % (opcode, instructions[0].get('expanded_desc', instructions[0]['desc'])  ))
+        if len(instructions) > 1:
+            print('\n0x%02x: (%d)' % (opcode, len(instructions)))
+            for inst in instructions:
+                print('    %s %s' % (inst['byte1'].ljust(15), inst.get('expanded_desc', inst['desc'])))
+
+            #print('0x%02x: MULTIPLE' % opcode)
+
