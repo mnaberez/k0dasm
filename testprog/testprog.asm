@@ -6,12 +6,16 @@
     movw ax,!0abceh     ;02 CE AB
     ;MOVW !0abcdh,AX    ;           RA78K0 error E2317: Even expression expected
     MOVW !0abceh,AX     ;03 CE AB
-    ;DBNZ saddr,$addr16 ;4          TODO
+label0:
+    DBNZ 0fe20h,$label0 ;04 20 FD   DBNZ saddr,$addr16
     xch a,[de]          ;05
                         ;06         06 is Illegal
     XCH A,[HL]          ;07
     ADD A,!0abcdh       ;08 CD AB
     ADD A,[HL+0abh]     ;09 AB
+
+    SET1 0fe20h.0
+    SET1 PSW.0
 
     callf !0800h        ;0C 00      0c = callf 0800h-08ffh
     callf !08ffh        ;0C FF
@@ -159,10 +163,13 @@
     INCW HL             ;86
     MOV A,[HL]          ;87
     ADD 0fe20h,#0abh    ;88 20 AB   ADD saddr,#byte (saddr = FE20H to FF1FH)
-    ; 0x8a: DBNZ C,$addr16          TODO
-    ; 0x8b: 'DBNZ B,$addr16'        TODO
+label1:
+    DBNZ C,$label1      ;8A FE
+label2:
+    DBNZ B,$label2      ;8BFE
     ; 0x8c:                         TODO
-    ; 0x8d: 'BC $addr16'            TODO
+label3:
+    BC $label3          ;8D FE
     MOV A,!0abcdh       ;8E CD AB
     RETI                ;8F
     DECW AX             ;90
@@ -177,7 +184,8 @@
     CALL !0abcdh        ;9A CD AB
     BR !0abcdh          ;9B CD AB
                         ;9C         TODO
-    ; 0x9d: 'BNC $addr16'           TODO
+label4:
+    BNC $label4         ;9D FE
     MOV !0abcdh,A       ;9E CD AB
     RETB                ;9F
     MOV X,#0abh         ;A0 AB
@@ -193,7 +201,8 @@
     ;MOVW AX,0ffffh     ;           TODO RA78K0 error E2317: Even expression expected
     MOV A,[HL+C]        ;AA
     MOV A,[HL+B]        ;AB
-    ; 0xad: 'BZ $addr16'            TODO
+label5:
+    bz $label5          ;AD FE
     MOV A,[HL+0abh]     ;AE AB
     RET                 ;AF
     POP AX              ;B0
@@ -209,7 +218,8 @@
     ;MOVW 0ffffh,AX     ;           TODO RA78K0 error E2317: Even expression expected
     MOV [HL+C],A        ;BA
     MOV [HL+B],A        ;BB
-    ; 0xbd: 'BNZ $addr16'           TODO
+label6:
+    bnz $label6         ;BD FE
     MOV [HL+0abh],A     ;BE AB
     BRK
     ; 0xc0: 'MOVW AX,AX'             TODO RA78K0 error E2202: Illegal operand
@@ -263,12 +273,12 @@
     callt [0072h]       ;F3
     MOV A,0fffeh        ;F4 FF      MOV A,sfr (sfr = FF00H to FFFFH)
     callt [0074h]       ;F5
-    ; 0xf6: 'MOV sfr,A'             TODO
     MOV 0fffeh,A        ;F6 FE      MOV sfr,A (sfr = FF00H to FFFFH)
     callt [0076h]       ;F7
     XOR 0fe20h,#0abh    ;F8 20 AB   XOR saddr,#byte (saddr = FE20H to FF1FH)
     callt [0078h]       ;F9
-    ; 0xfa: 'BR $addr16'            TODO
+label7:
+    br $label7          ;FA FE
     callt [007ah]       ;FB
     callt [007ch]       ;FD
     MOVW 0fffeh,#0abcdh ;FE FE CD AB    MOVW sfrp,#word (sfrp = FF00H to FFFFH, evens only)
