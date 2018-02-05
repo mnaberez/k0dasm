@@ -62,7 +62,201 @@ label0:
     ADDC A,0fe20h           ;2E 20      ADDC A,0fe20h   (saddr = FE20H to FF1FH)
     ADDC A,[HL]             ;2F
     XCH A,X                 ;30
-                            ;31         TODO
+    ;XCH A,A                 31         Illegal
+    XCH A,[HL+B]            ;31 8B
+    XCH A,[HL+C]            ;31 8A
+    ADD A,[HL+B]            ;31 0B
+    ADD A,[HL+C]            ;31 0A
+    ADDC A,[HL+B]           ;31 2B
+    ADDC A,[HL+C]           ;31 2A
+    SUB A,[HL+B]            ;31 1B
+    SUB A,[HL+C]            ;31 1A
+    SUBC A,[HL+B]           ;31 3B
+    SUBC A,[HL+C]           ;31 3A
+    AND A,[HL+B]            ;31 5B
+    AND A,[HL+C]            ;31 5A
+    OR A,[HL+B]             ;31 6B
+    OR A,[HL+C]             ;31 6A
+    XOR A,[HL+B]            ;31 7B
+    XOR A,[HL+C]            ;31 7A
+    CMP A,[HL+B]            ;31 4B
+    CMP A,[HL+C]            ;31 4A
+    MULU X                  ;31 88
+    DIVUW C                 ;31 82
+    ROR4 [HL]               ;31 90
+    ROL4 [HL]               ;31 80
+    BR AX                   ;31 98
+
+label24:
+    BT 0fffeh.0,$label24    ;31 06 FE FC        BT sfr.{bit},$addr16
+label25:
+    BT 0fffeh.1,$label25    ;31 16 FE FC        BT sfr.{bit},$addr16
+label26:
+    BT 0fffeh.2,$label26    ;31 26 FE FC        BT sfr.{bit},$addr16
+label27:
+    BT 0fffeh.3,$label27    ;31 36 FE FC        BT sfr.{bit},$addr16
+label28:
+    BT 0fffeh.4,$label28    ;31 46 FE FC        BT sfr.{bit},$addr16
+label29:
+    BT 0fffeh.5,$label29    ;31 56 FE FC        BT sfr.{bit},$addr16
+label30:
+    BT 0fffeh.6,$label30    ;31 66 FE FC        BT sfr.{bit},$addr16
+label31:
+    BT 0fffeh.7,$label31    ;31 76 FE FC        BT sfr.{bit},$addr16
+
+label32:
+    BT A.0,$label32         ;31 0E FD
+label33:
+    BT A.1,$label33         ;31 1E FD
+label34:
+    BT A.2,$label34         ;31 2E FD
+label35:
+    BT A.3,$label35         ;31 3E FD
+label36:
+    BT A.4,$label36         ;31 4E FD
+label37:
+    BT A.5,$label37         ;31 5E FD
+label38:
+    BT A.6,$label38         ;31 6E FD
+label39:
+    BT A.7,$label39         ;31 7E FD
+
+label40:
+    BT [HL].0,$label40      ;31 86 FD
+label41:
+    BT [HL].1,$label41      ;31 96 FD
+label42:
+    BT [HL].2,$label42      ;31 A6 FD
+label43:
+    BT [HL].3,$label43      ;31 B6 FD
+label44:
+    BT [HL].4,$label44      ;31 C6 FD
+label45:
+    BT [HL].5,$label45      ;31 D6 FD
+label46:
+    BT [HL].6,$label46      ;31 E6 FD
+label47:
+    BT [HL].7,$label47      ;31 F6 FD
+
+label48:
+    BF 0fe20h.0,$label48    ;31 03 20 FC        saddr
+label49:
+    BF 0fe20h.1,$label49    ;31 13 20 FC        saddr
+label50:
+    BF 0fe20h.2,$label50    ;31 23 20 FC        saddr
+label51:
+    BF 0fe20h.3,$label51    ;31 33 20 FC        saddr
+label52:
+    BF 0fe20h.4,$label52    ;31 43 20 FC        saddr
+label53:
+    BF 0fe20h.5,$label53    ;31 53 20 FC        saddr
+label54:
+    BF 0fe20h.6,$label54    ;31 63 20 FC        saddr
+label55:
+    BF 0fe20h.7,$label55    ;31 73 20 FC        saddr
+
+label56:
+    BF 0fffeh.0,$label56    ;31 07 FE FC        BF sfr.{bit},$addr16
+label57:
+    BF 0fffeh.1,$label57    ;31 17 FE FC        BF sfr.{bit},$addr16
+label58:
+    BF 0fffeh.2,$label58    ;31 27 FE FC        BF sfr.{bit},$addr16
+label59:
+    BF 0fffeh.3,$label59    ;31 37 FE FC        BF sfr.{bit},$addr16
+label60:
+    BF 0fffeh.4,$label60    ;31 47 FE FC        BF sfr.{bit},$addr16
+label61:
+    BF 0fffeh.5,$label61    ;31 57 FE FC        BF sfr.{bit},$addr16
+label62:
+    BF 0fffeh.6,$label62    ;31 67 FE FC        BF sfr.{bit},$addr16
+label63:
+    BF 0fffeh.7,$label63    ;31 77 FE FC        BF sfr.{bit},$addr16
+
+label64:
+    BF A.0,$label64         ;31 0F FD
+label65:
+    BF A.1,$label65         ;31 1F FD
+label66:
+    BF A.2,$label66         ;31 2F FD
+label67:
+    BF A.3,$label67         ;31 3F FD
+label68:
+    BF A.4,$label68         ;31 4F FD
+label69:
+    BF A.5,$label69         ;31 5F FD
+label70:
+    BF A.6,$label70         ;31 6F FD
+label71:
+    BF A.7,$label71         ;31 7F FD
+
+label72:
+    BF PSW.0,$label72       ;31 03 1E FC
+label73:
+    BF PSW.1,$label73       ;31 13 1E FC
+label74:
+    BF PSW.2,$label74       ;31 23 1E FC
+label75:
+    BF PSW.3,$label75       ;31 33 1E FC
+label76:
+    BF PSW.4,$label76       ;31 43 1E FC
+label77:
+    BF PSW.5,$label77       ;31 53 1E FC
+label78:
+    BF PSW.6,$label78       ;31 63 1E FC
+label79:
+    BF PSW.7,$label79       ;31 73 1E FC
+
+label80:
+    BF [HL].0,$label80      ;31 87 FD
+label81:
+    BF [HL].1,$label81      ;31 97 FD
+label82:
+    BF [HL].2,$label82      ;31 A7 FD
+label83:
+    BF [HL].3,$label83      ;31 B7 FD
+label84:
+    BF [HL].4,$label84      ;31 C7 FD
+label85:
+    BF [HL].5,$label85      ;31 D7 FD
+label86:
+    BF [HL].6,$label86      ;31 E7 FD
+label87:
+    BF [HL].7,$label87      ;31 F7 FD
+
+label88:
+    BTCLR 0fe20h.0,$label88 ;31 01 20 FC        saddr
+label89:
+    BTCLR 0fe20h.1,$label89 ;31 11 20 FC        saddr
+label90:
+    BTCLR 0fe20h.2,$label90 ;31 21 20 FC        saddr
+label91:
+    BTCLR 0fe20h.3,$label91 ;31 31 20 FC        saddr
+label92:
+    BTCLR 0fe20h.4,$label92 ;31 41 20 FC        saddr
+label93:
+    BTCLR 0fe20h.5,$label93 ;31 51 20 FC        saddr
+label94:
+    BTCLR 0fe20h.6,$label94 ;31 61 20 FC        saddr
+label95:
+    BTCLR 0fe20h.7,$label95 ;31 71 20 FC        saddr
+
+label96:
+    BTCLR 0fffeh.0,$label96  ;31 05 FE FC       sfr
+label97:
+    BTCLR 0fffeh.1,$label97  ;31 15 FE FC       sfr
+label98:
+    BTCLR 0fffeh.2,$label98  ;31 25 FE FC       sfr
+label99:
+    BTCLR 0fffeh.3,$label99  ;31 35 FE FC       sfr
+label100:
+    BTCLR 0fffeh.4,$label100 ;31 45 FE FC       sfr
+label101:
+    BTCLR 0fffeh.5,$label101 ;31 55 FE FC       sfr
+label102:
+    BTCLR 0fffeh.6,$label102 ;31 65 FE FC       sfr
+label103:
+    BTCLR 0fffeh.7,$label103 ;31 75 FE FC       sfr
+
     XCH A,C                 ;32
     XCH A,B                 ;33
     XCH A,E                 ;34
@@ -119,7 +313,11 @@ label0:
     AND A,0fe20h            ;5E 20       AND A,saddr   (saddr = FE20H to FF1FH)
     AND A,[HL]              ;5F
     MOV A,X                 ;60
-                            ;61         TODO
+
+    ;MOV A,A                ;61         Illegal
+    ADJBA                   ;61 80
+    ADJBS                   ;61 90
+
     MOV A,C                 ;62
     MOV A,B                 ;63
     MOV A,E                 ;64
@@ -138,7 +336,11 @@ label0:
     OR A,0fe20h             ;6E 20      OR A,saddr     (saddr = FE20H to FF1FH)
     OR A,[HL]               ;6F
     MOV X,A                 ;70
-                            ;71         TODO
+
+    ;MOV A,A                ;71         Illegal
+    HALT                    ;71 10
+    STOP                    ;71 00
+
     MOV C,A                 ;72
     MOV B,A                 ;73
     MOV E,A                 ;74

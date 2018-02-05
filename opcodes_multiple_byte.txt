@@ -29,40 +29,40 @@ These opcodes can only be decoded by looking at the first and second byte.
     CLR1 PSW.2
 
 0x31: (37)
-    XCH A,A
-    XCH A,[HL+B]
-    XCH A,[HL+C]
-    ADD A,[HL+B]
-    ADD A,[HL+C]
-    ADDC A,[HL+B]
-    ADDC A,[HL+C]
-    SUB A,[HL+B]
-    SUB A,[HL+C]
-    SUBC A,[HL+B]
-    SUBC A,[HL+C]
-    AND A,[HL+B]
-    AND A,[HL+C]
-    OR A,[HL+B]
-    OR A,[HL+C]
-    XOR A,[HL+B]
-    XOR A,[HL+C]
-    CMP A,[HL+B]
-    CMP A,[HL+C]
-    MULU X
-    DIVUW C
-    ROR4 [HL]
-    ROL4 [HL]
-    BR AX
-    BT sfr.{bit},$addr16
-    BT A.{bit},$addr16
-    BT [HL].{bit},$addr16
-    BF saddr.{bit},$addr16
-    BF sfr.{bit},$addr16
-    BF A.{bit},$addr16
-    BF PSW.{bit},$addr16
-    BF [HL].{bit},$addr16
-    BTCLR saddr.{bit},$addr16
-    BTCLR sfr.{bit},$addr16
+    XCH A,A  ✔
+    XCH A,[HL+B]  ✔
+    XCH A,[HL+C]  ✔
+    ADD A,[HL+B]  ✔
+    ADD A,[HL+C]  ✔
+    ADDC A,[HL+B]  ✔
+    ADDC A,[HL+C]  ✔
+    SUB A,[HL+B]  ✔
+    SUB A,[HL+C]  ✔
+    SUBC A,[HL+B]  ✔
+    SUBC A,[HL+C]  ✔
+    AND A,[HL+B]  ✔
+    AND A,[HL+C]  ✔
+    OR A,[HL+B]  ✔
+    OR A,[HL+C]  ✔
+    XOR A,[HL+B]  ✔
+    XOR A,[HL+C]  ✔
+    CMP A,[HL+B]  ✔
+    CMP A,[HL+C]  ✔
+    MULU X  ✔
+    DIVUW C  ✔
+    ROR4 [HL]  ✔
+    ROL4 [HL]  ✔
+    BR AX  ✔
+    BT sfr.{bit},$addr16  ✔
+    BT A.{bit},$addr16 ✔
+    BT [HL].{bit},$addr16 ✔
+    BF saddr.{bit},$addr16 ✔
+    BF sfr.{bit},$addr16 ✔
+    BF A.{bit},$addr16 ✔
+    BF PSW.{bit},$addr16 ✔
+    BF [HL].{bit},$addr16 ✔
+    BTCLR saddr.{bit},$addr16 ✔
+    BTCLR sfr.{bit},$addr16 ✔
     BTCLR A.{bit},$addr16
     BTCLR PSW.{bit},$addr16
     BTCLR [HL].{bit},$addr16
@@ -109,8 +109,8 @@ These opcodes can only be decoded by looking at the first and second byte.
     XOR {reg},A
     CMP A,{reg}
     CMP {reg},A
-    ADJBA
-    ADJBS
+    ADJBA ✔
+    ADJBS ✔
     MOV1 CY,A.{bit}
     MOV1 A.{bit},CY
     AND1 CY,A.{bit}
@@ -129,7 +129,7 @@ These opcodes can only be decoded by looking at the first and second byte.
     CLR1 PSW.6
 
 0x71: (27)
-    MOV A,A
+    MOV A,A ✔
     MOV1 CY,saddr.{bit}
     MOV1 CY,sfr.{bit}
     MOV1 CY,PSW.{bit}
@@ -154,8 +154,8 @@ These opcodes can only be decoded by looking at the first and second byte.
     SET1 [HL].{bit}
     CLR1 sfr.{bit}
     CLR1 [HL].{bit}
-    HALT
-    STOP
+    HALT ✔
+    STOP ✔
 
 0x7a: (3) ✔
     SET1 saddr.7
