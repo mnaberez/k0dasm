@@ -63,9 +63,9 @@ These opcodes can only be decoded by looking at the first and second byte.
     BF [HL].{bit},$addr16 ✔
     BTCLR saddr.{bit},$addr16 ✔
     BTCLR sfr.{bit},$addr16 ✔
-    BTCLR A.{bit},$addr16
-    BTCLR PSW.{bit},$addr16
-    BTCLR [HL].{bit},$addr16
+    BTCLR A.{bit},$addr16 ✔
+    BTCLR PSW.{bit},$addr16 ✔
+    BTCLR [HL].{bit},$addr16 ✔
 
 0x3a: (2) ✔
     SET1 saddr.3
@@ -92,7 +92,7 @@ These opcodes can only be decoded by looking at the first and second byte.
     CLR1 PSW.5
 
 0x61: (27)
-    MOV A,A
+    MOV A,A ✔
     ADD A,{reg}
     ADD {reg},A
     ADDC A,{reg}
@@ -130,30 +130,30 @@ These opcodes can only be decoded by looking at the first and second byte.
 
 0x71: (27)
     MOV A,A ✔
-    MOV1 CY,saddr.{bit}
-    MOV1 CY,sfr.{bit}
-    MOV1 CY,PSW.{bit}
-    MOV1 CY,[HL].{bit}
-    MOV1 saddr.{bit},CY
-    MOV1 sfr.{bit},CY
-    MOV1 PSW.{bit},CY
-    MOV1 [HL].{bit},CY
-    AND1 CY,saddr.{bit}
-    AND1 CY,sfr.{bit}
-    AND1 CY,PSW.{bit}
-    AND1 CY,[HL].{bit}
-    OR1 CY,saddr.{bit}
-    OR1 CY,sfr.{bit}
-    OR1 CY,PSW.{bit}
-    OR1 CY,[HL].{bit}
-    XOR1 CY,saddr.{bit}
-    XOR1 CY,sfr.{bit}
-    XOR1 CY,PSW.{bit}
-    XOR1 CY,[HL].{bit}
-    SET1 sfr.{bit}
-    SET1 [HL].{bit}
-    CLR1 sfr.{bit}
-    CLR1 [HL].{bit}
+    MOV1 CY,saddr.{bit} ✔
+    MOV1 CY,sfr.{bit} ✔
+    MOV1 CY,PSW.{bit} ✔
+    MOV1 CY,[HL].{bit} ✔
+    MOV1 saddr.{bit},CY ✔
+    MOV1 sfr.{bit},CY ✔
+    MOV1 PSW.{bit},CY ✔
+    MOV1 [HL].{bit},CY ✔
+    AND1 CY,saddr.{bit} ✔
+    AND1 CY,sfr.{bit} ✔
+    AND1 CY,PSW.{bit} ✔
+    AND1 CY,[HL].{bit} ✔
+    OR1 CY,saddr.{bit} ✔
+    OR1 CY,sfr.{bit} ✔
+    OR1 CY,PSW.{bit} ✔
+    OR1 CY,[HL].{bit} ✔
+    XOR1 CY,saddr.{bit} ✔
+    XOR1 CY,sfr.{bit} ✔
+    XOR1 CY,PSW.{bit} ✔
+    XOR1 CY,[HL].{bit} ✔
+    SET1 sfr.{bit} ✔
+    SET1 [HL].{bit} ✔
+    CLR1 sfr.{bit} ✔
+    CLR1 [HL].{bit} ✔
     HALT ✔
     STOP ✔
 

@@ -257,6 +257,57 @@ label102:
 label103:
     BTCLR 0fffeh.7,$label103 ;31 75 FE FC       sfr
 
+label104:
+    BTCLR A.0,$label104     ;31 0D FD
+label105:
+    BTCLR A.1,$label105     ;31 1D FD
+label106:
+    BTCLR A.2,$label106     ;31 2D FD
+label107:
+    BTCLR A.3,$label107     ;31 3D FD
+label108:
+    BTCLR A.4,$label108     ;31 4D FD
+label109:
+    BTCLR A.5,$label109     ;31 5D FD
+label110:
+    BTCLR A.6,$label110     ;31 6D FD
+label111:
+    BTCLR A.7,$label111     ;31 7D FD
+
+label112:
+    BTCLR PSW.0,$label112   ;31 01 1E FC
+label113:
+    BTCLR PSW.1,$label113   ;31 11 1E FC
+label114:
+    BTCLR PSW.2,$label114   ;31 21 1E FC
+label115:
+    BTCLR PSW.3,$label115   ;31 31 1E FC
+label116:
+    BTCLR PSW.4,$label116   ;31 41 1E FC
+label117:
+    BTCLR PSW.5,$label117   ;31 51 1E FC
+label118:
+    BTCLR PSW.6,$label118   ;31 61 1E FC
+label119:
+    BTCLR PSW.7,$label119   ;31 71 1E FC
+
+label120:
+    BTCLR [HL].0,$label120  ;31 85 FD
+label121:
+    BTCLR [HL].1,$label121  ;31 95 FD
+label122:
+    BTCLR [HL].2,$label122  ;31 A5 FD
+label123:
+    BTCLR [HL].3,$label123  ;31 B5 FD
+label124:
+    BTCLR [HL].4,$label124  ;31 C5 FD
+label125:
+    BTCLR [HL].5,$label125  ;31 D5 FD
+label126:
+    BTCLR [HL].6,$label126  ;31 E5 FD
+label127:
+    BTCLR [HL].7,$label127  ;31 F5 FD
+
     XCH A,C                 ;32
     XCH A,B                 ;33
     XCH A,E                 ;34
@@ -338,6 +389,222 @@ label103:
     MOV X,A                 ;70
 
     ;MOV A,A                ;71         Illegal
+    MOV1 CY,0fe20h.0        ;71 04 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.1        ;71 14 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.2        ;71 24 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.3        ;71 34 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.4        ;71 44 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.5        ;71 54 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.6        ;71 64 20   MOV1 CY,saddr.{bit}
+    MOV1 CY,0fe20h.7        ;71 74 20   MOV1 CY,saddr.{bit}
+
+    MOV1 CY,0fffeh.0        ;71 0C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.1        ;71 1C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.2        ;71 2C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.3        ;71 3C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.4        ;71 4C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.5        ;71 5C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.6        ;71 6C FE   MOV1 CY,sfr.{bit}
+    MOV1 CY,0fffeh.7        ;71 7C FE   MOV1 CY,sfr.{bit}
+
+    MOV1 CY,PSW.0           ;71 04 1E
+    MOV1 CY,PSW.1           ;71 14 1E
+    MOV1 CY,PSW.2           ;71 24 1E
+    MOV1 CY,PSW.3           ;71 34 1E
+    MOV1 CY,PSW.4           ;71 44 1E
+    MOV1 CY,PSW.5           ;71 54 1E
+    MOV1 CY,PSW.6           ;71 64 1E
+    MOV1 CY,PSW.7           ;71 74 1E
+
+    MOV1 CY,[HL].0          ;71 84
+    MOV1 CY,[HL].1          ;71 94
+    MOV1 CY,[HL].2          ;71 A4
+    MOV1 CY,[HL].3          ;71 B4
+    MOV1 CY,[HL].4          ;71 C4
+    MOV1 CY,[HL].5          ;71 D4
+    MOV1 CY,[HL].6          ;71 E4
+    MOV1 CY,[HL].7          ;71 F4
+
+    MOV1 0fe20h.0,CY        ;71 01 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.1,CY        ;71 11 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.2,CY        ;71 21 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.3,CY        ;71 31 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.4,CY        ;71 41 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.5,CY        ;71 51 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.6,CY        ;71 61 20   MOV1 saddr.{bit},CY
+    MOV1 0fe20h.7,CY        ;71 71 20   MOV1 saddr.{bit},CY
+
+    MOV1 0fffeh.0,CY        ;71 09 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.1,CY        ;71 19 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.2,CY        ;71 29 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.3,CY        ;71 39 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.4,CY        ;71 49 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.5,CY        ;71 59 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.6,CY        ;71 69 FE   MOV1 sfr.{bit},CY
+    MOV1 0fffeh.7,CY        ;71 79 FE   MOV1 sfr.{bit},CY
+
+    MOV1 PSW.0,CY           ;71 01 1E
+    MOV1 PSW.1,CY           ;71 11 1E
+    MOV1 PSW.2,CY           ;71 21 1E
+    MOV1 PSW.3,CY           ;71 31 1E
+    MOV1 PSW.4,CY           ;71 41 1E
+    MOV1 PSW.5,CY           ;71 51 1E
+    MOV1 PSW.6,CY           ;71 61 1E
+    MOV1 PSW.7,CY           ;71 71 1E
+
+    MOV1 [HL].0,CY          ;71 81
+    MOV1 [HL].1,CY          ;71 91
+    MOV1 [HL].2,CY          ;71 A1
+    MOV1 [HL].3,CY          ;71 B1
+    MOV1 [HL].4,CY          ;71 C1
+    MOV1 [HL].5,CY          ;71 D1
+    MOV1 [HL].6,CY          ;71 E1
+    MOV1 [HL].7,CY          ;71 F1
+
+    AND1 CY,0fe20h.0        ;71 05 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.1        ;71 15 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.2        ;71 25 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.3        ;71 35 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.4        ;71 45 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.5        ;71 55 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.6        ;71 65 20   AND1 CY,saddr.{bit}
+    AND1 CY,0fe20h.7        ;71 75 20   AND1 CY,saddr.{bit}
+
+    AND1 CY,0fffeh.0        ;71 0D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.1        ;71 1D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.2        ;71 2D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.3        ;71 3D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.4        ;71 4D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.5        ;71 5D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.6        ;71 6D FE   AND1 CY,sfr.{bit}
+    AND1 CY,0fffeh.7        ;71 7D FE   AND1 CY,sfr.{bit}
+
+    AND1 CY,PSW.0           ;71 05 1E
+    AND1 CY,PSW.1           ;71 15 1E
+    AND1 CY,PSW.2           ;71 25 1E
+    AND1 CY,PSW.3           ;71 35 1E
+    AND1 CY,PSW.4           ;71 45 1E
+    AND1 CY,PSW.5           ;71 55 1E
+    AND1 CY,PSW.6           ;71 65 1E
+    AND1 CY,PSW.7           ;71 75 1E
+
+    AND1 CY,[HL].0          ;71 85
+    AND1 CY,[HL].1          ;71 95
+    AND1 CY,[HL].2          ;71 A5
+    AND1 CY,[HL].3          ;71 B5
+    AND1 CY,[HL].4          ;71 C5
+    AND1 CY,[HL].5          ;71 D5
+    AND1 CY,[HL].6          ;71 E5
+    AND1 CY,[HL].7          ;71 F5
+
+    OR1 CY,0fe20h.0         ;71 06 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.1         ;71 16 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.2         ;71 26 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.3         ;71 36 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.4         ;71 46 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.5         ;71 56 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.6         ;71 66 20   OR1 CY,saddr.{bit}
+    OR1 CY,0fe20h.7         ;71 76 20   OR1 CY,saddr.{bit}
+
+    OR1 CY,0fffeh.0         ;71 0E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.1         ;71 1E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.2         ;71 2E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.3         ;71 3E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.4         ;71 4E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.5         ;71 5E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.6         ;71 6E FE   OR1 CY,sfr.{bit}
+    OR1 CY,0fffeh.7         ;71 7E FE   OR1 CY,sfr.{bit}
+
+    OR1 CY,PSW.0            ;71 06 1E
+    OR1 CY,PSW.1            ;71 16 1E
+    OR1 CY,PSW.2            ;71 26 1E
+    OR1 CY,PSW.3            ;71 36 1E
+    OR1 CY,PSW.4            ;71 46 1E
+    OR1 CY,PSW.5            ;71 56 1E
+    OR1 CY,PSW.6            ;71 66 1E
+    OR1 CY,PSW.7            ;71 76 1E
+
+    OR1 CY,[HL].0           ;71 86
+    OR1 CY,[HL].1           ;71 96
+    OR1 CY,[HL].2           ;71 A6
+    OR1 CY,[HL].3           ;71 B6
+    OR1 CY,[HL].4           ;71 C6
+    OR1 CY,[HL].5           ;71 D6
+    OR1 CY,[HL].6           ;71 E6
+    OR1 CY,[HL].7           ;71 F6
+
+    XOR1 CY,0fe20h.0        ;71 07 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.1        ;71 17 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.2        ;71 27 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.3        ;71 37 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.4        ;71 47 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.5        ;71 57 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.6        ;71 67 20   XOR1 CY,saddr.{bit}
+    XOR1 CY,0fe20h.7        ;71 77 20   XOR1 CY,saddr.{bit}
+
+    XOR1 CY,0fffeh.0        ;71 0F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.1        ;71 1F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.2        ;71 2F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.3        ;71 3F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.4        ;71 4F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.5        ;71 5F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.6        ;71 6F FE   XOR1 CY,sfr.{bit}
+    XOR1 CY,0fffeh.7        ;71 7F FE   XOR1 CY,sfr.{bit}
+
+    XOR1 CY,PSW.0           ;71 07 1E
+    XOR1 CY,PSW.1           ;71 17 1E
+    XOR1 CY,PSW.2           ;71 27 1E
+    XOR1 CY,PSW.3           ;71 37 1E
+    XOR1 CY,PSW.4           ;71 47 1E
+    XOR1 CY,PSW.5           ;71 57 1E
+    XOR1 CY,PSW.6           ;71 67 1E
+    XOR1 CY,PSW.7           ;71 77 1E
+
+    XOR1 CY,[HL].0          ;71 87
+    XOR1 CY,[HL].1          ;71 97
+    XOR1 CY,[HL].2          ;71 A7
+    XOR1 CY,[HL].3          ;71 B7
+    XOR1 CY,[HL].4          ;71 C7
+    XOR1 CY,[HL].5          ;71 D7
+    XOR1 CY,[HL].6          ;71 E7
+    XOR1 CY,[HL].7          ;71 F7
+
+    SET1 0fffeh.0           ;71 0A FE   SET1 sfr.{bit}
+    SET1 0fffeh.1           ;71 1A FE   SET1 sfr.{bit}
+    SET1 0fffeh.2           ;71 2A FE   SET1 sfr.{bit}
+    SET1 0fffeh.3           ;71 3A FE   SET1 sfr.{bit}
+    SET1 0fffeh.4           ;71 4A FE   SET1 sfr.{bit}
+    SET1 0fffeh.5           ;71 5A FE   SET1 sfr.{bit}
+    SET1 0fffeh.6           ;71 6A FE   SET1 sfr.{bit}
+    SET1 0fffeh.7           ;71 7A FE   SET1 sfr.{bit}
+
+    SET1 [HL].0             ;71 82
+    SET1 [HL].1             ;71 92
+    SET1 [HL].2             ;71 A2
+    SET1 [HL].3             ;71 B2
+    SET1 [HL].4             ;71 C2
+    SET1 [HL].5             ;71 D2
+    SET1 [HL].6             ;71 E2
+    SET1 [HL].7             ;71 F2
+
+    CLR1 0fffeh.0           ;71 0B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.1           ;71 1B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.2           ;71 2B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.3           ;71 3B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.4           ;71 4B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.5           ;71 5B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.6           ;71 6B FE   CLR1 sfr.{bit}
+    CLR1 0fffeh.7           ;71 7B FE   CLR1 sfr.{bit}
+
+    CLR1 [HL].0             ;71 83
+    CLR1 [HL].1             ;71 93
+    CLR1 [HL].2             ;71 A3
+    CLR1 [HL].3             ;71 B3
+    CLR1 [HL].4             ;71 C3
+    CLR1 [HL].5             ;71 D3
+    CLR1 [HL].6             ;71 E3
+    CLR1 [HL].7             ;71 F3
+
     HALT                    ;71 10
     STOP                    ;71 00
 
