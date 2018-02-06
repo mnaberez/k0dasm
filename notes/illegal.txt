@@ -1,0 +1,14 @@
+    ;movw ax,!0abcdh        ;02           RA78K0 error E2317: Even expression expected
+    ;MOVW !0abcdh,AX        ;03           RA78K0 error E2317: Even expression expected
+
+    ;SEL RB4                ;61 RA78K0 error E2407: Undefined symbol reference 'RB4'
+    ;MOVW AX,0ffffh         ;A9           TODO RA78K0 error E2317: Even expression expected
+    ;MOVW 0ffffh,AX         ;B9           TODO RA78K0 error E2317: Even expression expected
+    ; 0xc0: 'MOVW AX,AX'             TODO RA78K0 error E2202: Illegal operand
+    ; 0xd0: 'MOVW AX,AX'            TODO RA78K0 error E2202: Illegal operand
+    ; 0xe0: 'XCHW AX,AX'            TODO RA78K0 error E2202: Illegal operand
+    ;MOVW 0ffffh,#0abcdh    ;FE FE CD AB   TODO RA78K0 error E2317: Even expression expected
+                            ;06         06 is Illegal
+                            ;15         15 is Illegal
+                            ;17         17 is Illegal
+    ;MOV A,A                ;61         Illegal
