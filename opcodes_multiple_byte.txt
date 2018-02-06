@@ -93,32 +93,32 @@ These opcodes can only be decoded by looking at the first and second byte.
 
 0x61: (27)
     MOV A,A ✔
-    ADD A,{reg}
-    ADD {reg},A
-    ADDC A,{reg}
-    ADDC {reg},A
-    SUB A,{reg}
-    SUB {reg},A
-    SUBC A,{reg}
-    SUBC {reg},A
-    AND A,{reg}
-    AND {reg},A
-    OR A,{reg}
-    OR {reg},A
-    XOR A,{reg}
-    XOR {reg},A
-    CMP A,{reg}
-    CMP {reg},A
+    ADD A,{reg} ✔
+    ADD {reg},A ✔
+    ADDC A,{reg} ✔
+    ADDC {reg},A ✔
+    SUB A,{reg} ✔
+    SUB {reg},A ✔
+    SUBC A,{reg} ✔
+    SUBC {reg},A ✔
+    AND A,{reg} ✔
+    AND {reg},A ✔
+    OR A,{reg} ✔
+    OR {reg},A ✔
+    XOR A,{reg} ✔
+    XOR {reg},A ✔
+    CMP A,{reg} ✔
+    CMP {reg},A ✔
     ADJBA ✔
     ADJBS ✔
-    MOV1 CY,A.{bit}
-    MOV1 A.{bit},CY
-    AND1 CY,A.{bit}
-    OR1 CY,A.{bit}
-    XOR1 CY,A.{bit}
-    SET1 A.{bit}
-    CLR1 A.{bit}
-    SEL RB{regbank}
+    MOV1 CY,A.{bit} ✔
+    MOV1 A.{bit},CY ✔
+    AND1 CY,A.{bit} ✔
+    OR1 CY,A.{bit} ✔
+    XOR1 CY,A.{bit} ✔
+    SET1 A.{bit} ✔
+    CLR1 A.{bit} ✔
+    SEL RB{regbank} ✔
 
 0x6a: (2) ✔
     SET1 saddr.6

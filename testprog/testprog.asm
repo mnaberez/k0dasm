@@ -369,6 +369,219 @@ label127:
     ADJBA                   ;61 80
     ADJBS                   ;61 90
 
+    MOV1 CY,A.0             ;61 8C
+    MOV1 CY,A.1             ;61 9C
+    MOV1 CY,A.2             ;61 AC
+    MOV1 CY,A.3             ;61 BC
+    MOV1 CY,A.4             ;61 CC
+    MOV1 CY,A.5             ;61 DC
+    MOV1 CY,A.6             ;61 EC
+    MOV1 CY,A.7             ;61 FC
+
+    MOV1 A.0,CY             ;61 89
+    MOV1 A.1,CY             ;61 99
+    MOV1 A.2,CY             ;61 A9
+    MOV1 A.3,CY             ;61 B9
+    MOV1 A.4,CY             ;61 C9
+    MOV1 A.5,CY             ;61 D9
+    MOV1 A.6,CY             ;61 E9
+    MOV1 A.7,CY             ;61 F9
+
+    AND1 CY,A.0             ;61 8D
+    AND1 CY,A.1             ;61 9D
+    AND1 CY,A.2             ;61 AD
+    AND1 CY,A.3             ;61 BD
+    AND1 CY,A.4             ;61 CD
+    AND1 CY,A.5             ;61 DD
+    AND1 CY,A.6             ;61 ED
+    AND1 CY,A.7             ;61 FD
+
+    OR1 CY,A.0              ;61 8E
+    OR1 CY,A.1              ;61 9E
+    OR1 CY,A.2              ;61 AE
+    OR1 CY,A.3              ;61 BE
+    OR1 CY,A.4              ;61 CE
+    OR1 CY,A.5              ;61 DE
+    OR1 CY,A.6              ;61 EE
+    OR1 CY,A.7              ;61 FE
+
+    XOR1 CY,A.0             ;61 8F
+    XOR1 CY,A.1             ;61 9F
+    XOR1 CY,A.2             ;61 AF
+    XOR1 CY,A.3             ;61 BF
+    XOR1 CY,A.4             ;61 CF
+    XOR1 CY,A.5             ;61 DF
+    XOR1 CY,A.6             ;61 EF
+    XOR1 CY,A.7             ;61 FF
+
+    SET1 A.0                ;61 8A
+    SET1 A.1                ;61 9A
+    SET1 A.2                ;61 AA
+    SET1 A.3                ;61 BA
+    SET1 A.4                ;61 CA
+    SET1 A.5                ;61 DA
+    SET1 A.6                ;61 EA
+    SET1 A.7                ;61 FA
+
+    CLR1 A.0                ;61 8B
+    CLR1 A.1                ;61 9B
+    CLR1 A.2                ;61 AB
+    CLR1 A.3                ;61 BB
+    CLR1 A.4                ;61 CB
+    CLR1 A.5                ;61 DB
+    CLR1 A.6                ;61 EB
+    CLR1 A.7                ;61 FB
+
+    SEL RB0                 ;61 D0
+    SEL RB1                 ;61 D8
+    SEL RB2                 ;61 F0
+    SEL RB3                 ;61 F8
+    ;SEL RB4                ;RA78K0 error E2407: Undefined symbol reference 'RB4'
+
+    ADD A,X                 ;61 08
+    ADD A,A                 ;61 01
+    ADD A,C                 ;61 0A
+    ADD A,B                 ;61 0B
+    ADD A,E                 ;61 0C
+    ADD A,D                 ;61 0D
+    ADD A,L                 ;61 0E
+    ADD A,H                 ;61 0F
+
+    ADD X,A                 ;61 00
+    ADD A,A                 ;61 01
+    ADD C,A                 ;61 02
+    ADD B,A                 ;61 03
+    ADD E,A                 ;61 04
+    ADD D,A                 ;61 05
+    ADD L,A                 ;61 06
+    ADD H,A                 ;61 07
+
+    ADDC A,X                ;61 28
+    ADDC A,A                ;61 21
+    ADDC A,C                ;61 2A
+    ADDC A,B                ;61 2B
+    ADDC A,E                ;61 2C
+    ADDC A,D                ;61 2D
+    ADDC A,L                ;61 2E
+    ADDC A,H                ;61 2F
+
+    ADDC X,A                ;61 20
+    ADDC A,A                ;61 21
+    ADDC C,A                ;61 22
+    ADDC B,A                ;61 23
+    ADDC E,A                ;61 24
+    ADDC D,A                ;61 25
+    ADDC L,A                ;61 26
+    ADDC H,A                ;61 27
+
+    SUB A,X                 ;61 18
+    SUB A,A                 ;61 11
+    SUB A,C                 ;61 1A
+    SUB A,B                 ;61 1B
+    SUB A,E                 ;61 1C
+    SUB A,D                 ;61 1D
+    SUB A,L                 ;61 1E
+    SUB A,H                 ;61 1F
+
+    SUB X,A                 ;61 10
+    SUB A,A                 ;61 11
+    SUB C,A                 ;61 12
+    SUB B,A                 ;61 13
+    SUB E,A                 ;61 14
+    SUB D,A                 ;61 15
+    SUB L,A                 ;61 16
+    SUB H,A                 ;61 17
+
+    SUBC A,X                ;61 38
+    SUBC A,A                ;61 31
+    SUBC A,C                ;61 3A
+    SUBC A,B                ;61 3B
+    SUBC A,E                ;61 3C
+    SUBC A,D                ;61 3D
+    SUBC A,L                ;61 3E
+    SUBC A,H                ;61 3F
+
+    SUBC X,A                ;61 30
+    SUBC A,A                ;61 31
+    SUBC C,A                ;61 32
+    SUBC B,A                ;61 33
+    SUBC E,A                ;61 34
+    SUBC D,A                ;61 35
+    SUBC L,A                ;61 36
+    SUBC H,A                ;61 37
+
+    AND A,X                 ;03 60
+    AND A,A                 ;03 62
+    AND A,C                 ;03 64
+    AND A,B                 ;03 66
+    AND A,E                 ;03 68
+    AND A,D                 ;03 6A
+    AND A,L                 ;03 6C
+    AND A,H                 ;03 6E
+
+    AND X,A                 ;61 50
+    AND A,A                 ;61 51
+    AND C,A                 ;61 52
+    AND B,A                 ;61 53
+    AND E,A                 ;61 54
+    AND D,A                 ;61 55
+    AND L,A                 ;61 56
+    AND H,A                 ;61 57
+
+    OR A,X                  ;61 68
+    OR A,A                  ;61 61
+    OR A,C                  ;61 6A
+    OR A,B                  ;61 6B
+    OR A,E                  ;61 6C
+    OR A,D                  ;61 6D
+    OR A,L                  ;61 6E
+    OR A,H                  ;61 6F
+
+    OR X,A                  ;61 60
+    OR A,A                  ;61 61
+    OR C,A                  ;61 62
+    OR B,A                  ;61 63
+    OR E,A                  ;61 64
+    OR D,A                  ;61 65
+    OR L,A                  ;61 66
+    OR H,A                  ;61 67
+
+    XOR A,X                 ;61 78
+    XOR A,A                 ;61 71
+    XOR A,C                 ;61 7A
+    XOR A,B                 ;61 7B
+    XOR A,E                 ;61 7C
+    XOR A,D                 ;61 7D
+    XOR A,L                 ;61 7E
+    XOR A,H                 ;61 7F
+
+    XOR X,A                 ;61 70
+    XOR A,A                 ;61 71
+    XOR C,A                 ;61 72
+    XOR B,A                 ;61 73
+    XOR E,A                 ;61 74
+    XOR D,A                 ;61 75
+    XOR L,A                 ;61 76
+    XOR H,A                 ;61 77
+
+    CMP A,X                 ;61 48
+    CMP A,A                 ;61 41
+    CMP A,C                 ;61 4A
+    CMP A,B                 ;61 4B
+    CMP A,E                 ;61 4C
+    CMP A,D                 ;61 4D
+    CMP A,L                 ;61 4E
+    CMP A,H                 ;61 4F
+
+    CMP X,A                 ;61 40
+    CMP A,A                 ;61 41
+    CMP C,A                 ;61 42
+    CMP B,A                 ;61 43
+    CMP E,A                 ;61 44
+    CMP D,A                 ;61 45
+    CMP L,A                 ;61 46
+    CMP H,A                 ;61 47
+
     MOV A,C                 ;62
     MOV A,B                 ;63
     MOV A,E                 ;64
