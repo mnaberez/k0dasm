@@ -1,0 +1,220 @@
+These opcodes can only be decoded by looking at the first and second byte.
+
+0x0a: (2)
+    SET1 saddr.0
+    SET1 PSW.0
+
+0x0b: (2) 
+    CLR1 saddr.0
+    CLR1 PSW.0
+
+0x11: (2)
+    MOV saddr,#byte
+    MOV PSW,#byte
+
+0x1a: (2)
+    SET1 saddr.1
+    SET1 PSW.1
+
+0x1b: (2)
+    CLR1 saddr.1
+    CLR1 PSW.1
+
+0x2a: (2)
+    SET1 saddr.2
+    SET1 PSW.2
+
+0x2b: (2)
+    CLR1 saddr.2
+    CLR1 PSW.2
+
+0x31: (37)
+    XCH A,A
+    XCH A,[HL+B]
+    XCH A,[HL+C]
+    ADD A,[HL+B]
+    ADD A,[HL+C]
+    ADDC A,[HL+B]
+    ADDC A,[HL+C]
+    SUB A,[HL+B]
+    SUB A,[HL+C]
+    SUBC A,[HL+B]
+    SUBC A,[HL+C]
+    AND A,[HL+B]
+    AND A,[HL+C]
+    OR A,[HL+B]
+    OR A,[HL+C]
+    XOR A,[HL+B]
+    XOR A,[HL+C]
+    CMP A,[HL+B]
+    CMP A,[HL+C]
+    MULU X
+    DIVUW C
+    ROR4 [HL]
+    ROL4 [HL]
+    BR AX
+    BT sfr.{bit},$addr16
+    BT A.{bit},$addr16
+    BT [HL].{bit},$addr16
+    BF saddr.{bit},$addr16
+    BF sfr.{bit},$addr16
+    BF A.{bit},$addr16
+    BF PSW.{bit},$addr16
+    BF [HL].{bit},$addr16
+    BTCLR saddr.{bit},$addr16
+    BTCLR sfr.{bit},$addr16
+    BTCLR A.{bit},$addr16
+    BTCLR PSW.{bit},$addr16
+    BTCLR [HL].{bit},$addr16
+
+0x3a: (2)
+    SET1 saddr.3
+    SET1 PSW.3
+
+0x3b: (2)
+    CLR1 saddr.3
+    CLR1 PSW.3
+
+0x4a: (2)
+    SET1 saddr.4
+    SET1 PSW.4
+
+0x4b: (2)
+    CLR1 saddr.4
+    CLR1 PSW.4
+
+0x5a: (2)
+    SET1 saddr.5
+    SET1 PSW.5
+
+0x5b: (2)
+    CLR1 saddr.5
+    CLR1 PSW.5
+
+0x61: (27)
+    MOV A,A
+    ADD A,{reg}
+    ADD {reg},A
+    ADDC A,{reg}
+    ADDC {reg},A
+    SUB A,{reg}
+    SUB {reg},A
+    SUBC A,{reg}
+    SUBC {reg},A
+    AND A,{reg}
+    AND {reg},A
+    OR A,{reg}
+    OR {reg},A
+    XOR A,{reg}
+    XOR {reg},A
+    CMP A,{reg}
+    CMP {reg},A
+    ADJBA
+    ADJBS
+    MOV1 CY,A.{bit}
+    MOV1 A.{bit},CY
+    AND1 CY,A.{bit}
+    OR1 CY,A.{bit}
+    XOR1 CY,A.{bit}
+    SET1 A.{bit}
+    CLR1 A.{bit}
+    SEL RB{regbank}
+
+0x6a: (2)
+    SET1 saddr.6
+    SET1 PSW.6
+
+0x6b: (2)
+    CLR1 saddr.6
+    CLR1 PSW.6
+
+0x71: (27)
+    MOV A,A
+    MOV1 CY,saddr.{bit}
+    MOV1 CY,sfr.{bit}
+    MOV1 CY,PSW.{bit}
+    MOV1 CY,[HL].{bit}
+    MOV1 saddr.{bit},CY
+    MOV1 sfr.{bit},CY
+    MOV1 PSW.{bit},CY
+    MOV1 [HL].{bit},CY
+    AND1 CY,saddr.{bit}
+    AND1 CY,sfr.{bit}
+    AND1 CY,PSW.{bit}
+    AND1 CY,[HL].{bit}
+    OR1 CY,saddr.{bit}
+    OR1 CY,sfr.{bit}
+    OR1 CY,PSW.{bit}
+    OR1 CY,[HL].{bit}
+    XOR1 CY,saddr.{bit}
+    XOR1 CY,sfr.{bit}
+    XOR1 CY,PSW.{bit}
+    XOR1 CY,[HL].{bit}
+    SET1 sfr.{bit}
+    SET1 [HL].{bit}
+    CLR1 sfr.{bit}
+    CLR1 [HL].{bit}
+    HALT
+    STOP
+
+0x7a: (3)
+    SET1 saddr.7
+    SET1 PSW.7
+    EI
+
+0x7b: (3)
+    CLR1 saddr.7
+    CLR1 PSW.7
+    DI
+
+0x89: (2)
+    MOVW AX,saddrp
+    MOVW AX,SP
+
+0x8c: (2)
+    BT saddr.0,$addr16
+    BT PSW.0,$addr16
+
+0x99: (2)
+    MOVW saddrp,AX
+    MOVW SP,AX
+
+0x9c: (2)
+    BT saddr.1,$addr16
+    BT PSW.1,$addr16
+
+0xac: (2)
+    BT saddr.2,$addr16
+    BT PSW.2,$addr16
+
+0xbc: (2)
+    BT saddr.3,$addr16
+    BT PSW.3,$addr16
+
+0xcc: (2)
+    BT saddr.4,$addr16
+    BT PSW.4,$addr16
+
+0xdc: (2)
+    BT saddr.5,$addr16
+    BT PSW.5,$addr16
+
+0xec: (2)
+    BT saddr.6,$addr16
+    BT PSW.6,$addr16
+
+0xee: (2)
+    MOVW saddrp,#word
+    MOVW SP,#word
+
+0xf0: (2)
+    MOV A,saddr
+    MOV A,PSW
+
+0xf2: (2)
+    MOV saddr,A
+    MOV PSW,A
+
+0xfc: (2)
+    BT saddr.7,$addr16
+    BT PSW.7,$addr16
