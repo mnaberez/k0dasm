@@ -5,3 +5,4 @@
 *.prn
 *.rel
 *.sym
+__pycache__
