@@ -95,6 +95,22 @@ def disassemble(mem, pc):
     elif mem[0] == 0x17:
         return ("ILLEGAL 0x17", pc+1)
 
+    # 0x20: 'SET1 CY'
+    elif mem[0] == 0x20:
+        return ('SET1 CY', pc+1)
+
+    # 0x21: 'CLR1 CY'
+    elif mem[0] == 0x21:
+        return ('CLR1 CY', pc+1)
+
+    # 0x22: 'PUSH PSW'
+    elif mem[0] == 0x22:
+        return ('PUSH PSW', pc+1)
+
+    # 0x23: 'POP PSW'
+    elif mem[0] == 0x23:
+        return ('POP PSW', pc+1)
+
     # 0x30: 'XCH A,X' .. 0x37: 'XCH A,H'
     elif (mem[0] & 0b11111000) == 0b00110000:
         reg = mem[0] & 0b111
@@ -125,6 +141,46 @@ def disassemble(mem, pc):
         regname = _regname(reg)
         return ("MOV %s,A" % regname, pc+1)
 
+    # 0x80, 0x82, 0x84, 0x86
+    elif (mem[0] & 0b11111001) == 0b10000000:
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("INCW %s" % regpairname, pc+1)
+
+    # 0x81: 'INC saddr'
+    # INC 0fe20h                  ;81 20          saddr
+    elif mem[0] == 0x81:
+        saddr = _saddr(mem[1])
+        return ('INC 0%04xH' % saddr, pc+2)
+
+    elif mem[0] == 0x8f:
+        return ("RETI", pc+1)
+
+    # 0x90, 0x92, 0x94, 0x96
+    elif (mem[0] & 0b11111001) == 0b10010000:
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("DECW %s" % regpairname, pc+1)
+
+    # 0x91: 'DEC saddr'
+    # DEC 0fe20h                  ;91 20          saddr
+    elif mem[0] == 0x91:
+        saddr = _saddr(mem[1])
+        return ('DEC 0%04xH' % saddr, pc+2)
+
+    # 0x9a: 'CALL !addr16'
+    elif mem[0] == 0x9a:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('CALL !0%04xH' % addr16, pc+3)
+
+    # 0x9b: 'BR !addr16'
+    elif mem[0] == 0x9b:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('BR !0%04xH' % addr16, pc+3)
+
+    elif mem[0] == 0x9f:
+        return ("RETB", pc+1)
+
     # 0xa0: 'MOV X,#byte' .. 0xa7: 'MOV H,#byte'
     elif (mem[0] & 0b11111000) == 0b10100000:
         reg = mem[0] & 0b111
@@ -132,13 +188,60 @@ def disassemble(mem, pc):
         byte = mem[1]
         return ("MOV %s,#0%02xH" % (regname, byte), pc+1)
 
+    elif mem[0] == 0xaf:
+        return ("RET", pc+1)
+
+    # 0xB0, 0xB2, 0xB4, 0xB6
+    elif (mem[0] & 0b11111001) == 0b10110000:
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("POP %s" % regpairname, pc+1)
+
+    # 0xB1, 0xB3, 0xB5, 0xB7
+    elif (mem[0] & 0b11111001) == 0b10110001:
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("PUSH %s" % regpairname, pc+1)
+
+    # 0xba: 'MOV [HL+C],A'
+    # MOV [HL+C],A                ;BA
+    elif mem[0] == 0xba:
+        return ("MOV [HL+C],A", 1)
+
+    # MOV [HL+B],A                ;BB
+    elif mem[0] == 0xbb:
+        return ("MOV [HL+B],A", 1)
+
     elif mem[0] == 0xbf:
         return ("BRK", pc+1)
+
+    # 0xC0, 0xC2, 0xC4, 0xC6
+    elif (mem[0] & 0b11111001) == 0b11000000:
+        # TODO emit ILLEGAL for 0xC0
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("MOVW AX,%s" % regpairname, pc+1)
+
+    # 0xD0, 0xD2, 0xD4, 0xD6
+    elif (mem[0] & 0b11111001) == 0b11010000:
+        # TODO emit ILLEGAL for 0xD0
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("MOVW %s,AX" % regpairname, pc+1)
+
+    # 0xE0, 0xE2, 0xE4, 0xE6
+    elif (mem[0] & 0b11111001) == 0b11100000:
+        # TODO emit ILLEGAL for 0xD0
+        regpair = (mem[0] >> 1) & 0b11
+        regpairname = _regpairname(regpair)
+        return ("XCHW AX,%s" % regpairname, pc+1)
 
     else:
         raise NotImplementedError()
 
 
+def _regpairname(regpair):
+    return ('AX', 'BC', 'DE', 'HL')[regpair]
 
 def _regname(reg):
     return ('X', 'A', 'C', 'B', 'E', 'D', 'L', 'H')[reg]
@@ -291,6 +394,30 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(disasm, "ILLEGAL 0x17")
         self.assertEqual(new_pc, 1)
 
+    def test_20_set1_cy(self):
+        mem = [0x20]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "SET1 CY")
+        self.assertEqual(new_pc, 1)
+
+    def test_21_clr1_cy(self):
+        mem = [0x21]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "CLR1 CY")
+        self.assertEqual(new_pc, 1)
+
+    def test_22_push_psw(self):
+        mem = [0x22]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "PUSH PSW")
+        self.assertEqual(new_pc, 1)
+
+    def test_23_pop_psw(self):
+        mem = [0x23]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "POP PSW")
+        self.assertEqual(new_pc, 1)
+
     def test_30_37_xch_a_reg(self):
         d = {0x30: 'XCH A,X', 0x31: 'XCH A,A', 0x32: 'XCH A,C',
              0x33: 'XCH A,B', 0x34: 'XCH A,E', 0x35: 'XCH A,D',
@@ -346,6 +473,72 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, expected_disasm)
             self.assertEqual(new_pc, 1)
 
+    def test_80_82_84_86_incw_regpair(self):
+        d = {0x80: "INCW AX", 0x82: "INCW BC",
+             0x84: "INCW DE", 0x86: "INCW HL"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_81_inc_saddr(self):
+        for saddr in range(0xfe20, 0xff20):
+            saddr_low = saddr & 0xff
+            mem = [0x81, saddr_low]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, "INC 0%04xH" % saddr)
+            self.assertEqual(new_pc, 2)
+
+    def test_8f_reti(self):
+        mem = [0x8f]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "RETI")
+        self.assertEqual(new_pc, 1)
+
+    def test_90_92_94_96_decw_regpair(self):
+        d = {0x90: "DECW AX", 0x92: "DECW BC",
+             0x94: "DECW DE", 0x96: "DECW HL"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_91_dec_saddr(self):
+        for saddr in range(0xfe20, 0xff20):
+            saddr_low = saddr & 0xff
+            mem = [0x91, saddr_low]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, "DEC 0%04xH" % saddr)
+            self.assertEqual(new_pc, 2)
+
+    def test_9a_call_addr16(self):
+        for addr16 in (0x0000, 0xabcd, 0xffff):
+            low = addr16 & 0xff
+            high = (addr16 >> 8) & 0xff
+            mem = [0x9a, low, high]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, 'CALL !0%04xH' % addr16)
+            self.assertEqual(new_pc, 3)
+
+    def test_9b_br_addr16(self):
+        for addr16 in (0x0000, 0xabcd, 0xffff):
+            low = addr16 & 0xff
+            high = (addr16 >> 8) & 0xff
+            mem = [0x9b, low, high]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, 'BR !0%04xH' % addr16)
+            self.assertEqual(new_pc, 3)
+
+    def test_9f_retb(self):
+        mem = [0x9F]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "RETB")
+        self.assertEqual(new_pc, 1)
+
     def test_a0_a7_mov_reg_imm8(self):
         d = {0xa0: 'MOV X,#0%02xH', 0xa1: 'MOV A,#0%02xH',
              0xa2: 'MOV C,#0%02xH', 0xa3: 'MOV B,#0%02xH',
@@ -359,12 +552,76 @@ class disassemble_tests(unittest.TestCase):
                 self.assertEqual(disasm, expected_disasm_fmt % imm8)
                 self.assertEqual(new_pc, 1)
 
+    def test_af_ret(self):
+        mem = [0xAF]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "RET")
+        self.assertEqual(new_pc, 1)
+
+    def test_b0_b2_b4_b6_pop_regpair(self):
+        d = {0xB0: "POP AX", 0xB2: "POP BC",
+             0xB4: "POP DE", 0xB6: "POP HL"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_b1_b3_b5_b7_push_regpair(self):
+        d = {0xB1: "PUSH AX", 0xB3: "PUSH BC",
+             0xB5: "PUSH DE", 0xB7: "PUSH HL"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_ba_mov_hl_plus_c_a(self):
+        mem = [0xBA]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "MOV [HL+C],A")
+        self.assertEqual(new_pc, 1)
+
+    def test_bb_mov_hl_plus_b_a(self):
+        mem = [0xBB]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "MOV [HL+B],A")
+        self.assertEqual(new_pc, 1)
+
     def test_bf_brk(self):
         mem = [0xBF]
         disasm, new_pc = disassemble(mem, pc=0)
         self.assertEqual(disasm, "BRK")
         self.assertEqual(new_pc, 1)
 
+    def test_c2_c4_c6_mov_ax_regpair(self):
+        d = {0xC2: "MOVW AX,BC", 0xC4: "MOVW AX,DE", 0xC6: "MOVW AX,HL"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_d2_d4_d6_mov_regpair(self):
+        d = {0xD2: "MOVW BC,AX", 0xD4: "MOVW DE,AX", 0xD6: "MOVW HL,AX"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_e2_e4_e6_xchw_ax_regpair(self):
+        d = {0xE2: "XCHW AX,BC", 0xE4: "XCHW AX,DE", 0xE6: "XCHW AX,HL"}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
 
 
 def test_suite():
