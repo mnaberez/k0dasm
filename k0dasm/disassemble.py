@@ -68,28 +68,80 @@ def disassemble(mem, pc):
     # ADD A,#0abh                 ;0D AB
     elif mem[0] == 0x0d:
         byte = mem[1]
-        return ('ADD A,#0%02xH' % byte, 2)
+        return ('ADD A,#0%02xH' % byte, pc+2)
 
     # 0x0e: 'ADD A,saddr'
     # ADD A,0fe20h                ;0E 20          saddr
     elif mem[0] == 0x0e:
         saddr = _saddr(mem[1])
-        return ('ADD A,0%04xH' % saddr, 2)
+        return ('ADD A,0%04xH' % saddr, pc+2)
 
     # 0x0f: 'ADD A,[HL]'
     # ADD A,[HL]                  ;0F
     elif mem[0] == 0x0f:
-        return ('ADD A,[HL]', 1)
+        return ('ADD A,[HL]', pc+1)
 
     # 0x10: 'MOVW AX,#word'
     # MOVW AX,#0abcdh             ;10 CD AB
     elif mem[0] == 0x10:
         imm16 = mem[1] + (mem[2] << 8)
-        return ('MOVW AX,#0%04xH' % imm16, 3)
+        return ('MOVW AX,#0%04xH' % imm16, pc+3)
+
+    # 0x15: ILLEGAL
+    elif mem[0] == 0x15:
+        return ("ILLEGAL 0x15", pc+1)
+
+    # 0x17: ILLEGAL
+    elif mem[0] == 0x17:
+        return ("ILLEGAL 0x17", pc+1)
+
+    # 0x30: 'XCH A,X' .. 0x37: 'XCH A,H'
+    elif (mem[0] & 0b11111000) == 0b00110000:
+        reg = mem[0] & 0b111
+        regname = _regname(reg)
+        return ("XCH A,%s" % regname, pc+1)
+
+    # 0x40: 'INC X' .. 0x47: 'INC H'
+    elif (mem[0] & 0b11111000) == 0b01000000:
+        reg = mem[0] & 0b111
+        regname = _regname(reg)
+        return ("INC %s" % regname, pc+1)
+
+    # 0x50: 'DEC X' .. 0x57: 'DEC H'
+    elif (mem[0] & 0b11111000) == 0b01010000:
+        reg = mem[0] & 0b111
+        regname = _regname(reg)
+        return ("DEC %s" % regname, pc+1)
+
+    # 0x60: 'MOV A,X' .. 0x67: 'MOV A,H'
+    elif (mem[0] & 0b11111000) == 0b01100000:
+        reg = mem[0] & 0b111
+        regname = _regname(reg)
+        return ("MOV A,%s" % regname, pc+1)
+
+    # 0x70: 'MOV X,A' .. 0x77: 'MOV H,A'
+    elif (mem[0] & 0b11111000) == 0b01110000:
+        reg = mem[0] & 0b111
+        regname = _regname(reg)
+        return ("MOV %s,A" % regname, pc+1)
+
+    # 0xa0: 'MOV X,#byte' .. 0xa7: 'MOV H,#byte'
+    elif (mem[0] & 0b11111000) == 0b10100000:
+        reg = mem[0] & 0b111
+        regname = _regname(reg)
+        byte = mem[1]
+        return ("MOV %s,#0%02xH" % (regname, byte), pc+1)
+
+    elif mem[0] == 0xbf:
+        return ("BRK", pc+1)
 
     else:
         raise NotImplementedError()
 
+
+
+def _regname(reg):
+    return ('X', 'A', 'C', 'B', 'E', 'D', 'L', 'H')[reg]
 
 def _saddr(byte):
     # When 8-bit immediate data is at 20H to FFH,
@@ -226,6 +278,94 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc=0)
             self.assertEqual(disasm, 'MOVW AX,#0%04xH' % imm16)
             self.assertEqual(new_pc, 3)
+
+    def test_15_illegal(self):
+        mem = [0x15]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "ILLEGAL 0x15")
+        self.assertEqual(new_pc, 1)
+
+    def test_17_illegal(self):
+        mem = [0x17]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "ILLEGAL 0x17")
+        self.assertEqual(new_pc, 1)
+
+    def test_30_37_xch_a_reg(self):
+        d = {0x30: 'XCH A,X', 0x31: 'XCH A,A', 0x32: 'XCH A,C',
+             0x33: 'XCH A,B', 0x34: 'XCH A,E', 0x35: 'XCH A,D',
+             0x36: 'XCH A,L', 0x37: 'XCH A,H'}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_40_47_inc_reg(self):
+        d = {0x40: 'INC X', 0x41: 'INC A', 0x42: 'INC C',
+             0x43: 'INC B', 0x44: 'INC E', 0x45: 'INC D',
+             0x46: 'INC L', 0x47: 'INC H'}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_50_57_dec_reg(self):
+        d = {0x50: 'DEC X', 0x51: 'DEC A', 0x52: 'DEC C',
+             0x53: 'DEC B', 0x54: 'DEC E', 0x55: 'DEC D',
+             0x56: 'DEC L', 0x57: 'DEC H'}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_60_67_mov_a_reg(self):
+        d = {0x60: 'MOV A,X', 0x61: 'MOV A,A', 0x62: 'MOV A,C',
+             0x63: 'MOV A,B', 0x64: 'MOV A,E', 0x65: 'MOV A,D',
+             0x66: 'MOV A,L', 0x67: 'MOV A,H'}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_70_77_mov_a_reg(self):
+        d = {0x70: 'MOV X,A', 0x71: 'MOV A,A', 0x72: 'MOV C,A',
+             0x73: 'MOV B,A', 0x74: 'MOV E,A', 0x75: 'MOV D,A',
+             0x76: 'MOV L,A', 0x77: 'MOV H,A'}
+
+        for opcode, expected_disasm in d.items():
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, 1)
+
+    def test_a0_a7_mov_reg_imm8(self):
+        d = {0xa0: 'MOV X,#0%02xH', 0xa1: 'MOV A,#0%02xH',
+             0xa2: 'MOV C,#0%02xH', 0xa3: 'MOV B,#0%02xH',
+             0xa4: 'MOV E,#0%02xH', 0xa5: 'MOV D,#0%02xH',
+             0xa6: 'MOV L,#0%02xH', 0xa7: 'MOV H,#0%02xH'}
+
+        for opcode, expected_disasm_fmt in d.items():
+            for imm8 in (0x00, 0xab, 0xff):
+                mem = [opcode, imm8]
+                disasm, new_pc = disassemble(mem, pc=0)
+                self.assertEqual(disasm, expected_disasm_fmt % imm8)
+                self.assertEqual(new_pc, 1)
+
+    def test_bf_brk(self):
+        mem = [0xBF]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "BRK")
+        self.assertEqual(new_pc, 1)
+
+
 
 def test_suite():
     return unittest.findTestCases(sys.modules[__name__])
