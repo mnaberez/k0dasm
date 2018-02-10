@@ -114,7 +114,7 @@ def disassemble(mem, pc):
     # 0x1d: 'SUB A,#byte'
     elif mem[0] == 0x1d:
         imm8 = mem[1]
-        return ('SUB A,#0%02xH' % imm8, pc+1)
+        return ('SUB A,#0%02xH' % imm8, pc+2)
 
     elif mem[0] == 0x1e:
         saddr = _saddr(mem[1])
@@ -182,7 +182,7 @@ def disassemble(mem, pc):
     # 0x2d: 'ADDC A,#byte'
     elif mem[0] == 0x2d:
         imm8 = mem[1]
-        return ('ADDC A,#0%02xH' % imm8, pc+1)
+        return ('ADDC A,#0%02xH' % imm8, pc+2)
 
     # 0x30: 'XCH A,X' .. 0x37: 'XCH A,H'
     elif (mem[0] & 0b11111000) == 0b00110000:
@@ -323,7 +323,7 @@ def disassemble(mem, pc):
     # 0x7d: 'XOR A,#byte'
     elif mem[0] == 0x7d:
         imm8 = mem[1]
-        return ('XOR A,#0%02xH' % imm8, pc+1)
+        return ('XOR A,#0%02xH' % imm8, pc+2)
 
     # 0x7f: 'XOR A,[HL]'
     elif mem[0] == 0x7f:
@@ -448,7 +448,7 @@ def disassemble(mem, pc):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         byte = mem[1]
-        return ("MOV %s,#0%02xH" % (regname, byte), pc+1)
+        return ("MOV %s,#0%02xH" % (regname, byte), pc+2)
 
     # 0xa8: 'ADDC saddr,#byte'
     elif mem[0] == 0xa8:
