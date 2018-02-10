@@ -307,7 +307,7 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(new_pc, pc + len(mem))
 
     def test_30_37_xch_a_reg(self):
-        d = {0x30: 'XCH A,X', 0x31: 'XCH A,A', 0x32: 'XCH A,C',
+        d = {0x30: 'XCH A,X',                  0x32: 'XCH A,C',
              0x33: 'XCH A,B', 0x34: 'XCH A,E', 0x35: 'XCH A,D',
              0x36: 'XCH A,L', 0x37: 'XCH A,H'}
 
@@ -453,7 +453,7 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_60_67_mov_a_reg(self):
-        d = {0x60: 'MOV A,X', 0x61: 'MOV A,A', 0x62: 'MOV A,C',
+        d = {0x60: 'MOV A,X',                  0x62: 'MOV A,C',
              0x63: 'MOV A,B', 0x64: 'MOV A,E', 0x65: 'MOV A,D',
              0x66: 'MOV A,L', 0x67: 'MOV A,H'}
 
@@ -505,7 +505,7 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_70_77_mov_a_reg(self):
-        d = {0x70: 'MOV X,A', 0x71: 'MOV A,A', 0x72: 'MOV C,A',
+        d = {0x70: 'MOV X,A',                  0x72: 'MOV C,A',
              0x73: 'MOV B,A', 0x74: 'MOV E,A', 0x75: 'MOV D,A',
              0x76: 'MOV L,A', 0x77: 'MOV H,A'}
 

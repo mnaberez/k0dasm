@@ -186,7 +186,8 @@ def disassemble(mem, pc):
         return ('ADDC A,#0%02xH' % imm8, pc+2)
 
     # 0x30: 'XCH A,X' .. 0x37: 'XCH A,H'
-    elif (mem[0] & 0b11111000) == 0b00110000:
+    # except 0x31
+    elif mem[0] in (0x30, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("XCH A,%s" % regname, pc+1)
@@ -271,7 +272,8 @@ def disassemble(mem, pc):
         return ('AND A,[HL]', pc+1)
 
     # 0x60: 'MOV A,X' .. 0x67: 'MOV A,H'
-    elif (mem[0] & 0b11111000) == 0b01100000:
+    # except 0x61
+    elif mem[0] in (0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("MOV A,%s" % regname, pc+1)
@@ -306,7 +308,8 @@ def disassemble(mem, pc):
         return ('OR A,[HL]', pc+1)
 
     # 0x70: 'MOV X,A' .. 0x77: 'MOV H,A'
-    elif (mem[0] & 0b11111000) == 0b01110000:
+    # except 0x71
+    elif mem[0] in (0x70, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("MOV %s,A" % regname, pc+1)
