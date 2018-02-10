@@ -398,13 +398,13 @@ def disassemble(mem, pc):
     # 0x93: 'XCH A,sfr'
     elif mem[0] == 0x93:
         sfr = _sfr(mem[1])
-        return ("XCH A,0%04xH" % sfr, 2)
+        return ("XCH A,0%04xH" % sfr, pc+2)
 
     # 0x13: 'MOV sfr,#byte'
     elif mem[0] == 0x13:
         sfr = _sfr(mem[1])
         imm8 = mem[2]
-        return ("MOV 0%04xH,#0%02xH" % (sfr, imm8), 3)
+        return ("MOV 0%04xH,#0%02xH" % (sfr, imm8), pc+3)
 
     # 0x95: MOV [DE],A
     elif mem[0] == 0x95:
@@ -459,7 +459,7 @@ def disassemble(mem, pc):
     # 0xa9: 'MOVW AX,sfrp'
     elif mem[0] == 0xa9:
         sfrp = _sfrp(mem[1])
-        return ("MOVW AX,0%04xH" % sfrp, 2)
+        return ("MOVW AX,0%04xH" % sfrp, pc+2)
 
     elif mem[0] == 0xaa:
         return ("MOV A,[HL+C]", pc+1)
@@ -501,16 +501,16 @@ def disassemble(mem, pc):
     # 0xb9: 'MOVW sfrp,AX'
     elif mem[0] == 0xb9:
         sfrp = _sfrp(mem[1])
-        return ("MOVW 0%04xH,AX" % sfrp, 2)
+        return ("MOVW 0%04xH,AX" % sfrp, pc+2)
 
     # 0xba: 'MOV [HL+C],A'
     # MOV [HL+C],A                ;BA
     elif mem[0] == 0xba:
-        return ("MOV [HL+C],A", 1)
+        return ("MOV [HL+C],A", pc+1)
 
     # MOV [HL+B],A                ;BB
     elif mem[0] == 0xbb:
-        return ("MOV [HL+B],A", 1)
+        return ("MOV [HL+B],A", pc+1)
 
     # 0xbd: 'BNZ $rel'
     elif mem[0] == 0xbd:
@@ -541,7 +541,7 @@ def disassemble(mem, pc):
     # ADDW AX,#0abcdh             ;CA CD AB
     elif mem[0] == 0xCA:
         imm16 = mem[1] + (mem[2] << 8)
-        return ("ADDW AX,#0%04xH" % imm16, 3)
+        return ("ADDW AX,#0%04xH" % imm16, pc+3)
 
     # 0xce: 'XCH A,!addr16'
     elif mem[0] == 0xce:
@@ -564,7 +564,7 @@ def disassemble(mem, pc):
     # SUBW AX,#0abcdh             ;DA CD AB
     elif mem[0] == 0xDA:
         imm16 = mem[1] + (mem[2] << 8)
-        return ("SUBW AX,#0%04xH" % imm16, 3)
+        return ("SUBW AX,#0%04xH" % imm16, pc+3)
 
     # 0xde: 'XCH A,[HL+byte]'
     elif mem[0] == 0xde:
@@ -587,17 +587,17 @@ def disassemble(mem, pc):
     # CMPW AX,#0abcdh             ;EA CD AB
     elif mem[0] == 0xea:
         imm16 = mem[1] + (mem[2] << 8)
-        return ("CMPW AX,#0%04xH" % imm16, 3)
+        return ("CMPW AX,#0%04xH" % imm16, pc+3)
 
     # 0xf4: 'MOV A,sfr'
     elif mem[0] == 0xf4:
         sfr = _sfr(mem[1])
-        return ("MOV A,0%04xH" % sfr, 2)
+        return ("MOV A,0%04xH" % sfr, pc+2)
 
     # 0xf6: 'MOV sfr,A'
     elif mem[0] == 0xf6:
         sfr = _sfr(mem[1])
-        return ("MOV 0%04xH,A" % sfr, 2)
+        return ("MOV 0%04xH,A" % sfr, pc+2)
 
     # 0xf8: 'XOR saddr,#byte'
     elif mem[0] == 0xf8:

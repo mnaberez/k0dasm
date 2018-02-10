@@ -1,98 +1,110 @@
 These opcodes can only be decoded by looking at the first and second byte.
 
 0x31: (37)
-    XCH A,A
     XCH A,[HL+B]
-    XCH A,[HL+C]
     ADD A,[HL+B]
-    ADD A,[HL+C]
     ADDC A,[HL+B]
-    ADDC A,[HL+C]
     SUB A,[HL+B]
-    SUB A,[HL+C]
     SUBC A,[HL+B]
-    SUBC A,[HL+C]
     AND A,[HL+B]
-    AND A,[HL+C]
     OR A,[HL+B]
-    OR A,[HL+C]
     XOR A,[HL+B]
-    XOR A,[HL+C]
     CMP A,[HL+B]
+
+    XCH A,[HL+C]
+    ADD A,[HL+C]
+    ADDC A,[HL+C]
+    SUB A,[HL+C]
+    SUBC A,[HL+C]
+    AND A,[HL+C]
+    OR A,[HL+C]
+    XOR A,[HL+C]
     CMP A,[HL+C]
+
+    BT A.{bit},$rel
+    BF A.{bit},$rel
+    BTCLR A.{bit},$rel
+
+    BT sfr.{bit},$rel
+    BF sfr.{bit},$rel
+    BTCLR sfr.{bit},$rel
+
+    BF saddr.{bit},$rel
+    BTCLR saddr.{bit},$rel
+
+    BT [HL].{bit},$rel
+    BF [HL].{bit},$rel
+    BTCLR [HL].{bit},$rel
+
+    BF PSW.{bit},$rel
+    BTCLR PSW.{bit},$rel
+
     MULU X
     DIVUW C
     ROR4 [HL]
     ROL4 [HL]
     BR AX
-    BT sfr.{bit},$rel
-    BT A.{bit},$rel
-    BT [HL].{bit},$rel
-    BF saddr.{bit},$rel
-    BF sfr.{bit},$rel
-    BF A.{bit},$rel
-    BF PSW.{bit},$rel
-    BF [HL].{bit},$rel
-    BTCLR saddr.{bit},$rel
-    BTCLR sfr.{bit},$rel
-    BTCLR A.{bit},$rel
-    BTCLR PSW.{bit},$rel
-    BTCLR [HL].{bit},$rel
 
 0x61: (27)
-    MOV A,A
     ADD A,{reg}
-    ADD {reg},A
     ADDC A,{reg}
-    ADDC {reg},A
     SUB A,{reg}
-    SUB {reg},A
     SUBC A,{reg}
-    SUBC {reg},A
     AND A,{reg}
-    AND {reg},A
     OR A,{reg}
-    OR {reg},A
     XOR A,{reg}
-    XOR {reg},A
     CMP A,{reg}
+
+    ADD {reg},A
+    ADDC {reg},A
+    SUB {reg},A
+    SUBC {reg},A
+    AND {reg},A
+    OR {reg},A
+    XOR {reg},A
     CMP {reg},A
-    ADJBA
-    ADJBS
+
     MOV1 CY,A.{bit}
-    MOV1 A.{bit},CY
     AND1 CY,A.{bit}
     OR1 CY,A.{bit}
     XOR1 CY,A.{bit}
+
     SET1 A.{bit}
     CLR1 A.{bit}
+    ADJBA
+    ADJBS
+    MOV1 A.{bit},CY
     SEL RB{regbank}
 
 0x71: (27)
-    MOV A,A
     MOV1 CY,saddr.{bit}
-    MOV1 CY,sfr.{bit}
-    MOV1 CY,PSW.{bit}
-    MOV1 CY,[HL].{bit}
-    MOV1 saddr.{bit},CY
-    MOV1 sfr.{bit},CY
-    MOV1 PSW.{bit},CY
-    MOV1 [HL].{bit},CY
     AND1 CY,saddr.{bit}
-    AND1 CY,sfr.{bit}
-    AND1 CY,PSW.{bit}
-    AND1 CY,[HL].{bit}
     OR1 CY,saddr.{bit}
-    OR1 CY,sfr.{bit}
-    OR1 CY,PSW.{bit}
-    OR1 CY,[HL].{bit}
     XOR1 CY,saddr.{bit}
-    XOR1 CY,sfr.{bit}
+
+    MOV1 CY,PSW.{bit}
+    AND1 CY,PSW.{bit}
+    OR1 CY,PSW.{bit}
     XOR1 CY,PSW.{bit}
+
+    MOV1 CY,sfr.{bit}
+    AND1 CY,sfr.{bit}
+    OR1 CY,sfr.{bit}
+    XOR1 CY,sfr.{bit}
+
+    MOV1 CY,[HL].{bit}
+    AND1 CY,[HL].{bit}
+    OR1 CY,[HL].{bit}
     XOR1 CY,[HL].{bit}
+
+    MOV1 sfr.{bit},CY
     SET1 sfr.{bit}
-    SET1 [HL].{bit}
     CLR1 sfr.{bit}
+
+    MOV1 saddr.{bit},CY
+    MOV1 [HL].{bit},CY
+    MOV1 PSW.{bit},CY
+    SET1 [HL].{bit}
     CLR1 [HL].{bit}
     HALT
     STOP
