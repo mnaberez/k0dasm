@@ -97,6 +97,25 @@ def disassemble(mem, pc):
     elif mem[0] == 0x17:
         return ("ILLEGAL 0x17", pc+1)
 
+    # 0x18: 'SUB A,!addr16'
+    elif mem[0] == 0x18:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('SUB A,!0%04xH' % addr16, pc+3)
+
+    # 0x19: 'SUB A,[HL+byte]'
+    elif mem[0] == 0x19:
+        offset = mem[1]
+        return ('SUB A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x1d: 'SUB A,#byte'
+    elif mem[0] == 0x1d:
+        imm8 = mem[1]
+        return ('SUB A,#0%02xH' % imm8, pc+1)
+
+    elif mem[0] == 0x1e:
+        saddr = _saddr(mem[1])
+        return ('SUB A,0%04xH' % saddr, pc+2)
+
     elif mem[0] == 0x1f:
         return ('SUB A,[HL]', pc+1)
 
@@ -132,15 +151,55 @@ def disassemble(mem, pc):
     elif mem[0] == 0x27:
         return ('ROLC A,1', pc+1)
 
+    # 0x28: 'ADDC A,!addr16'
+    elif mem[0] == 0x28:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('ADDC A,!0%04xH' % addr16, pc+3)
+
+    # 0x38: 'SUBC A,!addr16'
+    elif mem[0] == 0x38:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('SUBC A,!0%04xH' % addr16, pc+3)
+
+    # 0x2e: 'ADDC A,saddr'
+    elif mem[0] == 0x2e:
+        saddr = _saddr(mem[1])
+        return ('ADDC A,0%04xH' % saddr, pc+2)
+
     # 0x27: 'ADDC A,[HL]'
     elif mem[0] == 0x2f:
         return ('ADDC A,[HL]', pc+1)
+
+    # ADDC A,[HL+0abh]            ;29 AB
+    elif mem[0] == 0x29:
+        offset = mem[1]
+        return ('ADDC A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x2d: 'ADDC A,#byte'
+    elif mem[0] == 0x2d:
+        imm8 = mem[1]
+        return ('ADDC A,#0%02xH' % imm8, pc+1)
 
     # 0x30: 'XCH A,X' .. 0x37: 'XCH A,H'
     elif (mem[0] & 0b11111000) == 0b00110000:
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("XCH A,%s" % regname, pc+1)
+
+    # 0x39: 'SUBC A,[HL+byte]'
+    elif mem[0] == 0x39:
+        offset = mem[1]
+        return ('SUBC A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x3d: 'SUBC A,#byte'
+    elif mem[0] == 0x3d:
+        imm8 = mem[1]
+        return ('SUBC A,#0%02xH' % imm8, pc+2)
+
+    # 0x3e: 'SUBC A,saddr'
+    elif mem[0] == 0x3e:
+        saddr = _saddr(mem[1])
+        return ('SUBC A,0%04xH' % saddr, pc+2)
 
     # 0x3f: 'SUBC A,[HL]'
     elif mem[0] == 0x3f:
@@ -152,6 +211,26 @@ def disassemble(mem, pc):
         regname = _regname(reg)
         return ("INC %s" % regname, pc+1)
 
+    # 0x48: 'CMP A,!addr16'
+    elif mem[0] == 0x48:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('CMP A,!0%04xH' % addr16, pc+3)
+
+    # 0x49: 'CMP A,[HL+byte]'
+    elif mem[0] == 0x49:
+        offset = mem[1]
+        return ('CMP A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x4d: 'CMP A,#byte'
+    elif mem[0] == 0x4d:
+        imm8 = mem[1]
+        return ('CMP A,#0%02xH' % imm8, pc+2)
+
+    # 0x4e: 'CMP A,saddr
+    elif mem[0] == 0x4e:
+        saddr = _saddr(mem[1])
+        return ('CMP A,0%04xH' % saddr, pc+2)
+
     # 0x4f: 'CMP A,[HL]'
     elif mem[0] == 0x4f:
         return ('CMP A,[HL]', pc+1)
@@ -162,17 +241,89 @@ def disassemble(mem, pc):
         regname = _regname(reg)
         return ("DEC %s" % regname, pc+1)
 
+    # 0x58: 'AND A,!addr16'
+    elif mem[0] == 0x58:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('AND A,!0%04xH' % addr16, pc+3)
+
+    # 0x59: 'AND A,[HL+byte]'
+    elif mem[0] == 0x59:
+        offset = mem[1]
+        return ('AND A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x5d: 'AND A,#byte'
+    elif mem[0] == 0x5d:
+        imm8 = mem[1]
+        return ('AND A,#0%02xH' % imm8, pc+2)
+
+    # 0x5e: 'AND A,saddr'
+    elif mem[0] == 0x5e:
+        saddr = _saddr(mem[1])
+        return ('AND A,0%04xH' % saddr, pc+2)
+
+    # 0x5f: 'AND A,[HL]'
+    elif mem[0] == 0x5f:
+        return ('AND A,[HL]', pc+1)
+
     # 0x60: 'MOV A,X' .. 0x67: 'MOV A,H'
     elif (mem[0] & 0b11111000) == 0b01100000:
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("MOV A,%s" % regname, pc+1)
 
+    # 0x68: 'OR A,!addr16'
+    elif mem[0] == 0x68:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('OR A,!0%04xH' % addr16, pc+3)
+
+    # 0x69: 'OR A,[HL+byte]'
+    elif mem[0] == 0x69:
+        offset = mem[1]
+        return ('OR A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x6d: 'OR A,#byte'
+    elif mem[0] == 0x6d:
+        imm8 = mem[1]
+        return ('OR A,#0%02xH' % imm8, pc+2)
+
+    # 0x6e: 'OR A,saddr'
+    elif mem[0] == 0x6e:
+        saddr = _saddr(mem[1])
+        return ('OR A,0%04xH' % saddr, pc+2)
+
+    # 0x7e: 'XOR A,saddr'
+    elif mem[0] == 0x7e:
+        saddr = _saddr(mem[1])
+        return ('XOR A,0%04xH' % saddr, pc+2)
+
+    # 0x6f: 'OR A,[HL]'
+    elif mem[0] == 0x6f:
+        return ('OR A,[HL]', pc+1)
+
     # 0x70: 'MOV X,A' .. 0x77: 'MOV H,A'
     elif (mem[0] & 0b11111000) == 0b01110000:
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("MOV %s,A" % regname, pc+1)
+
+    # 0x78: 'XOR A,!addr16'
+    elif mem[0] == 0x78:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('XOR A,!0%04xH' % addr16, pc+3)
+
+    # 0x79: 'XOR A,[HL+byte]'
+    elif mem[0] == 0x79:
+        offset = mem[1]
+        return ('XOR A,[HL+0%02xH]' % offset, pc+2)
+
+    # 0x7d: 'XOR A,#byte'
+    elif mem[0] == 0x7d:
+        imm8 = mem[1]
+        return ('XOR A,#0%02xH' % imm8, pc+1)
+
+    # 0x7f: 'XOR A,[HL]'
+    elif mem[0] == 0x7f:
+        return ('XOR A,[HL]', pc+1)
 
     # 0x80, 0x82, 0x84, 0x86
     elif (mem[0] & 0b11111001) == 0b10000000:
@@ -186,9 +337,44 @@ def disassemble(mem, pc):
         saddr = _saddr(mem[1])
         return ('INC 0%04xH' % saddr, pc+2)
 
+    # 0x83: 'XCH A,saddr'
+    elif mem[0] == 0x83:
+        saddr = _saddr(mem[1])
+        return ('XCH A,0%04xH' % saddr, pc+2)
+
+    # 0x85: 'MOV A,[DE]'
+    elif mem[0] == 0x85:
+        return ('MOV A,[DE]', pc+1)
+
     # 0x87: 'MOV A,[HL]'
     elif mem[0] == 0x87:
         return ('MOV A,[HL]', pc+1)
+
+    # 0x88: 'ADD saddr,#byte'
+    elif mem[0] == 0x88:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('ADD 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
+    # 0x8a: 'DBNZ C,$rel   '
+    elif mem[0] == 0x8a:
+        disp = mem[1]
+        return ('DBNZ C,$disp=%02x' % disp, pc+2)
+
+    # 0x8b: 'DBNZ B,$rel   '
+    elif mem[0] == 0x8b:
+        disp = mem[1]
+        return ('DBNZ B,$disp=%02x' % disp, pc+2)
+
+    # 0x8d: 'BC $rel'
+    elif mem[0] == 0x8d:
+        disp = mem[1]
+        return ('BC $disp=%02x' % disp, pc+2)
+
+    # 0x8e: 'MOV A,!addr16'
+    elif mem[0] == 0x8e:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('MOV A,!0%04xH' % addr16, pc+3)
 
     elif mem[0] == 0x8f:
         return ("RETI", pc+1)
@@ -205,6 +391,17 @@ def disassemble(mem, pc):
         saddr = _saddr(mem[1])
         return ('DEC 0%04xH' % saddr, pc+2)
 
+    # 0x93: 'XCH A,sfr'
+    elif mem[0] == 0x93:
+        sfr = _sfr(mem[1])
+        return ("XCH A,0%04xH" % sfr, 2)
+
+    # 0x13: 'MOV sfr,#byte'
+    elif mem[0] == 0x13:
+        sfr = _sfr(mem[1])
+        imm8 = mem[2]
+        return ("MOV 0%04xH,#0%02xH" % (sfr, imm8), 3)
+
     # 0x95: MOV [DE],A
     elif mem[0] == 0x95:
         return ('MOV [DE],A', pc+1)
@@ -212,6 +409,12 @@ def disassemble(mem, pc):
     # 0x97: 'MOV [HL],A'
     elif mem[0] == 0x97:
         return ('MOV [HL],A', pc+1)
+
+    # 0x98: 'SUB saddr,#byte'
+    elif mem[0] == 0x98:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('SUB 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
 
     # 0x9a: 'CALL !addr16'
     elif mem[0] == 0x9a:
@@ -223,6 +426,16 @@ def disassemble(mem, pc):
         addr16 = mem[1] + (mem[2] << 8)
         return ('BR !0%04xH' % addr16, pc+3)
 
+    # 0x9d: 'BNC $rel'
+    elif mem[0] == 0x9d:
+        disp = mem[1]
+        return ('BNC $disp=%02x' % disp, pc+2)
+
+    # 0x9e: 'MOV !addr16,A'
+    elif mem[0] == 0x9e:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('MOV !0%04xH,A' % addr16, pc+3)
+
     elif mem[0] == 0x9f:
         return ("RETB", pc+1)
 
@@ -232,6 +445,33 @@ def disassemble(mem, pc):
         regname = _regname(reg)
         byte = mem[1]
         return ("MOV %s,#0%02xH" % (regname, byte), pc+1)
+
+    # 0xa8: 'ADDC saddr,#byte'
+    elif mem[0] == 0xa8:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('ADDC 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
+    # 0xa9: 'MOVW AX,sfrp'
+    elif mem[0] == 0xa9:
+        sfrp = _sfrp(mem[1])
+        return ("MOVW AX,0%04xH" % sfrp, 2)
+
+    elif mem[0] == 0xaa:
+        return ("MOV A,[HL+C]", pc+1)
+
+    elif mem[0] == 0xab:
+        return ("MOV A,[HL+B]", pc+1)
+
+    # 0xad: 'BZ $rel   '
+    elif mem[0] == 0xad:
+        disp = mem[1]
+        return ('BZ $disp=%02x' % disp, pc+2)
+
+    # 0xae: 'MOV A,[HL+byte]'
+    elif mem[0] == 0xae:
+        imm8 = mem[1]
+        return ("MOV A,[HL+0%02xH]" % imm8, pc+2)
 
     elif mem[0] == 0xaf:
         return ("RET", pc+1)
@@ -248,6 +488,17 @@ def disassemble(mem, pc):
         regpairname = _regpairname(regpair)
         return ("PUSH %s" % regpairname, pc+1)
 
+    # 0xb8: 'SUBC saddr,#byte'
+    elif mem[0] == 0xb8:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('SUBC 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
+    # 0xb9: 'MOVW sfrp,AX'
+    elif mem[0] == 0xb9:
+        sfrp = _sfrp(mem[1])
+        return ("MOVW 0%04xH,AX" % sfrp, 2)
+
     # 0xba: 'MOV [HL+C],A'
     # MOV [HL+C],A                ;BA
     elif mem[0] == 0xba:
@@ -256,6 +507,16 @@ def disassemble(mem, pc):
     # MOV [HL+B],A                ;BB
     elif mem[0] == 0xbb:
         return ("MOV [HL+B],A", 1)
+
+    # 0xbd: 'BNZ $rel'
+    elif mem[0] == 0xbd:
+        disp = mem[1]
+        return ('BNZ $disp=%02x' % disp, pc+2)
+
+    # 0xbe: 'MOV [HL+byte],A'
+    elif mem[0] == 0xbe:
+        imm8 = mem[1]
+        return ("MOV [HL+0%02xH],A" % imm8, pc+2)
 
     elif mem[0] == 0xbf:
         return ("BRK", pc+1)
@@ -267,10 +528,21 @@ def disassemble(mem, pc):
         regpairname = _regpairname(regpair)
         return ("MOVW AX,%s" % regpairname, pc+1)
 
+    # 0xc8: 'CMP saddr,#byte'
+    elif mem[0] == 0xc8:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('CMP 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
     # ADDW AX,#0abcdh             ;CA CD AB
     elif mem[0] == 0xCA:
         imm16 = mem[1] + (mem[2] << 8)
         return ("ADDW AX,#0%04xH" % imm16, 3)
+
+    # 0xce: 'XCH A,!addr16'
+    elif mem[0] == 0xce:
+        addr16 = mem[1] + (mem[2] << 8)
+        return ('XCH A,!0%04xH' % addr16, pc+3)
 
     # 0xD0, 0xD2, 0xD4, 0xD6
     elif (mem[0] & 0b11111001) == 0b11010000:
@@ -279,10 +551,21 @@ def disassemble(mem, pc):
         regpairname = _regpairname(regpair)
         return ("MOVW %s,AX" % regpairname, pc+1)
 
+    # 0xd8: 'AND saddr,#byte'
+    elif mem[0] == 0xd8:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('AND 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
     # SUBW AX,#0abcdh             ;DA CD AB
     elif mem[0] == 0xDA:
         imm16 = mem[1] + (mem[2] << 8)
         return ("SUBW AX,#0%04xH" % imm16, 3)
+
+    # 0xde: 'XCH A,[HL+byte]'
+    elif mem[0] == 0xde:
+        imm8 = mem[1]
+        return ("XCH A,[HL+byte]" % imm8, pc+2)
 
     # 0xE0, 0xE2, 0xE4, 0xE6
     elif (mem[0] & 0b11111001) == 0b11100000:
@@ -291,13 +574,46 @@ def disassemble(mem, pc):
         regpairname = _regpairname(regpair)
         return ("XCHW AX,%s" % regpairname, pc+1)
 
+    # 0xe8: 'OR saddr,#byte'
+    elif mem[0] == 0xe8:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('OR 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
     # CMPW AX,#0abcdh             ;EA CD AB
     elif mem[0] == 0xea:
         imm16 = mem[1] + (mem[2] << 8)
         return ("CMPW AX,#0%04xH" % imm16, 3)
 
+    # 0xf4: 'MOV A,sfr'
+    elif mem[0] == 0xf4:
+        sfr = _sfr(mem[1])
+        return ("MOV A,0%04xH" % sfr, 2)
+
+    # 0xf6: 'MOV sfr,A'
+    elif mem[0] == 0xf6:
+        sfr = _sfr(mem[1])
+        return ("MOV 0%04xH,A" % sfr, 2)
+
+    # 0xf8: 'XOR saddr,#byte'
+    elif mem[0] == 0xf8:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        return ('XOR 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
+    # 0xfa: 'BR $rel'
+    elif mem[0] == 0xfa:
+        disp = mem[1]
+        return ('BR $disp=%02x' % disp, pc+2)
+
+    # MOVW 0fffeh,#0abcdh         ;FE FE CD AB    sfrp
+    elif mem[0] == 0xfe:
+        sfrp = _sfrp(mem[1])
+        imm16 = mem[2] + (mem[3] << 8)
+        return ('MOVW 0%04xH,#0%04xH' % (sfrp, imm16), 4)
+
     else:
-        raise NotImplementedError()
+        raise NotImplementedError(hex(mem[0]))
 
 
 def _regpairname(regpair):
@@ -314,3 +630,9 @@ def _saddr(byte):
     if byte in range(0x20):
         saddr |= 0b100000000
     return saddr
+
+def _sfr(byte):
+    sfr = 0xff00 + byte
+    return sfr
+
+_sfrp = _sfr

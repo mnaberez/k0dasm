@@ -2,8 +2,8 @@
 
     nop                         ;00
     not1 cy                     ;01
-    movw ax,!0abceh             ;02 CE AB       saddrp
-    MOVW !0abceh,AX             ;03 CE AB       saddrp
+    movw ax,0abcfh              ;02 CE AB       saddrp  TODO review this
+    MOVW 0abceh,AX              ;03 CE AB       saddrp  TODO review this
 label0:
     DBNZ 0fe20h,$label0         ;04 20 FD       saddr
     xch a,[de]                  ;05
@@ -884,7 +884,7 @@ label4:
     MOV L,#0abh                 ;A6 AB
     MOV H,#0abh                 ;A7 AB
     ADDC 0fe20h,#0abh           ;A8 20 AB       saddr
-    MOVW AX,0fffeh              ;A9 FE          saddr
+    MOVW AX,0fffeh              ;A9 FE          sfrp
     MOV A,[HL+C]                ;AA
     MOV A,[HL+B]                ;AB
 label12:
