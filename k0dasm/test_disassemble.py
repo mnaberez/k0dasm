@@ -952,6 +952,13 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, "SUBW AX,#0%04xH" % imm16)
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_de_xch_a_hl_plus_byte(self):
+        pc = 0x1000
+        mem = [0xde, 0xab]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "XCH A,[HL+0abH]")
+        self.assertEqual(new_pc, pc + len(mem))
+
     def test_e2_e4_e6_xchw_ax_regpair(self):
         d = {0xE2: "XCHW AX,BC", 0xE4: "XCHW AX,DE", 0xE6: "XCHW AX,HL"}
 

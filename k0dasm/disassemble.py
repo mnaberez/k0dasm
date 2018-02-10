@@ -582,7 +582,7 @@ def disassemble(mem, pc):
     # 0xde: 'XCH A,[HL+byte]'
     elif mem[0] == 0xde:
         imm8 = mem[1]
-        return ("XCH A,[HL+byte]" % imm8, pc+2)
+        return ("XCH A,[HL+0%02xH]" % imm8, pc+2)
 
     # 0xE0, 0xE2, 0xE4, 0xE6
     elif (mem[0] & 0b11111001) == 0b11100000:
