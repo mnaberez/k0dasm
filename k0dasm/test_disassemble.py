@@ -37,7 +37,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x04, saddr_low, 0xFD]
             disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "DBNZ 0%04xH,$disp=fd" % saddr)
+            self.assertEqual(disasm, "DBNZ 0%04xH,$01000H" % saddr)
             self.assertEqual(new_pc, pc + len(mem))
 
     def test_05_xch_a_de(self):
@@ -610,16 +610,23 @@ class disassemble_tests(unittest.TestCase):
 
     def test_8a_bc_rel(self):
         pc = 0x1000
-        mem = [0x8a, 0xab]
+        mem = [0x8a, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "DBNZ C,$disp=ab")
+        self.assertEqual(disasm, "DBNZ C,$01000H")
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_8b_bc_rel(self):
         pc = 0x1000
-        mem = [0x8b, 0xab]
+        mem = [0x8b, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "DBNZ B,$disp=ab")
+        self.assertEqual(disasm, "DBNZ B,$01000H")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_8d_bc_rel(self):
+        pc = 0x1000
+        mem = [0x8d, 0xfe]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, 'BC $01000H')
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_8e_mov_a_addr16(self):
@@ -713,9 +720,9 @@ class disassemble_tests(unittest.TestCase):
 
     def test_9d_bnc_rel(self):
         pc = 0x1000
-        mem = [0x9d, 0xab]
+        mem = [0x9d, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "BNC $disp=ab")
+        self.assertEqual(disasm, "BNC $01000H")
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_9e_mov_addr16_a(self):
@@ -783,9 +790,9 @@ class disassemble_tests(unittest.TestCase):
 
     def test_ad_bz_rel(self):
         pc = 0x1000
-        mem = [0xad, 0xab]
+        mem = [0xad, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "BZ $disp=ab")
+        self.assertEqual(disasm, "BZ $01000H")
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_ae_mov_a_hl_plus_byte(self):
@@ -867,9 +874,9 @@ class disassemble_tests(unittest.TestCase):
 
     def test_bd_bnz_rel(self):
         pc = 0x1000
-        mem = [0xbd, 0xab]
+        mem = [0xbd, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "BNZ $disp=ab")
+        self.assertEqual(disasm, "BNZ $01000H")
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_be_mov_hl_plus_byte_a(self):
@@ -1012,9 +1019,9 @@ class disassemble_tests(unittest.TestCase):
 
     def test_fa_br_rel(self):
         pc = 0x1000
-        mem = [0xfa, 0xab]
+        mem = [0xfa, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "BR $disp=ab")
+        self.assertEqual(disasm, "BR $01000H")
         self.assertEqual(new_pc, pc + len(mem))
 
     #
@@ -1121,7 +1128,7 @@ class disassemble_tests(unittest.TestCase):
         for bit, opcode in enumerate(opcodes):
             mem = [opcode, 0x1e, 0xfd]
             disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "BT PSW.%d,$disp=fd" % bit)
+            self.assertEqual(disasm, "BT PSW.%d,$01000H" % bit)
             self.assertEqual(new_pc, pc + len(mem))
 
     def test_bt_saddr_bit_rel(self):
@@ -1134,7 +1141,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [opcode, saddr_low, 0xfd]
                 disasm, new_pc = disassemble(mem, pc)
-                self.assertEqual(disasm, "BT 0%04xH.%d,$disp=fd" % (saddr, bit))
+                self.assertEqual(disasm, "BT 0%04xH.%d,$01000H" % (saddr, bit))
 
     def test_99_1c_movw_sp_ax(self):
         pc = 0x1000

@@ -26,8 +26,9 @@ def disassemble(mem, pc):
     elif mem[0] == 0x04:
         saddr = _saddr(mem[1])
         disp = mem[2]
-        # TODO calculate pc from displacement
-        return ('DBNZ 0%04xH,$disp=%02x' % (saddr, disp), pc+3)
+        new_pc = pc + 3
+        target = _resolve_rel(new_pc, disp)
+        return ('DBNZ 0%04xH,$0%04xH' % (saddr, target), new_pc)
 
     # XCH A,[DE]
     elif mem[0] == 0x05:
@@ -363,17 +364,23 @@ def disassemble(mem, pc):
     # 0x8a: 'DBNZ C,$rel   '
     elif mem[0] == 0x8a:
         disp = mem[1]
-        return ('DBNZ C,$disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('DBNZ C,$0%04xH' % target, new_pc)
 
     # 0x8b: 'DBNZ B,$rel   '
     elif mem[0] == 0x8b:
         disp = mem[1]
-        return ('DBNZ B,$disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('DBNZ B,$0%04xH' % target, new_pc)
 
     # 0x8d: 'BC $rel'
     elif mem[0] == 0x8d:
         disp = mem[1]
-        return ('BC $disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('BC $0%04xH' % target, pc+2)
 
     # 0x8e: 'MOV A,!addr16'
     elif mem[0] == 0x8e:
@@ -433,7 +440,9 @@ def disassemble(mem, pc):
     # 0x9d: 'BNC $rel'
     elif mem[0] == 0x9d:
         disp = mem[1]
-        return ('BNC $disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('BNC $0%04xH' % target, new_pc)
 
     # 0x9e: 'MOV !addr16,A'
     elif mem[0] == 0x9e:
@@ -470,7 +479,9 @@ def disassemble(mem, pc):
     # 0xad: 'BZ $rel   '
     elif mem[0] == 0xad:
         disp = mem[1]
-        return ('BZ $disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('BZ $0%04xH' % target, new_pc)
 
     # 0xae: 'MOV A,[HL+byte]'
     elif mem[0] == 0xae:
@@ -515,7 +526,9 @@ def disassemble(mem, pc):
     # 0xbd: 'BNZ $rel'
     elif mem[0] == 0xbd:
         disp = mem[1]
-        return ('BNZ $disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('BNZ $0%04xH' % target, new_pc)
 
     # 0xbe: 'MOV [HL+byte],A'
     elif mem[0] == 0xbe:
@@ -608,7 +621,9 @@ def disassemble(mem, pc):
     # 0xfa: 'BR $rel'
     elif mem[0] == 0xfa:
         disp = mem[1]
-        return ('BR $disp=%02x' % disp, pc+2)
+        new_pc = pc + 2
+        target = _resolve_rel(new_pc, disp)
+        return ('BR $0%04xH' % target, new_pc)
 
     # MOVW 0fffeh,#0abcdh         ;FE FE CD AB    sfrp
     elif mem[0] == 0xfe:
@@ -672,11 +687,13 @@ def disassemble(mem, pc):
     elif mem[0] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
         bit = ((mem[0] & 0b01110000) >> 4) & 0xff
         disp = mem[2]
+        new_pc = pc + 3
+        target = _resolve_rel(new_pc, disp)
         if mem[1] == 0x1e:
-            return ('BT PSW.%d,$disp=%02x' % (bit, disp), pc+3)
+            return ('BT PSW.%d,$0%04xH' % (bit, target), new_pc)
         else:
             saddr = _saddr(mem[1])
-            return ('BT 0%04xH.%d,$disp=%02x' % (saddr, bit, disp), pc+3)
+            return ('BT 0%04xH.%d,$0%04xH' % (saddr, bit, target), new_pc)
 
     # MOVW 0fe20h,AX              ;99 20          saddrp
     # MOVW SP,AX                  ;99 1C
@@ -739,3 +756,8 @@ def _sfr(byte):
     sfr = 0xff00 + byte
     return sfr
 _sfrp = _sfr
+
+def _resolve_rel(pc, displacement):
+    if displacement & 0x80:
+        displacement = -((displacement ^ 0xFF) + 1)
+    return (pc + displacement) & 0xFFFF
