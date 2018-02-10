@@ -12,15 +12,15 @@ def disassemble(mem, pc):
     elif mem[0] == 0x01:
         return ('NOT1 CY', pc+1)
 
-    # movw ax,!0abceh             ;02 CE AB       saddrp TODO is this really saddrp?
+    # movw ax,0fe20h              ;02 CE AB       saddrp
     elif mem[0] == 0x02:
         saddrp = mem[1] + (mem[2] << 8)
-        return ('MOVW AX,!0%04xH' % saddrp, pc+3)
+        return ('MOVW AX,0%04xH' % saddrp, pc+3)
 
-    # MOVW !0abceh,AX             ;03 CE AB       saddrp TODO is this really saddrp?
+    # MOVW 0fe20h,AX              ;03 CE AB       saddrp
     elif mem[0] == 0x03:
         saddrp = mem[1] + (mem[2] << 8)
-        return ('MOVW !0%04xH,AX' % saddrp, pc+3)
+        return ('MOVW 0%04xH,AX' % saddrp, pc+3)
 
     # DBNZ 0fe20h,$label0         ;04 20 FD       saddr
     elif mem[0] == 0x04:

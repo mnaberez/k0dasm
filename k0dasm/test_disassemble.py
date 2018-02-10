@@ -16,15 +16,15 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(new_pc, 1)
 
     def test_02_movw_ax_saddrp(self):
-        mem = [0x02, 0xce, 0xab]
+        mem = [0x02, 0x20, 0xfe]
         disasm, new_pc = disassemble(mem, pc=0)
-        self.assertEqual(disasm, "MOVW AX,!0abceH")
+        self.assertEqual(disasm, "MOVW AX,0fe20H")
         self.assertEqual(new_pc, 3)
 
     def test_03_movw_saddrp_ax(self):
-        mem = [0x03, 0xce, 0xab]
+        mem = [0x03, 0x20, 0xfe]
         disasm, new_pc = disassemble(mem, pc=0)
-        self.assertEqual(disasm, "MOVW !0abceH,AX")
+        self.assertEqual(disasm, "MOVW 0fe20H,AX")
         self.assertEqual(new_pc, 3)
 
     def test_04_dbnz_saddr_disp(self):

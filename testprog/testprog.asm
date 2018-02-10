@@ -2,8 +2,8 @@
 
     nop                         ;00
     not1 cy                     ;01
-    movw ax,0fe20h              ;02 CE AB       saddrp  TODO review this
-    MOVW 0fe20h,AX              ;03 CE AB       saddrp  TODO review this
+    movw ax,0fe20h              ;02 CE AB       saddrp
+    MOVW 0fe20h,AX              ;03 CE AB       saddrp
 label0:
     DBNZ 0fe20h,$label0         ;04 20 FD       saddr
     xch a,[de]                  ;05
