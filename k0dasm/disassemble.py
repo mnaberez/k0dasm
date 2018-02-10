@@ -1,5 +1,9 @@
 
 def disassemble(mem, pc):
+    #
+    # Instructions that require only the first byte to recognize
+    #
+
     # nop                         ;00
     if mem[0] == 0x00:
         return ("NOP", pc+1)
@@ -610,7 +614,39 @@ def disassemble(mem, pc):
     elif mem[0] == 0xfe:
         sfrp = _sfrp(mem[1])
         imm16 = mem[2] + (mem[3] << 8)
-        return ('MOVW 0%04xH,#0%04xH' % (sfrp, imm16), 4)
+        return ('MOVW 0%04xH,#0%04xH' % (sfrp, imm16), pc+4)
+
+    #
+    # Instructions that require multiple bytes to recognize
+    #
+
+    # SET1 0fe20h.7               ;7A 20          saddr
+    # SET1 PSW.7                  ;7A 1E
+    # EI                          ;7A 1E          alias for SET1 PSW.7
+    elif mem[0] in (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a):
+        bit = ((mem[0] & 0b01110000) >> 4) & 0xff
+        if mem[1] == 0x1e:
+            if bit == 7:
+                return ("EI", pc+2) # alias for SET1 PSW.7
+            else:
+                return ('SET1 PSW.%d' % bit, pc+2)
+        else:
+            saddr = _saddr(mem[1])
+            return ('SET1 0%04xH.%d' % (saddr, bit), pc+2)
+
+    # CLR1 0fe20h.7               ;7B 20          saddr
+    # CLR1 PSW.7                  ;7B 1E
+    # DI                          ;7B 1E          alias for CLR1 PSW.7
+    elif mem[0] in (0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b):
+        bit = ((mem[0] & 0b01110000) >> 4) & 0xff
+        if mem[1] == 0x1e:
+            if bit == 7:
+                return ("DI", pc+2) # alias for CLR1 PSW.7
+            else:
+                return ('CLR1 PSW.%d' % bit, pc+2)
+        else:
+            saddr = _saddr(mem[1])
+            return ('CLR1 0%04xH.%d' % (saddr, bit), pc+2)
 
     else:
         raise NotImplementedError(hex(mem[0]))

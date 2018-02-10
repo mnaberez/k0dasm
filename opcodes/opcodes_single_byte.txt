@@ -1,2 +1,0 @@
-These instructions can be decoded by looking only the first byte.
-

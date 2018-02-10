@@ -69,6 +69,59 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, "ADD A,[HL+%02xH]" % byte)
             self.assertEqual(new_pc, 2)
 
+    def test_set1_psw(self):
+        opcodes = (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a)
+        for bit, opcode in enumerate(opcodes):
+            mem = [opcode, 0x1e]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, "SET1 PSW.%d" % bit)
+            self.assertEqual(new_pc, 2)
+
+    def test_7a_ei_alias_for_set1_psw_bit_7(self):
+        mem = [0x7a, 0x1e]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "EI")
+        self.assertEqual(new_pc, 2)
+
+    def test_set1_saddr(self):
+        opcodes = (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a)
+        for bit, opcode in enumerate(opcodes):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as SET1 PSW.x
+                saddr_low = saddr & 0xff
+                mem = [opcode, saddr_low]
+                disasm, new_pc = disassemble(mem, pc=0)
+                self.assertEqual(disasm, "SET1 0%04xH.%d" % (saddr, bit))
+                self.assertEqual(new_pc, 2)
+
+    def test_clr1_psw(self):
+        opcodes = (0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b)
+        for bit, opcode in enumerate(opcodes):
+            mem = [opcode, 0x1e]
+            disasm, new_pc = disassemble(mem, pc=0)
+            self.assertEqual(disasm, "CLR1 PSW.%d" % bit)
+            self.assertEqual(new_pc, 2)
+
+    def test_7b_di_alias_for_set1_psw_bit_7(self):
+        mem = [0x7b, 0x1e]
+        disasm, new_pc = disassemble(mem, pc=0)
+        self.assertEqual(disasm, "DI")
+        self.assertEqual(new_pc, 2)
+
+    def test_clr1_saddr(self):
+        opcodes = (0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b)
+        for bit, opcode in enumerate(opcodes):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as CLR1 PSW.x
+                saddr_low = saddr & 0xff
+                mem = [opcode, saddr_low]
+                disasm, new_pc = disassemble(mem, pc=0)
+                self.assertEqual(disasm, "CLR1 0%04xH.%d" % (saddr, bit))
+                self.assertEqual(new_pc, 2)
+
+
     def test_callf(self):
         d = {0x0C: 0x0800, 0x1C: 0x0900, 0x2C: 0x0A00, 0x3C: 0x0B00,
              0x4C: 0x0C00, 0x5C: 0x0D00, 0x6C: 0x0E00, 0x7C: 0x0F00}

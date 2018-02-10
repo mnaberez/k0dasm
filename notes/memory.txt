@@ -1,0 +1,3 @@
+
+saddr = Label or FE20H to FF1FH immediate data
+saddrp = Label or FE20H to FF1FH immediate data (even address only)

@@ -1,33 +1,5 @@
 These opcodes can only be decoded by looking at the first and second byte.
 
-0x0a: (2)
-    SET1 saddr.0
-    SET1 PSW.0
-
-0x0b: (2)
-    CLR1 saddr.0
-    CLR1 PSW.0
-
-0x11: (2)
-    MOV saddr,#byte
-    MOV PSW,#byte
-
-0x1a: (2)
-    SET1 saddr.1
-    SET1 PSW.1
-
-0x1b: (2)
-    CLR1 saddr.1
-    CLR1 PSW.1
-
-0x2a: (2)
-    SET1 saddr.2
-    SET1 PSW.2
-
-0x2b: (2)
-    CLR1 saddr.2
-    CLR1 PSW.2
-
 0x31: (37)
     XCH A,A
     XCH A,[HL+B]
@@ -67,30 +39,6 @@ These opcodes can only be decoded by looking at the first and second byte.
     BTCLR PSW.{bit},$rel
     BTCLR [HL].{bit},$rel
 
-0x3a: (2)
-    SET1 saddr.3
-    SET1 PSW.3
-
-0x3b: (2)
-    CLR1 saddr.3
-    CLR1 PSW.3
-
-0x4a: (2)
-    SET1 saddr.4
-    SET1 PSW.4
-
-0x4b: (2)
-    CLR1 saddr.4
-    CLR1 PSW.4
-
-0x5a: (2)
-    SET1 saddr.5
-    SET1 PSW.5
-
-0x5b: (2)
-    CLR1 saddr.5
-    CLR1 PSW.5
-
 0x61: (27)
     MOV A,A
     ADD A,{reg}
@@ -119,14 +67,6 @@ These opcodes can only be decoded by looking at the first and second byte.
     SET1 A.{bit}
     CLR1 A.{bit}
     SEL RB{regbank}
-
-0x6a: (2)
-    SET1 saddr.6
-    SET1 PSW.6
-
-0x6b: (2)
-    CLR1 saddr.6
-    CLR1 PSW.6
 
 0x71: (27)
     MOV A,A
@@ -157,15 +97,10 @@ These opcodes can only be decoded by looking at the first and second byte.
     HALT
     STOP
 
-0x7a: (3)
-    SET1 saddr.7
-    SET1 PSW.7
-    EI
 
-0x7b: (3)
-    CLR1 saddr.7
-    CLR1 PSW.7
-    DI
+0x11: (2)
+    MOV saddr,#byte
+    MOV PSW,#byte
 
 0x89: (2)
     MOVW AX,saddrp
