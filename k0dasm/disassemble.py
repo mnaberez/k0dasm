@@ -620,6 +620,16 @@ def disassemble(mem, pc):
     # Instructions that require multiple bytes to recognize
     #
 
+    # MOV 0fe20h,#0abh            ;11 20 AB       saddr
+    # MOV PSW,#0abh               ;11 1E AB
+    elif mem[0] == 0x11:
+        imm8 = mem[2]
+        if mem[1] == 0x1e:
+            return ('MOV PSW,#0%02xH' % imm8, pc+3)
+        else:
+            saddr = _saddr(mem[1])
+            return ('MOV 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
     # SET1 0fe20h.7               ;7A 20          saddr
     # SET1 PSW.7                  ;7A 1E
     # EI                          ;7A 1E          alias for SET1 PSW.7
@@ -648,6 +658,63 @@ def disassemble(mem, pc):
             saddr = _saddr(mem[1])
             return ('CLR1 0%04xH.%d' % (saddr, bit), pc+2)
 
+    # MOVW AX,0fe20h              ;89 20          saddrp
+    # MOVW AX,SP                  ;89 1C
+    elif mem[0] == 0x89:
+        if mem[1] == 0x1c:
+            return ('MOVW AX,SP', pc+2)
+        else:
+            saddrp = _saddrp(mem[1])
+            return ('MOVW AX,0%04xH' % saddrp, pc+2)
+
+    # BT 0fe20h.0,$label8         ;8C 20 FD       saddr
+    # BT PSW.0,$label9            ;8C 1E FD
+    elif mem[0] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
+        bit = ((mem[0] & 0b01110000) >> 4) & 0xff
+        disp = mem[2]
+        if mem[1] == 0x1e:
+            return ('BT PSW.%d,$disp=%02x' % (bit, disp), pc+3)
+        else:
+            saddr = _saddr(mem[1])
+            return ('BT 0%04xH.%d,$disp=%02x' % (saddr, bit, disp), pc+3)
+
+    # MOVW 0fe20h,AX              ;99 20          saddrp
+    # MOVW SP,AX                  ;99 1C
+    elif mem[0] == 0x99:
+        if mem[1] == 0x1c:
+            return ('MOVW SP,AX', pc+2)
+        else:
+            saddrp = _saddrp(mem[1])
+            return ('MOVW 0%04xH,AX' % saddrp, pc+2)
+
+    # MOVW 0fe20h,#0abcdh         ;EE 20 CD AB    saddrp
+    # MOVW SP,#0abcdh             ;EE 1C CD AB
+    elif mem[0] == 0xee:
+        imm16 = mem[2] + (mem[3] << 8)
+        if mem[1] == 0x01c:
+            return ('MOVW SP,#0%04xH' % imm16, pc+4)
+        else:
+            saddrp = _saddrp(mem[1])
+            return ('MOVW 0%04xH,#0%04xH' % (saddrp, imm16), pc+4)
+
+    # mov a,0fe20h                ;F0 20          saddr
+    # mov a,psw                   ;F0 1E
+    elif mem[0] == 0xf0:
+        if mem[1] == 0x1e:
+            return ('MOV A,PSW', pc+2)
+        else:
+            saddr = _saddr(mem[1])
+            return ('MOV A,0%04xH' % saddr, pc+2)
+
+    # MOV 0fe20h,A                ;F2 20          saddr
+    # MOV PSW,A                   ;F2 1E
+    elif mem[0] == 0xf2:
+        if mem[1] == 0x1e:
+            return ('MOV PSW,A', pc+2)
+        else:
+            saddr = _saddr(mem[1])
+            return ('MOV 0%04xH,A' % saddr, pc+2)
+
     else:
         raise NotImplementedError(hex(mem[0]))
 
@@ -666,9 +733,9 @@ def _saddr(byte):
     if byte in range(0x20):
         saddr |= 0b100000000
     return saddr
+_saddrp = _saddr
 
 def _sfr(byte):
     sfr = 0xff00 + byte
     return sfr
-
 _sfrp = _sfr
