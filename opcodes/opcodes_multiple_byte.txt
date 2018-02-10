@@ -4,7 +4,7 @@ These opcodes can only be decoded by looking at the first and second byte.
     SET1 saddr.0
     SET1 PSW.0
 
-0x0b: (2) 
+0x0b: (2)
     CLR1 saddr.0
     CLR1 PSW.0
 
@@ -53,19 +53,19 @@ These opcodes can only be decoded by looking at the first and second byte.
     ROR4 [HL]
     ROL4 [HL]
     BR AX
-    BT sfr.{bit},$addr16
-    BT A.{bit},$addr16
-    BT [HL].{bit},$addr16
-    BF saddr.{bit},$addr16
-    BF sfr.{bit},$addr16
-    BF A.{bit},$addr16
-    BF PSW.{bit},$addr16
-    BF [HL].{bit},$addr16
-    BTCLR saddr.{bit},$addr16
-    BTCLR sfr.{bit},$addr16
-    BTCLR A.{bit},$addr16
-    BTCLR PSW.{bit},$addr16
-    BTCLR [HL].{bit},$addr16
+    BT sfr.{bit},$rel
+    BT A.{bit},$rel
+    BT [HL].{bit},$rel
+    BF saddr.{bit},$rel
+    BF sfr.{bit},$rel
+    BF A.{bit},$rel
+    BF PSW.{bit},$rel
+    BF [HL].{bit},$rel
+    BTCLR saddr.{bit},$rel
+    BTCLR sfr.{bit},$rel
+    BTCLR A.{bit},$rel
+    BTCLR PSW.{bit},$rel
+    BTCLR [HL].{bit},$rel
 
 0x3a: (2)
     SET1 saddr.3
@@ -172,36 +172,36 @@ These opcodes can only be decoded by looking at the first and second byte.
     MOVW AX,SP
 
 0x8c: (2)
-    BT saddr.0,$addr16
-    BT PSW.0,$addr16
+    BT saddr.0,$rel
+    BT PSW.0,$rel
 
 0x99: (2)
     MOVW saddrp,AX
     MOVW SP,AX
 
 0x9c: (2)
-    BT saddr.1,$addr16
-    BT PSW.1,$addr16
+    BT saddr.1,$rel
+    BT PSW.1,$rel
 
 0xac: (2)
-    BT saddr.2,$addr16
-    BT PSW.2,$addr16
+    BT saddr.2,$rel
+    BT PSW.2,$rel
 
 0xbc: (2)
-    BT saddr.3,$addr16
-    BT PSW.3,$addr16
+    BT saddr.3,$rel
+    BT PSW.3,$rel
 
 0xcc: (2)
-    BT saddr.4,$addr16
-    BT PSW.4,$addr16
+    BT saddr.4,$rel
+    BT PSW.4,$rel
 
 0xdc: (2)
-    BT saddr.5,$addr16
-    BT PSW.5,$addr16
+    BT saddr.5,$rel
+    BT PSW.5,$rel
 
 0xec: (2)
-    BT saddr.6,$addr16
-    BT PSW.6,$addr16
+    BT saddr.6,$rel
+    BT PSW.6,$rel
 
 0xee: (2)
     MOVW saddrp,#word
@@ -216,5 +216,5 @@ These opcodes can only be decoded by looking at the first and second byte.
     MOV PSW,A
 
 0xfc: (2)
-    BT saddr.7,$addr16
-    BT PSW.7,$addr16
+    BT saddr.7,$rel
+    BT PSW.7,$rel

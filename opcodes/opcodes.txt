@@ -226,35 +226,35 @@ MOVW SP,AX                  0b10011001       0b00011100           2
 MOVW AX,SP                  0b10001001       0b00011100           2
 
 BR !addr16                  0b10011011                            3
-BR $addr16                  0b11111010                            2
+BR $rel                     0b11111010                            2
 BR AX                       0b00110001       0b10011000           2
 
-BC $addr16                  0b10001101                            2
-BNC $addr16                 0b10011101                            2
-BZ $addr16                  0b10101101                            2
-BNZ $addr16                 0b10111101                            2
+BC $rel                     0b10001101                            2
+BNC $rel                    0b10011101                            2
+BZ $rel                     0b10101101                            2
+BNZ $rel                    0b10111101                            2
 
-BT saddr.{bit},$addr16      0b1bbb1100       {saddr_offset}       3
-BT sfr.{bit},$addr16        0b00110001       0b0bbb0110           4
-BT A.{bit},$addr16          0b00110001       0b0bbb1110           3
-BT PSW.{bit},$addr16        0b1bbb1100       0b00011110           3
-BT [HL].{bit},$addr16       0b00110001       0b1bbb0110           3
+BT saddr.{bit},$rel         0b1bbb1100       {saddr_offset}       3
+BT sfr.{bit},$rel           0b00110001       0b0bbb0110           4
+BT A.{bit},$rel             0b00110001       0b0bbb1110           3
+BT PSW.{bit},$rel           0b1bbb1100       0b00011110           3
+BT [HL].{bit},$rel          0b00110001       0b1bbb0110           3
 
-BF saddr.{bit},$addr16      0b00110001       0b0bbb0011           4
-BF sfr.{bit},$addr16        0b00110001       0b0bbb0111           4
-BF A.{bit},$addr16          0b00110001       0b0bbb1111           3
-BF PSW.{bit},$addr16        0b00110001       0b0bbb0011           4
-BF [HL].{bit},$addr16       0b00110001       0b1bbb0111           3
+BF saddr.{bit},$rel         0b00110001       0b0bbb0011           4
+BF sfr.{bit},$rel           0b00110001       0b0bbb0111           4
+BF A.{bit},$rel             0b00110001       0b0bbb1111           3
+BF PSW.{bit},$rel           0b00110001       0b0bbb0011           4
+BF [HL].{bit},$rel          0b00110001       0b1bbb0111           3
 
-BTCLR saddr.{bit},$addr16   0b00110001       0b0bbb0001           4
-BTCLR sfr.{bit},$addr16     0b00110001       0b0bbb0101           4
-BTCLR A.{bit},$addr16       0b00110001       0b0bbb1101           3
-BTCLR PSW.{bit},$addr16     0b00110001       0b0bbb0001           4
-BTCLR [HL].{bit},$addr16    0b00110001       0b1bbb0101           3
+BTCLR saddr.{bit},$rel      0b00110001       0b0bbb0001           4
+BTCLR sfr.{bit},$rel        0b00110001       0b0bbb0101           4
+BTCLR A.{bit},$rel          0b00110001       0b0bbb1101           3
+BTCLR PSW.{bit},$rel        0b00110001       0b0bbb0001           4
+BTCLR [HL].{bit},$rel       0b00110001       0b1bbb0101           3
 
-DBNZ B,$addr16              0b10001011                            2
-DBNZ C,$addr16              0b10001010                            2
-DBNZ saddr,$addr16          0b00000100                            3
+DBNZ B,$rel                 0b10001011                            2
+DBNZ C,$rel                 0b10001010                            2
+DBNZ saddr,$rel             0b00000100                            3
 
 SEL RB{regbank}             0b01100001       0b11n1n000           2
 NOP                         0b00000000                            1
