@@ -1,6 +1,6 @@
 import sys
 import unittest
-from disassemble import disassemble
+from k0dasm.disassemble import disassemble
 
 class disassemble_tests(unittest.TestCase):
     def test_00_nop(self):
