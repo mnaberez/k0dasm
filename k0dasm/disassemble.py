@@ -50,7 +50,7 @@ def disassemble(mem, pc):
     # ADD A,[HL+0abh]             ;09 AB
     elif mem[0] == 0x09:
         byte = mem[1]
-        return ("ADD A,[HL+%02xH]" % byte, pc+2)
+        return ("ADD A,[HL+0%02xH]" % byte, pc+2)
 
     # callt [0040H]               ;C1
     # CALLT [{addr5}]             0b11ttttt1                            1

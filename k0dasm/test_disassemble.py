@@ -76,7 +76,7 @@ class disassemble_tests(unittest.TestCase):
         for byte in (0x00, 0xab, 0xff):
             mem = [0x09, byte]
             disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "ADD A,[HL+%02xH]" % byte)
+            self.assertEqual(disasm, "ADD A,[HL+0%02xH]" % byte)
             self.assertEqual(new_pc, pc + len(mem))
 
     def test_callf(self):
