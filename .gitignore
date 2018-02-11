@@ -3,6 +3,7 @@
 *.lmf
 *.map
 *.prn
+*.pyc
 *.rel
 *.sym
 __pycache__
