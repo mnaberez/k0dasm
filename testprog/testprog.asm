@@ -362,6 +362,11 @@ label127:
     ADJBA                       ;61 80
     ADJBS                       ;61 90
 
+    SEL RB0                     ;61 D0
+    SEL RB1                     ;61 D8
+    SEL RB2                     ;61 F0
+    SEL RB3                     ;61 F8
+
     MOV1 CY,A.0                 ;61 8C
     MOV1 CY,A.1                 ;61 9C
     MOV1 CY,A.2                 ;61 AC
@@ -424,11 +429,6 @@ label127:
     CLR1 A.5                    ;61 DB
     CLR1 A.6                    ;61 EB
     CLR1 A.7                    ;61 FB
-
-    SEL RB0                     ;61 D0
-    SEL RB1                     ;61 D8
-    SEL RB2                     ;61 F0
-    SEL RB3                     ;61 F8
 
     ADD A,X                     ;61 08
     ADD A,A                     ;61 01
@@ -502,15 +502,6 @@ label127:
     SUBC L,A                    ;61 36
     SUBC H,A                    ;61 37
 
-    AND A,X                     ;03 60
-    AND A,A                     ;03 62
-    AND A,C                     ;03 64
-    AND A,B                     ;03 66
-    AND A,E                     ;03 68
-    AND A,D                     ;03 6A
-    AND A,L                     ;03 6C
-    AND A,H                     ;03 6E
-
     AND X,A                     ;61 50
     AND A,A                     ;61 51
     AND C,A                     ;61 52
@@ -519,6 +510,15 @@ label127:
     AND D,A                     ;61 55
     AND L,A                     ;61 56
     AND H,A                     ;61 57
+
+    AND A,X                     ;61 58
+    AND A,A                     ;61 51
+    AND A,C                     ;61 5A
+    AND A,B                     ;61 5B
+    AND A,E                     ;61 5C
+    AND A,D                     ;61 5D
+    AND A,L                     ;61 5E
+    AND A,H                     ;61 5F
 
     OR A,X                      ;61 68
     OR A,A                      ;61 61
