@@ -212,7 +212,7 @@ def disassemble(mem, pc):
         return ('SUBC A,[HL]', pc+1)
 
     # 0x40: 'INC X' .. 0x47: 'INC H'
-    elif (mem[0] & 0b11111000) == 0b01000000:
+    elif mem[0] in (0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("INC %s" % regname, pc+1)
@@ -242,7 +242,7 @@ def disassemble(mem, pc):
         return ('CMP A,[HL]', pc+1)
 
     # 0x50: 'DEC X' .. 0x57: 'DEC H'
-    elif (mem[0] & 0b11111000) == 0b01010000:
+    elif mem[0] in (0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         return ("DEC %s" % regname, pc+1)
@@ -333,8 +333,7 @@ def disassemble(mem, pc):
     elif mem[0] == 0x7f:
         return ('XOR A,[HL]', pc+1)
 
-    # 0x80, 0x82, 0x84, 0x86
-    elif (mem[0] & 0b11111001) == 0b10000000:
+    elif mem[0] in (0x80, 0x82, 0x84, 0x86):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("INCW %s" % regpairname, pc+1)
@@ -393,8 +392,7 @@ def disassemble(mem, pc):
     elif mem[0] == 0x8f:
         return ("RETI", pc+1)
 
-    # 0x90, 0x92, 0x94, 0x96
-    elif (mem[0] & 0b11111001) == 0b10010000:
+    elif mem[0] in (0x90, 0x92, 0x94, 0x96):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("DECW %s" % regpairname, pc+1)
@@ -455,8 +453,7 @@ def disassemble(mem, pc):
     elif mem[0] == 0x9f:
         return ("RETB", pc+1)
 
-    # 0xa0: 'MOV X,#byte' .. 0xa7: 'MOV H,#byte'
-    elif (mem[0] & 0b11111000) == 0b10100000:
+    elif mem[0] in (0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7):
         reg = mem[0] & 0b111
         regname = _regname(reg)
         byte = mem[1]
@@ -494,14 +491,12 @@ def disassemble(mem, pc):
     elif mem[0] == 0xaf:
         return ("RET", pc+1)
 
-    # 0xB0, 0xB2, 0xB4, 0xB6
-    elif (mem[0] & 0b11111001) == 0b10110000:
+    elif mem[0] in (0xb0, 0xb2, 0xb4, 0xb6):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("POP %s" % regpairname, pc+1)
 
-    # 0xB1, 0xB3, 0xB5, 0xB7
-    elif (mem[0] & 0b11111001) == 0b10110001:
+    elif mem[0]in (0xb1, 0xb3, 0xb5, 0xb7):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("PUSH %s" % regpairname, pc+1)
@@ -541,9 +536,10 @@ def disassemble(mem, pc):
     elif mem[0] == 0xbf:
         return ("BRK", pc+1)
 
-    # 0xC0, 0xC2, 0xC4, 0xC6
-    elif (mem[0] & 0b11111001) == 0b11000000:
-        # TODO emit ILLEGAL for 0xC0
+    elif mem[0] == 0xc0:
+        return ("ILLEGAL 0xc0", pc+1)
+
+    elif mem[0] in (0xc2, 0xc4, 0xc6):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("MOVW AX,%s" % regpairname, pc+1)
@@ -564,9 +560,10 @@ def disassemble(mem, pc):
         addr16 = mem[1] + (mem[2] << 8)
         return ('XCH A,!0%04xH' % addr16, pc+3)
 
-    # 0xD0, 0xD2, 0xD4, 0xD6
-    elif (mem[0] & 0b11111001) == 0b11010000:
-        # TODO emit ILLEGAL for 0xD0
+    elif mem[0] == 0xd0:
+        return ("ILLEGAL 0xd0", pc+1)
+
+    elif mem[0] in (0xd2, 0xd4, 0xd6):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("MOVW %s,AX" % regpairname, pc+1)
@@ -587,9 +584,10 @@ def disassemble(mem, pc):
         imm8 = mem[1]
         return ("XCH A,[HL+0%02xH]" % imm8, pc+2)
 
-    # 0xE0, 0xE2, 0xE4, 0xE6
-    elif (mem[0] & 0b11111001) == 0b11100000:
-        # TODO emit ILLEGAL for 0xD0
+    elif mem[0] == 0xe0:
+        return ("ILLEGAL 0xe0", pc+1)
+
+    elif mem[0] in (0xe2, 0xe4, 0xe6):
         regpair = (mem[0] >> 1) & 0b11
         regpairname = _regpairname(regpair)
         return ("XCHW AX,%s" % regpairname, pc+1)
