@@ -733,6 +733,37 @@ def disassemble(mem, pc):
             saddr = _saddr(mem[1])
             return ('MOV 0%04xH,A' % saddr, pc+2)
 
+    elif mem[0] == 0x61:
+        new_pc = pc + 2
+        bit = ((mem[1] & 0b01110000) >> 4) & 0xff
+        if mem[1] == 0x80:
+            return ('ADJBA', new_pc)
+        elif mem[1] == 0x90:
+            return ('ADJBS', new_pc)
+        elif mem[1] == 0xd0:
+            return ('SEL RB0', new_pc)
+        elif mem[1] == 0xd8:
+            return ('SEL RB1', new_pc)
+        elif mem[1] == 0xf0:
+            return ('SEL RB2', new_pc)
+        elif mem[1] == 0xf8:
+            return ('SEL RB3', new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001100:
+            return ('MOV1 CY,A.%d' % bit, new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001001:
+            return ('MOV1 A.%d,CY' % bit, new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001101:
+            return ('AND1 CY,A.%d' % bit, new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001110:
+            return ('OR1 CY,A.%d' % bit, new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001111:
+            return ('XOR1 CY,A.%d' % bit, new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001010:
+            return ('SET1 A.%d' % bit, new_pc)
+        elif (mem[1] & 0b10001111) == 0b10001011:
+            return ('CLR1 A.%d' % bit, new_pc)
+        else:
+            raise NotImplementedError("61 %02x" % mem[1])
     else:
         raise NotImplementedError(hex(mem[0]))
 

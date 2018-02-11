@@ -464,6 +464,101 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, expected_disasm)
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_61_80_adjba(self):
+        pc = 0x1000
+        mem = [0x61, 0x80]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ADJBA")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_90_adjbs(self):
+        pc = 0x1000
+        mem = [0x61, 0x90]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ADJBS")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_dx_fx_sel_rbx(self):
+        d = {0xd0: 'SEL RB0', 0xd8: 'SEL RB1',
+             0xf0: 'SEL RB2', 0xf8: 'SEL RB3'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xc_mov1_cy_a_bit(self):
+        operands = (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "MOV1 CY,A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_x9_mov1_a_bit_cy(self):
+        operands = (0x89, 0x99, 0xa9, 0xb9, 0xc9, 0xd9, 0xe9, 0xf9)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "MOV1 A.%d,CY" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xd_and1_cy_a_bit(self):
+        operands = (0x8d, 0x9d, 0xad, 0xbd, 0xcd, 0xdd, 0xed, 0xfd)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "AND1 CY,A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xe_or1_cy_a_bit(self):
+        operands = (0x8e, 0x9e, 0xae, 0xbe, 0xce, 0xde, 0xee, 0xfe)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "OR1 CY,A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xf_xor1_cy_a_bit(self):
+        operands = (0x8f, 0x9f, 0xaf, 0xbf, 0xcf, 0xdf, 0xef, 0xff)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "XOR1 CY,A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xa_set1_a_bit(self):
+        operands = (0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "SET1 A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xb_clr1_a_bit(self):
+        operands = (0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "CLR1 A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
     def test_68_or_a_addr16(self):
         pc = 0x1000
         for addr16 in (0x0000, 0xabcd, 0xffff):
