@@ -744,12 +744,9 @@ def _regname(reg):
     return ('X', 'A', 'C', 'B', 'E', 'D', 'L', 'H')[reg]
 
 def _saddr(byte):
-    # When 8-bit immediate data is at 20H to FFH,
-    # bit 8 of an effective address is set to 0. When
-    # it is at 00H to 1FH, bit 8 is set to 1.
     saddr = 0xfe00 + byte
-    if byte in range(0x20):
-        saddr |= 0b100000000
+    if byte < 0x20:
+        saddr += 0x100
     return saddr
 _saddrp = _saddr
 
