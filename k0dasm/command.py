@@ -7,9 +7,11 @@ def main():
 
     pc = data[0] + (data[1] << 8) # reset vector
 
-    while pc < 0xf000:
+    print("    org 0%04xh" % pc)
+    while pc < len(data):
         disasm, new_pc = disassemble(data[pc:], pc)
         length = new_pc - pc
-        inst = (' '.join(['%02x' % x for x in data[pc:pc+length]])).ljust(12)
-        print("%04x %s %s" % (pc, inst, disasm))
+        inst = ' '.join(['%02x' % x for x in data[pc:pc+length]])
+        print("    %s ;%04x %s" % (disasm.ljust(20), pc, inst))
         pc = new_pc
+    print("    end")
