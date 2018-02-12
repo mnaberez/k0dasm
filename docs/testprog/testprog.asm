@@ -1,5 +1,6 @@
     org 0
 
+    nop                         ;00             two nops are also reset vector
     nop                         ;00
     not1 cy                     ;01
     movw ax,0fe20h              ;02 CE AB       saddrp
