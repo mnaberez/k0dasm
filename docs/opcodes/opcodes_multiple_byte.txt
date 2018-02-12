@@ -45,37 +45,6 @@ These opcodes can only be decoded by looking at the first and second byte.
     ROL4 [HL]
     BR AX
 
-0x61: (27)
-    ADD A,{reg}
-    ADDC A,{reg}
-    SUB A,{reg}
-    SUBC A,{reg}
-    AND A,{reg}
-    OR A,{reg}
-    XOR A,{reg}
-    CMP A,{reg}
-
-    ADD {reg},A
-    ADDC {reg},A
-    SUB {reg},A
-    SUBC {reg},A
-    AND {reg},A
-    OR {reg},A
-    XOR {reg},A
-    CMP {reg},A
-
-    MOV1 CY,A.{bit}
-    AND1 CY,A.{bit}
-    OR1 CY,A.{bit}
-    XOR1 CY,A.{bit}
-
-    SET1 A.{bit}
-    CLR1 A.{bit}
-    ADJBA
-    ADJBS
-    MOV1 A.{bit},CY
-    SEL RB{regbank}
-
 0x71: (27)
     MOV1 CY,saddr.{bit}
     AND1 CY,saddr.{bit}

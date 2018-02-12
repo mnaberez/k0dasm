@@ -478,6 +478,198 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(disasm, "ADJBS")
         self.assertEqual(new_pc, pc + len(mem))
 
+    def test_61_00_thru_07_and_reg_a(self):
+        d = {0x00: 'ADD X,A', 0x01: 'ADD A,A', 0x02: 'ADD C,A',
+             0x03: 'ADD B,A', 0x04: 'ADD E,A', 0x05: 'ADD D,A',
+             0x06: 'ADD L,A', 0x07: 'ADD H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_08_thru_0f_add_a_reg(self):
+        d = {0x08: 'ADD A,X', 0x09: 'ADD A,A', 0x0a: 'ADD A,C',
+             0x0b: 'ADD A,B', 0x0c: 'ADD A,E', 0x0d: 'ADD A,D',
+             0x0e: 'ADD A,L', 0x0f: 'ADD A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_10_thru_17_and_reg_a(self):
+        d = {0x10: 'SUB X,A', 0x11: 'SUB A,A', 0x12: 'SUB C,A',
+             0x13: 'SUB B,A', 0x14: 'SUB E,A', 0x15: 'SUB D,A',
+             0x16: 'SUB L,A', 0x17: 'SUB H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_18_thru_1f_sub_a_reg(self):
+        d = {0x18: 'SUB A,X', 0x19: 'SUB A,A', 0x1a: 'SUB A,C',
+             0x1b: 'SUB A,B', 0x1c: 'SUB A,E', 0x1d: 'SUB A,D',
+             0x1e: 'SUB A,L', 0x1f: 'SUB A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_20_thru_27_addc_reg_a(self):
+        d = {0x20: 'ADDC X,A', 0x21: 'ADDC A,A', 0x22: 'ADDC C,A',
+             0x23: 'ADDC B,A', 0x24: 'ADDC E,A', 0x25: 'ADDC D,A',
+             0x26: 'ADDC L,A', 0x27: 'ADDC H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_28_thru_2f_addc_a_reg(self):
+        d = {0x28: 'ADDC A,X', 0x29: 'ADDC A,A', 0x2a: 'ADDC A,C',
+             0x2b: 'ADDC A,B', 0x2c: 'ADDC A,E', 0x2d: 'ADDC A,D',
+             0x2e: 'ADDC A,L', 0x2f: 'ADDC A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_30_thru_37_subc_reg_a(self):
+        d = {0x30: 'SUBC X,A', 0x31: 'SUBC A,A', 0x32: 'SUBC C,A',
+             0x33: 'SUBC B,A', 0x34: 'SUBC E,A', 0x35: 'SUBC D,A',
+             0x36: 'SUBC L,A', 0x37: 'SUBC H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_38_thru_3f_subc_a_reg(self):
+        d = {0x38: 'SUBC A,X', 0x39: 'SUBC A,A', 0x3a: 'SUBC A,C',
+             0x3b: 'SUBC A,B', 0x3c: 'SUBC A,E', 0x3d: 'SUBC A,D',
+             0x3e: 'SUBC A,L', 0x3f: 'SUBC A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_40_thru_47_cmp_reg_a(self):
+        d = {0x40: 'CMP X,A', 0x41: 'CMP A,A', 0x42: 'CMP C,A',
+             0x43: 'CMP B,A', 0x44: 'CMP E,A', 0x45: 'CMP D,A',
+             0x46: 'CMP L,A', 0x47: 'CMP H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_48_thru_4f_cmp_a_reg(self):
+        d = {0x48: 'CMP A,X', 0x49: 'CMP A,A', 0x4a: 'CMP A,C',
+             0x4b: 'CMP A,B', 0x4c: 'CMP A,E', 0x4d: 'CMP A,D',
+             0x4e: 'CMP A,L', 0x4f: 'CMP A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_50_thru_57_and_reg_a(self):
+        d = {0x50: 'AND X,A', 0x51: 'AND A,A', 0x52: 'AND C,A',
+             0x53: 'AND B,A', 0x54: 'AND E,A', 0x55: 'AND D,A',
+             0x56: 'AND L,A', 0x57: 'AND H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_58_thru_5f_and_a_reg(self):
+        d = {0x58: 'AND A,X', 0x59: 'AND A,A', 0x5a: 'AND A,C',
+             0x5b: 'AND A,B', 0x5c: 'AND A,E', 0x5d: 'AND A,D',
+             0x5e: 'AND A,L', 0x5f: 'AND A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_60_thru_67_or_reg_a(self):
+        d = {0x60: 'OR X,A', 0x61: 'OR A,A', 0x62: 'OR C,A',
+             0x63: 'OR B,A', 0x64: 'OR E,A', 0x65: 'OR D,A',
+             0x66: 'OR L,A', 0x67: 'OR H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_68_thru_6f_or_a_reg(self):
+        d = {0x68: 'OR A,X', 0x69: 'OR A,A', 0x6a: 'OR A,C',
+             0x6b: 'OR A,B', 0x6c: 'OR A,E', 0x6d: 'OR A,D',
+             0x6e: 'OR A,L', 0x6f: 'OR A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_70_thru_77_or_reg_a(self):
+        d = {0x70: 'XOR X,A', 0x71: 'XOR A,A', 0x72: 'XOR C,A',
+             0x73: 'XOR B,A', 0x74: 'XOR E,A', 0x75: 'XOR D,A',
+             0x76: 'XOR L,A', 0x77: 'XOR H,A'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_78_thru_7f_or_a_reg(self):
+        d = {0x78: 'XOR A,X', 0x79: 'XOR A,A', 0x7a: 'XOR A,C',
+             0x7b: 'XOR A,B', 0x7c: 'XOR A,E', 0x7d: 'XOR A,D',
+             0x7e: 'XOR A,L', 0x7f: 'XOR A,H'}
+
+        pc = 0x1000
+        for operand, expected_disasm in d.items():
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, expected_disasm)
+            self.assertEqual(new_pc, pc + len(mem))
+
     def test_61_dx_fx_sel_rbx(self):
         d = {0xd0: 'SEL RB0', 0xd8: 'SEL RB1',
              0xf0: 'SEL RB2', 0xf8: 'SEL RB3'}
@@ -489,16 +681,6 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, expected_disasm)
             self.assertEqual(new_pc, pc + len(mem))
 
-    def test_61_xc_mov1_cy_a_bit(self):
-        operands = (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc)
-
-        pc = 0x1000
-        for bit, operand in enumerate(operands):
-            mem = [0x61, operand]
-            disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "MOV1 CY,A.%d" % bit)
-            self.assertEqual(new_pc, pc + len(mem))
-
     def test_61_x9_mov1_a_bit_cy(self):
         operands = (0x89, 0x99, 0xa9, 0xb9, 0xc9, 0xd9, 0xe9, 0xf9)
 
@@ -507,6 +689,36 @@ class disassemble_tests(unittest.TestCase):
             mem = [0x61, operand]
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(disasm, "MOV1 A.%d,CY" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xa_set1_a_bit(self):
+        operands = (0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "SET1 A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xb_clr1_a_bit(self):
+        operands = (0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "CLR1 A.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_61_xc_mov1_cy_a_bit(self):
+        operands = (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc)
+
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x61, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "MOV1 CY,A.%d" % bit)
             self.assertEqual(new_pc, pc + len(mem))
 
     def test_61_xd_and1_cy_a_bit(self):
@@ -537,26 +749,6 @@ class disassemble_tests(unittest.TestCase):
             mem = [0x61, operand]
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(disasm, "XOR1 CY,A.%d" % bit)
-            self.assertEqual(new_pc, pc + len(mem))
-
-    def test_61_xa_set1_a_bit(self):
-        operands = (0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa)
-
-        pc = 0x1000
-        for bit, operand in enumerate(operands):
-            mem = [0x61, operand]
-            disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "SET1 A.%d" % bit)
-            self.assertEqual(new_pc, pc + len(mem))
-
-    def test_61_xb_clr1_a_bit(self):
-        operands = (0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb)
-
-        pc = 0x1000
-        for bit, operand in enumerate(operands):
-            mem = [0x61, operand]
-            disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "CLR1 A.%d" % bit)
             self.assertEqual(new_pc, pc + len(mem))
 
     def test_68_or_a_addr16(self):
