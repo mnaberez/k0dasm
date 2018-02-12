@@ -796,6 +796,14 @@ def disassemble(mem, pc):
         else:
             raise NotImplementedError("61 %02x" % mem[1])
 
+    elif mem[0] == 0x71:
+        if mem[1] == 0x00:
+            return ('STOP', pc+2)
+        elif mem[1] == 0x10:
+            return ('HALT', pc+2)
+        else:
+            raise NotImplementedError("71 %02x" % mem[1])
+
     # MOVW AX,0fe20h              ;89 20          saddrp
     # MOVW AX,SP                  ;89 1C
     elif mem[0] == 0x89:

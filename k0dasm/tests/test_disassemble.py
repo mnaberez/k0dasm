@@ -803,6 +803,20 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, expected_disasm)
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_71_00_stop(self):
+        pc = 0x1000
+        mem = [0x71, 0x00]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, 'STOP')
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_10_halt(self):
+        pc = 0x1000
+        mem = [0x71, 0x10]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, 'HALT')
+        self.assertEqual(new_pc, pc + len(mem))
+
     def test_78_xor_a_addr16(self):
         pc = 0x1000
         for addr16 in (0x0000, 0xabcd, 0xffff):

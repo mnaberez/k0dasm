@@ -1,0 +1,215 @@
+MOV1 CY,0fe20h.0            ;71 04 20       saddr
+MOV1 CY,0fe20h.1            ;71 14 20       saddr
+MOV1 CY,0fe20h.2            ;71 24 20       saddr
+MOV1 CY,0fe20h.3            ;71 34 20       saddr
+MOV1 CY,0fe20h.4            ;71 44 20       saddr
+MOV1 CY,0fe20h.5            ;71 54 20       saddr
+MOV1 CY,0fe20h.6            ;71 64 20       saddr
+MOV1 CY,0fe20h.7            ;71 74 20       saddr
+
+MOV1 CY,0fffeh.0            ;71 0C FE       sfr
+MOV1 CY,0fffeh.1            ;71 1C FE       sfr
+MOV1 CY,0fffeh.2            ;71 2C FE       sfr
+MOV1 CY,0fffeh.3            ;71 3C FE       sfr
+MOV1 CY,0fffeh.4            ;71 4C FE       sfr
+MOV1 CY,0fffeh.5            ;71 5C FE       sfr
+MOV1 CY,0fffeh.6            ;71 6C FE       sfr
+MOV1 CY,0fffeh.7            ;71 7C FE       sfr
+
+MOV1 CY,PSW.0               ;71 04 1E
+MOV1 CY,PSW.1               ;71 14 1E
+MOV1 CY,PSW.2               ;71 24 1E
+MOV1 CY,PSW.3               ;71 34 1E
+MOV1 CY,PSW.4               ;71 44 1E
+MOV1 CY,PSW.5               ;71 54 1E
+MOV1 CY,PSW.6               ;71 64 1E
+MOV1 CY,PSW.7               ;71 74 1E
+
+MOV1 CY,[HL].0              ;71 84
+MOV1 CY,[HL].1              ;71 94
+MOV1 CY,[HL].2              ;71 A4
+MOV1 CY,[HL].3              ;71 B4
+MOV1 CY,[HL].4              ;71 C4
+MOV1 CY,[HL].5              ;71 D4
+MOV1 CY,[HL].6              ;71 E4
+MOV1 CY,[HL].7              ;71 F4
+
+MOV1 0fe20h.0,CY            ;71 01 20       saddr
+MOV1 0fe20h.1,CY            ;71 11 20       saddr
+MOV1 0fe20h.2,CY            ;71 21 20       saddr
+MOV1 0fe20h.3,CY            ;71 31 20       saddr
+MOV1 0fe20h.4,CY            ;71 41 20       saddr
+MOV1 0fe20h.5,CY            ;71 51 20       saddr
+MOV1 0fe20h.6,CY            ;71 61 20       saddr
+MOV1 0fe20h.7,CY            ;71 71 20       saddr
+
+MOV1 0fffeh.0,CY            ;71 09 FE       sfr
+MOV1 0fffeh.1,CY            ;71 19 FE       sfr
+MOV1 0fffeh.2,CY            ;71 29 FE       sfr
+MOV1 0fffeh.3,CY            ;71 39 FE       sfr
+MOV1 0fffeh.4,CY            ;71 49 FE       sfr
+MOV1 0fffeh.5,CY            ;71 59 FE       sfr
+MOV1 0fffeh.6,CY            ;71 69 FE       sfr
+MOV1 0fffeh.7,CY            ;71 79 FE       sfr
+
+MOV1 PSW.0,CY               ;71 01 1E
+MOV1 PSW.1,CY               ;71 11 1E
+MOV1 PSW.2,CY               ;71 21 1E
+MOV1 PSW.3,CY               ;71 31 1E
+MOV1 PSW.4,CY               ;71 41 1E
+MOV1 PSW.5,CY               ;71 51 1E
+MOV1 PSW.6,CY               ;71 61 1E
+MOV1 PSW.7,CY               ;71 71 1E
+
+MOV1 [HL].0,CY              ;71 81
+MOV1 [HL].1,CY              ;71 91
+MOV1 [HL].2,CY              ;71 A1
+MOV1 [HL].3,CY              ;71 B1
+MOV1 [HL].4,CY              ;71 C1
+MOV1 [HL].5,CY              ;71 D1
+MOV1 [HL].6,CY              ;71 E1
+MOV1 [HL].7,CY              ;71 F1
+
+AND1 CY,0fe20h.0            ;71 05 20       saddr
+AND1 CY,0fe20h.1            ;71 15 20       saddr
+AND1 CY,0fe20h.2            ;71 25 20       saddr
+AND1 CY,0fe20h.3            ;71 35 20       saddr
+AND1 CY,0fe20h.4            ;71 45 20       saddr
+AND1 CY,0fe20h.5            ;71 55 20       saddr
+AND1 CY,0fe20h.6            ;71 65 20       saddr
+AND1 CY,0fe20h.7            ;71 75 20       saddr
+
+AND1 CY,0fffeh.0            ;71 0D FE       sfr
+AND1 CY,0fffeh.1            ;71 1D FE       sfr
+AND1 CY,0fffeh.2            ;71 2D FE       sfr
+AND1 CY,0fffeh.3            ;71 3D FE       sfr
+AND1 CY,0fffeh.4            ;71 4D FE       sfr
+AND1 CY,0fffeh.5            ;71 5D FE       sfr
+AND1 CY,0fffeh.6            ;71 6D FE       sfr
+AND1 CY,0fffeh.7            ;71 7D FE       sfr
+
+AND1 CY,PSW.0               ;71 05 1E
+AND1 CY,PSW.1               ;71 15 1E
+AND1 CY,PSW.2               ;71 25 1E
+AND1 CY,PSW.3               ;71 35 1E
+AND1 CY,PSW.4               ;71 45 1E
+AND1 CY,PSW.5               ;71 55 1E
+AND1 CY,PSW.6               ;71 65 1E
+AND1 CY,PSW.7               ;71 75 1E
+
+AND1 CY,[HL].0              ;71 85
+AND1 CY,[HL].1              ;71 95
+AND1 CY,[HL].2              ;71 A5
+AND1 CY,[HL].3              ;71 B5
+AND1 CY,[HL].4              ;71 C5
+AND1 CY,[HL].5              ;71 D5
+AND1 CY,[HL].6              ;71 E5
+AND1 CY,[HL].7              ;71 F5
+
+OR1 CY,0fe20h.0             ;71 06 20       saddr
+OR1 CY,0fe20h.1             ;71 16 20       saddr
+OR1 CY,0fe20h.2             ;71 26 20       saddr
+OR1 CY,0fe20h.3             ;71 36 20       saddr
+OR1 CY,0fe20h.4             ;71 46 20       saddr
+OR1 CY,0fe20h.5             ;71 56 20       saddr
+OR1 CY,0fe20h.6             ;71 66 20       saddr
+OR1 CY,0fe20h.7             ;71 76 20       saddr
+
+OR1 CY,0fffeh.0             ;71 0E FE       sfr
+OR1 CY,0fffeh.1             ;71 1E FE       sfr
+OR1 CY,0fffeh.2             ;71 2E FE       sfr
+OR1 CY,0fffeh.3             ;71 3E FE       sfr
+OR1 CY,0fffeh.4             ;71 4E FE       sfr
+OR1 CY,0fffeh.5             ;71 5E FE       sfr
+OR1 CY,0fffeh.6             ;71 6E FE       sfr
+OR1 CY,0fffeh.7             ;71 7E FE       sfr
+
+OR1 CY,PSW.0                ;71 06 1E
+OR1 CY,PSW.1                ;71 16 1E
+OR1 CY,PSW.2                ;71 26 1E
+OR1 CY,PSW.3                ;71 36 1E
+OR1 CY,PSW.4                ;71 46 1E
+OR1 CY,PSW.5                ;71 56 1E
+OR1 CY,PSW.6                ;71 66 1E
+OR1 CY,PSW.7                ;71 76 1E
+
+OR1 CY,[HL].0               ;71 86
+OR1 CY,[HL].1               ;71 96
+OR1 CY,[HL].2               ;71 A6
+OR1 CY,[HL].3               ;71 B6
+OR1 CY,[HL].4               ;71 C6
+OR1 CY,[HL].5               ;71 D6
+OR1 CY,[HL].6               ;71 E6
+OR1 CY,[HL].7               ;71 F6
+
+XOR1 CY,0fe20h.0            ;71 07 20       saddr
+XOR1 CY,0fe20h.1            ;71 17 20       saddr
+XOR1 CY,0fe20h.2            ;71 27 20       saddr
+XOR1 CY,0fe20h.3            ;71 37 20       saddr
+XOR1 CY,0fe20h.4            ;71 47 20       saddr
+XOR1 CY,0fe20h.5            ;71 57 20       saddr
+XOR1 CY,0fe20h.6            ;71 67 20       saddr
+XOR1 CY,0fe20h.7            ;71 77 20       saddr
+
+XOR1 CY,0fffeh.0            ;71 0F FE       sfr
+XOR1 CY,0fffeh.1            ;71 1F FE       sfr
+XOR1 CY,0fffeh.2            ;71 2F FE       sfr
+XOR1 CY,0fffeh.3            ;71 3F FE       sfr
+XOR1 CY,0fffeh.4            ;71 4F FE       sfr
+XOR1 CY,0fffeh.5            ;71 5F FE       sfr
+XOR1 CY,0fffeh.6            ;71 6F FE       sfr
+XOR1 CY,0fffeh.7            ;71 7F FE       sfr
+
+XOR1 CY,PSW.0               ;71 07 1E
+XOR1 CY,PSW.1               ;71 17 1E
+XOR1 CY,PSW.2               ;71 27 1E
+XOR1 CY,PSW.3               ;71 37 1E
+XOR1 CY,PSW.4               ;71 47 1E
+XOR1 CY,PSW.5               ;71 57 1E
+XOR1 CY,PSW.6               ;71 67 1E
+XOR1 CY,PSW.7               ;71 77 1E
+
+XOR1 CY,[HL].0              ;71 87
+XOR1 CY,[HL].1              ;71 97
+XOR1 CY,[HL].2              ;71 A7
+XOR1 CY,[HL].3              ;71 B7
+XOR1 CY,[HL].4              ;71 C7
+XOR1 CY,[HL].5              ;71 D7
+XOR1 CY,[HL].6              ;71 E7
+XOR1 CY,[HL].7              ;71 F7
+
+SET1 0fffeh.0               ;71 0A FE       sfr
+SET1 0fffeh.1               ;71 1A FE       sfr
+SET1 0fffeh.2               ;71 2A FE       sfr
+SET1 0fffeh.3               ;71 3A FE       sfr
+SET1 0fffeh.4               ;71 4A FE       sfr
+SET1 0fffeh.5               ;71 5A FE       sfr
+SET1 0fffeh.6               ;71 6A FE       sfr
+SET1 0fffeh.7               ;71 7A FE       sfr
+
+SET1 [HL].0                 ;71 82
+SET1 [HL].1                 ;71 92
+SET1 [HL].2                 ;71 A2
+SET1 [HL].3                 ;71 B2
+SET1 [HL].4                 ;71 C2
+SET1 [HL].5                 ;71 D2
+SET1 [HL].6                 ;71 E2
+SET1 [HL].7                 ;71 F2
+
+CLR1 0fffeh.0               ;71 0B FE       sfr
+CLR1 0fffeh.1               ;71 1B FE       sfr
+CLR1 0fffeh.2               ;71 2B FE       sfr
+CLR1 0fffeh.3               ;71 3B FE       sfr
+CLR1 0fffeh.4               ;71 4B FE       sfr
+CLR1 0fffeh.5               ;71 5B FE       sfr
+CLR1 0fffeh.6               ;71 6B FE       sfr
+CLR1 0fffeh.7               ;71 7B FE       sfr
+
+CLR1 [HL].0                 ;71 83
+CLR1 [HL].1                 ;71 93
+CLR1 [HL].2                 ;71 A3
+CLR1 [HL].3                 ;71 B3
+CLR1 [HL].4                 ;71 C3
+CLR1 [HL].5                 ;71 D3
+CLR1 [HL].6                 ;71 E3
+CLR1 [HL].7                 ;71 F3
