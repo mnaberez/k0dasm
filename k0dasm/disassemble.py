@@ -832,6 +832,23 @@ def disassemble(mem, pc):
             names = ('MOV1', 'AND1', 'OR1', 'XOR1')
             instname = names[inst]
             return ('%s CY,0%04xH.%d' % (instname, sfr, bit), pc+3)
+        elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) == 1:
+            bit = (mem[1] >> 4)
+            saddr = _saddr(mem[2])
+            if saddr == 0xff1e:
+                return ('MOV1 PSW.%d,CY' % bit, pc+3)
+            else:
+                return ('MOV1 0%04xH.%d,CY' % (saddr, bit), pc+3)
+        elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) in (0x4, 0x5, 0x6, 0x7):
+            bit = (mem[1] >> 4)
+            inst = (mem[1] & 0x0f) - 4
+            names = ('MOV1', 'AND1', 'OR1', 'XOR1')
+            instname = names[inst]
+            saddr = _saddr(mem[2])
+            if saddr == 0xff1e:
+                return ('%s CY,PSW.%d' % (instname, bit), pc+3)
+            else:
+                return ('%s CY,0%04xH.%d' % (instname, saddr, bit), pc+3)
         else:
             raise NotImplementedError("71 %02x" % mem[1])
 

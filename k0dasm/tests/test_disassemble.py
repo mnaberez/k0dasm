@@ -810,6 +810,116 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(disasm, 'STOP')
         self.assertEqual(new_pc, pc + len(mem))
 
+    def test_71_01_mov1_saddr_bit_cy(self):
+        operands = (0x01, 0x11, 0x21, 0x31, 0x41, 0x51, 0x61, 0x71)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as MOV1 PSW.bit,CY
+                saddr_low = saddr & 0xff
+                mem = [0x71, operand, saddr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "MOV1 0%04xH.%d,CY" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_01_mov1_psw_bit_cy(self):
+        operands = (0x01, 0x11, 0x21, 0x31, 0x41, 0x51, 0x61, 0x71)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand, 0x1e]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "MOV1 PSW.%d,CY" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_04_thru_74_mov1_cy_saddr_bit(self):
+        operands = (0x04, 0x14, 0x24, 0x34, 0x44, 0x54, 0x64, 0x74)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as MOV1 CY,PSW.bit
+                saddr_low = saddr & 0xff
+                mem = [0x71, operand, saddr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "MOV1 CY,0%04xH.%d" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_04_thru_74_cy_psw_bit(self):
+        operands = (0x04, 0x14, 0x24, 0x34, 0x44, 0x54, 0x64, 0x74)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand, 0x1e]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "MOV1 CY,PSW.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_05_thru_75_and1_cy_saddr_bit(self):
+        operands = (0x05, 0x15, 0x25, 0x35, 0x45, 0x55, 0x65, 0x75)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as AND1 CY,PSW.bit
+                saddr_low = saddr & 0xff
+                mem = [0x71, operand, saddr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "AND1 CY,0%04xH.%d" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_05_thru_75_and1_cy_psw_bit(self):
+        operands = (0x05, 0x15, 0x25, 0x35, 0x45, 0x55, 0x65, 0x75)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand, 0x1e]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "AND1 CY,PSW.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_06_thru_76_or1_cy_saddr_bit(self):
+        operands = (0x06, 0x16, 0x26, 0x36, 0x46, 0x56, 0x66, 0x76)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as OR1 CY,PSW.bit
+                saddr_low = saddr & 0xff
+                mem = [0x71, operand, saddr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "OR1 CY,0%04xH.%d" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_06_thru_76_or1_cy_psw_bit(self):
+        operands = (0x06, 0x16, 0x26, 0x36, 0x46, 0x56, 0x66, 0x76)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand, 0x1e]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "OR1 CY,PSW.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_07_thru_77_xor1_cy_saddr_bit(self):
+        operands = (0x07, 0x17, 0x27, 0x37, 0x47, 0x57, 0x67, 0x77)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as XOR1 CY,PSW.bit
+                saddr_low = saddr & 0xff
+                mem = [0x71, operand, saddr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "XOR1 CY,0%04xH.%d" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_07_thru_77_xor1_cy_psw_bit(self):
+        operands = (0x07, 0x17, 0x27, 0x37, 0x47, 0x57, 0x67, 0x77)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand, 0x1e]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "XOR1 CY,PSW.%d" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
     def test_71_10_halt(self):
         pc = 0x1000
         mem = [0x71, 0x10]
