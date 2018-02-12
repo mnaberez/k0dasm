@@ -1370,6 +1370,83 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, "MOV 0%04xH,#0abH" % (saddr))
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_31_01_thru_71_btclr_saddr(self):
+        opcodes = (0x01, 0x11, 0x21, 0x31, 0x41, 0x51, 0x61, 0x71)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as BTCLR PSW.x,$rel
+                saddr_low = saddr & 0xff
+                mem = [0x31, opcode, saddr_low, 0xfc]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "BTCLR 0%04xH.%d,$01000H" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_01_thru_71_btclr_psw(self):
+        opcodes = (0x01, 0x11, 0x21, 0x31, 0x41, 0x51, 0x61, 0x71)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0x1e, 0xfc]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BTCLR PSW.%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_03_thru_73_bf_saddr(self):
+        opcodes = (0x03, 0x13, 0x23, 0x33, 0x43, 0x53, 0x63, 0x73)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            for saddr in range(0xfe20, 0xff20):
+                if saddr == 0xff1e:
+                    continue # special case; would disassemble as BF PSW.x,$rel
+                saddr_low = saddr & 0xff
+                mem = [0x31, opcode, saddr_low, 0xfc]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "BF 0%04xH.%d,$01000H" % (saddr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_03_thru_73_bf_psw(self):
+        opcodes = (0x03, 0x13, 0x23, 0x33, 0x43, 0x53, 0x63, 0x73)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0x1e, 0xfc]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BF PSW.%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_05_thru_75_btclr_sfr(self):
+        opcodes = (0x05, 0x15, 0x25, 0x35, 0x45, 0x55, 0x65, 0x75)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            for sfr in range(0xff00, 0x10000):
+                sfr_low = sfr & 0xff
+                mem = [0x31, opcode, sfr_low, 0xfc]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "BTCLR 0%04xH.%d,$01000H" % (sfr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_06_thru_76_bt_sfr(self):
+        opcodes = (0x06, 0x16, 0x26, 0x36, 0x46, 0x56, 0x66, 0x76)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            for sfr in range(0xff00, 0x10000):
+                sfr_low = sfr & 0xff
+                mem = [0x31, opcode, sfr_low, 0xfc]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "BT 0%04xH.%d,$01000H" % (sfr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_07_thru_77_bf_sfr(self):
+        opcodes = (0x07, 0x17, 0x27, 0x37, 0x47, 0x57, 0x67, 0x77)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            for sfr in range(0xff00, 0x10000):
+                sfr_low = sfr & 0xff
+                mem = [0x31, opcode, sfr_low, 0xfc]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, "BF 0%04xH.%d,$01000H" % (sfr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
     def test_31_0a_add_a_hl_plus_c(self):
         pc = 0x1000
         mem = [0x31, 0x0a]
@@ -1383,6 +1460,60 @@ class disassemble_tests(unittest.TestCase):
         disasm, new_pc = disassemble(mem, pc)
         self.assertEqual(disasm, "ADD A,[HL+B]")
         self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_0d_thru_7d_btclr(self):
+        opcodes = (0x0d, 0x1d, 0x2d, 0x3d, 0x4d, 0x5d, 0x6d, 0x7d)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0xfd]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BTCLR A.%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_85_thru_f5_btclr_hl(self):
+        opcodes = (0x85, 0x95, 0xa5, 0xb5, 0xc5, 0xd5, 0xe5, 0xf5)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0xfd]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BTCLR [HL].%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_86_thru_f6_bt_hl(self):
+        opcodes = (0x86, 0x96, 0xa6, 0xb6, 0xc6, 0xd6, 0xe6, 0xf6)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0xfd]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BT [HL].%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_87_thru_f7_bf_hl(self):
+        opcodes = (0x87, 0x97, 0xa7, 0xb7, 0xc7, 0xd7, 0xe7, 0xf7)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0xfd]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BF [HL].%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_0e_thru_7e_bt(self):
+        opcodes = (0x0e, 0x1e, 0x2e, 0x3e, 0x4e, 0x5e, 0x6e, 0x7e)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0xfd]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BT A.%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_0f_thru_7f_bt(self):
+        opcodes = (0x0f, 0x1f, 0x2f, 0x3f, 0x4f, 0x5f, 0x6f, 0x7f)
+        pc = 0x1000
+        for bit, opcode in enumerate(opcodes):
+            mem = [0x31, opcode, 0xfd]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "BF A.%d,$01000H" % bit)
+            self.assertEqual(new_pc, pc + len(mem))
 
     def test_31_1a_sub_a_hl_plus_c(self):
         pc = 0x1000

@@ -1,50 +1,5 @@
 These opcodes can only be decoded by looking at the first and second byte.
 
-0x31: (37)
-    XCH A,[HL+B]
-    ADD A,[HL+B]
-    ADDC A,[HL+B]
-    SUB A,[HL+B]
-    SUBC A,[HL+B]
-    AND A,[HL+B]
-    OR A,[HL+B]
-    XOR A,[HL+B]
-    CMP A,[HL+B]
-
-    XCH A,[HL+C]
-    ADD A,[HL+C]
-    ADDC A,[HL+C]
-    SUB A,[HL+C]
-    SUBC A,[HL+C]
-    AND A,[HL+C]
-    OR A,[HL+C]
-    XOR A,[HL+C]
-    CMP A,[HL+C]
-
-    BT A.{bit},$rel
-    BF A.{bit},$rel
-    BTCLR A.{bit},$rel
-
-    BT sfr.{bit},$rel
-    BF sfr.{bit},$rel
-    BTCLR sfr.{bit},$rel
-
-    BF saddr.{bit},$rel
-    BTCLR saddr.{bit},$rel
-
-    BT [HL].{bit},$rel
-    BF [HL].{bit},$rel
-    BTCLR [HL].{bit},$rel
-
-    BF PSW.{bit},$rel
-    BTCLR PSW.{bit},$rel
-
-    MULU X
-    DIVUW C
-    ROR4 [HL]
-    ROL4 [HL]
-    BR AX
-
 0x71: (27)
     MOV1 CY,saddr.{bit}
     AND1 CY,saddr.{bit}

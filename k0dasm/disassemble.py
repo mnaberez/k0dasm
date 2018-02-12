@@ -675,18 +675,23 @@ def disassemble(mem, pc):
             return ('CLR1 0%04xH.%d' % (saddr, bit), pc+2)
 
     elif mem[0] == 0x31:
-        new_pc = pc + 2
         if mem[1] == 0x80:
+            new_pc = pc + 2
             return ('ROL4 [HL]', new_pc)
         elif mem[1] == 0x82:
+            new_pc = pc + 2
             return ('DIVUW C', new_pc)
         elif mem[1] == 0x88:
+            new_pc = pc + 2
             return ('MULU X', new_pc)
         elif mem[1] == 0x90:
+            new_pc = pc + 2
             return ('ROR4 [HL]', new_pc)
         elif mem[1] == 0x98:
+            new_pc = pc + 2
             return ('BR AX', new_pc)
-        elif (mem[1] & 0x0f) in (0x0a, 0x0b) and (mem[1] >> 4) < 0x09:
+        elif (mem[1] >> 4) < 0x09 and (mem[1] & 0x0f) in (0x0a, 0x0b):
+            new_pc = pc + 2
             inst = mem[1] >> 4
             names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR', 'XCH')
             instname = names[inst]
@@ -695,6 +700,56 @@ def disassemble(mem, pc):
             modename = "A,[HL+B]" if mode == 0x0b else "A,[HL+C]"
 
             return ("%s %s" % (instname, modename), new_pc)
+        elif (mem[1] >> 4) < 0x08 and (mem[1] & 0x0f) in (0x0d, 0x0e, 0x0f):
+            new_pc = pc + 3
+
+            inst = (mem[1] & 0x0f) - 0x0d
+            names = ('BTCLR', 'BT', 'BF')
+            instname = names[inst]
+
+            bit = mem[1] >> 4
+            disp = mem[2]
+            target = _resolve_rel(new_pc, disp)
+
+            return ("%s A.%d,$0%04xH" % (instname, bit, target), new_pc)
+        elif (mem[1] >> 4) < 0x08 and (mem[1] & 0x0f) in (0x01, 0x03):
+            new_pc = pc + 4
+
+            instname = 'BTCLR' if (mem[1] & 0x0f) == 0x01 else 'BF'
+            bit = mem[1] >> 4
+            saddr = _saddr(mem[2])
+            disp = mem[3]
+            target = _resolve_rel(new_pc, disp)
+
+            if saddr == 0xff1e:
+                return ("%s PSW.%d,$0%04xH" % (instname, bit, target), new_pc)
+            else:
+                return ("%s 0%04xH.%d,$0%04xH" % (instname, saddr, bit, target), new_pc)
+        elif (mem[1] >> 4) < 0x08 and (mem[1] & 0x0f) in (0x5, 0x6, 0x7):
+            new_pc = pc + 4
+
+            inst = (mem[1] & 0x0f) - 0x05
+            names = ('BTCLR', 'BT', 'BF')
+            instname = names[inst]
+
+            bit = mem[1] >> 4
+            sfr = _sfr(mem[2])
+            disp = mem[3]
+            target = _resolve_rel(new_pc, disp)
+
+            return ("%s 0%04xH.%d,$0%04xH" % (instname, sfr, bit, target), new_pc)
+        elif (mem[1] >> 4) in range(0x8, 0xf+1) and (mem[1] & 0x0f) in (0x5, 0x6, 0x7):
+            new_pc = pc + 3
+
+            inst = (mem[1] & 0x0f) - 0x05
+            names = ('BTCLR', 'BT', 'BF')
+            instname = names[inst]
+
+            bit = (mem[1] >> 4) - 0x08
+            disp = mem[2]
+            target = _resolve_rel(new_pc, disp)
+
+            return ("%s [HL].%d,$0%04xH" % (instname, bit, target), new_pc)
         else:
             raise NotImplementedError("31 %02x" % mem[1])
 
