@@ -674,6 +674,73 @@ def disassemble(mem, pc):
             saddr = _saddr(mem[1])
             return ('CLR1 0%04xH.%d' % (saddr, bit), pc+2)
 
+    elif mem[0] == 0x31:
+        new_pc = pc + 2
+        if mem[1] == 0x80:
+            return ('ROL4 [HL]', new_pc)
+        elif mem[1] == 0x82:
+            return ('DIVUW C', new_pc)
+        elif mem[1] == 0x88:
+            return ('MULU X', new_pc)
+        elif mem[1] == 0x90:
+            return ('ROR4 [HL]', new_pc)
+        elif mem[1] == 0x98:
+            return ('BR AX', new_pc)
+        elif (mem[1] & 0x0f) in (0x0a, 0x0b) and (mem[1] >> 4) < 0x09:
+            inst = mem[1] >> 4
+            names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR', 'XCH')
+            instname = names[inst]
+
+            mode = mem[1] & 0x0f
+            modename = "A,[HL+B]" if mode == 0x0b else "A,[HL+C]"
+
+            return ("%s %s" % (instname, modename), new_pc)
+        else:
+            raise NotImplementedError("31 %02x" % mem[1])
+
+    elif mem[0] == 0x61:
+        new_pc = pc + 2
+        bit = ((mem[1] & 0b01110000) >> 4) & 0xff
+        regname = _regname(mem[1] & 0b111)
+        if mem[1] == 0x80:
+            return ('ADJBA', new_pc)
+        elif mem[1] == 0x90:
+            return ('ADJBS', new_pc)
+        elif mem[1] == 0xd0:
+            return ('SEL RB0', new_pc)
+        elif mem[1] == 0xd8:
+            return ('SEL RB1', new_pc)
+        elif mem[1] == 0xf0:
+            return ('SEL RB2', new_pc)
+        elif mem[1] == 0xf8:
+            return ('SEL RB3', new_pc)
+        elif mem[1] in range(0x00, 0x80):
+            inst = (mem[1] >> 4) & 0x0f
+            names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR')
+            instname = names[inst]
+
+            mode = mem[1] & 0x0f
+            modetpl = "%s,A" if mode in range(0x00, 0x08) else "A,%s"
+
+            template = instname + " " + modetpl
+            return (template % regname), new_pc
+        elif mem[1] in (0x89, 0x99, 0xa9, 0xb9, 0xc9, 0xd9, 0xe9, 0xf9):
+            return ('MOV1 A.%d,CY' % bit, new_pc)
+        elif mem[1] in (0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa):
+            return ('SET1 A.%d' % bit, new_pc)
+        elif mem[1] in (0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb):
+            return ('CLR1 A.%d' % bit, new_pc)
+        elif mem[1] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
+            return ('MOV1 CY,A.%d' % bit, new_pc)
+        elif mem[1] in (0x8d, 0x9d, 0xad, 0xbd, 0xcd, 0xdd, 0xed, 0xfd):
+            return ('AND1 CY,A.%d' % bit, new_pc)
+        elif mem[1] in (0x8e, 0x9e, 0xae, 0xbe, 0xce, 0xde, 0xee, 0xfe):
+            return ('OR1 CY,A.%d' % bit, new_pc)
+        elif mem[1] in (0x8f, 0x9f, 0xaf, 0xbf, 0xcf, 0xdf, 0xef, 0xff):
+            return ('XOR1 CY,A.%d' % bit, new_pc)
+        else:
+            raise NotImplementedError("61 %02x" % mem[1])
+
     # MOVW AX,0fe20h              ;89 20          saddrp
     # MOVW AX,SP                  ;89 1C
     elif mem[0] == 0x89:
@@ -733,48 +800,6 @@ def disassemble(mem, pc):
             saddr = _saddr(mem[1])
             return ('MOV 0%04xH,A' % saddr, pc+2)
 
-    elif mem[0] == 0x61:
-        new_pc = pc + 2
-        bit = ((mem[1] & 0b01110000) >> 4) & 0xff
-        regname = _regname(mem[1] & 0b111)
-        if mem[1] == 0x80:
-            return ('ADJBA', new_pc)
-        elif mem[1] == 0x90:
-            return ('ADJBS', new_pc)
-        elif mem[1] == 0xd0:
-            return ('SEL RB0', new_pc)
-        elif mem[1] == 0xd8:
-            return ('SEL RB1', new_pc)
-        elif mem[1] == 0xf0:
-            return ('SEL RB2', new_pc)
-        elif mem[1] == 0xf8:
-            return ('SEL RB3', new_pc)
-        elif mem[1] in range(0x00, 0x80):
-            inst = (mem[1] >> 4) & 0x0f
-            names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR')
-            instname = names[inst]
-
-            mode = mem[1] & 0x0f
-            modetpl = "%s,A" if mode in range(0x00, 0x08) else "A,%s"
-
-            template = instname + " " + modetpl
-            return (template % regname), new_pc
-        elif mem[1] in (0x89, 0x99, 0xa9, 0xb9, 0xc9, 0xd9, 0xe9, 0xf9):
-            return ('MOV1 A.%d,CY' % bit, new_pc)
-        elif mem[1] in (0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa):
-            return ('SET1 A.%d' % bit, new_pc)
-        elif mem[1] in (0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb):
-            return ('CLR1 A.%d' % bit, new_pc)
-        elif mem[1] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
-            return ('MOV1 CY,A.%d' % bit, new_pc)
-        elif mem[1] in (0x8d, 0x9d, 0xad, 0xbd, 0xcd, 0xdd, 0xed, 0xfd):
-            return ('AND1 CY,A.%d' % bit, new_pc)
-        elif mem[1] in (0x8e, 0x9e, 0xae, 0xbe, 0xce, 0xde, 0xee, 0xfe):
-            return ('OR1 CY,A.%d' % bit, new_pc)
-        elif mem[1] in (0x8f, 0x9f, 0xaf, 0xbf, 0xcf, 0xdf, 0xef, 0xff):
-            return ('XOR1 CY,A.%d' % bit, new_pc)
-        else:
-            raise NotImplementedError("61 %02x" % mem[1])
     else:
         raise NotImplementedError(hex(mem[0]))
 

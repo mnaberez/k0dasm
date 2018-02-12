@@ -1,28 +1,20 @@
-    ADD A,[HL+B]                ;31 0B
-    SUB A,[HL+B]                ;31 1B
-    ADDC A,[HL+B]               ;31 2B
-    SUBC A,[HL+B]               ;31 3B
-    CMP A,[HL+B]                ;31 4B
-    AND A,[HL+B]                ;31 5B
-    OR A,[HL+B]                 ;31 6B
-    XOR A,[HL+B]                ;31 7B
-    XCH A,[HL+B]                ;31 8B
 
-    ADD A,[HL+C]                ;31 0A
-    SUB A,[HL+C]                ;31 1A
-    ADDC A,[HL+C]               ;31 2A
-    SUBC A,[HL+C]               ;31 3A
-    CMP A,[HL+C]                ;31 4A
-    AND A,[HL+C]                ;31 5A
-    OR A,[HL+C]                 ;31 6A
-    XOR A,[HL+C]                ;31 7A
-    XCH A,[HL+C]                ;31 8A
-
-    MULU X                      ;31 88
-    DIVUW C                     ;31 82
-    ROR4 [HL]                   ;31 90
-    ROL4 [HL]                   ;31 80
-    BR AX                       ;31 98
+label104:
+    BTCLR A.0,$label104         ;31 0D FD
+label105:
+    BTCLR A.1,$label105         ;31 1D FD
+label106:
+    BTCLR A.2,$label106         ;31 2D FD
+label107:
+    BTCLR A.3,$label107         ;31 3D FD
+label108:
+    BTCLR A.4,$label108         ;31 4D FD
+label109:
+    BTCLR A.5,$label109         ;31 5D FD
+label110:
+    BTCLR A.6,$label110         ;31 6D FD
+label111:
+    BTCLR A.7,$label111         ;31 7D FD
 
 label32:
     BT A.0,$label32             ;31 0E FD
@@ -58,22 +50,22 @@ label70:
 label71:
     BF A.7,$label71             ;31 7F FD
 
-label104:
-    BTCLR A.0,$label104         ;31 0D FD
-label105:
-    BTCLR A.1,$label105         ;31 1D FD
-label106:
-    BTCLR A.2,$label106         ;31 2D FD
-label107:
-    BTCLR A.3,$label107         ;31 3D FD
-label108:
-    BTCLR A.4,$label108         ;31 4D FD
-label109:
-    BTCLR A.5,$label109         ;31 5D FD
-label110:
-    BTCLR A.6,$label110         ;31 6D FD
-label111:
-    BTCLR A.7,$label111         ;31 7D FD
+label120:
+    BTCLR [HL].0,$label120      ;31 85 FD
+label121:
+    BTCLR [HL].1,$label121      ;31 95 FD
+label122:
+    BTCLR [HL].2,$label122      ;31 A5 FD
+label123:
+    BTCLR [HL].3,$label123      ;31 B5 FD
+label124:
+    BTCLR [HL].4,$label124      ;31 C5 FD
+label125:
+    BTCLR [HL].5,$label125      ;31 D5 FD
+label126:
+    BTCLR [HL].6,$label126      ;31 E5 FD
+label127:
+    BTCLR [HL].7,$label127      ;31 F5 FD
 
 label40:
     BT [HL].0,$label40          ;31 86 FD
@@ -108,23 +100,6 @@ label86:
     BF [HL].6,$label86          ;31 E7 FD
 label87:
     BF [HL].7,$label87          ;31 F7 FD
-
-label120:
-    BTCLR [HL].0,$label120      ;31 85 FD
-label121:
-    BTCLR [HL].1,$label121      ;31 95 FD
-label122:
-    BTCLR [HL].2,$label122      ;31 A5 FD
-label123:
-    BTCLR [HL].3,$label123      ;31 B5 FD
-label124:
-    BTCLR [HL].4,$label124      ;31 C5 FD
-label125:
-    BTCLR [HL].5,$label125      ;31 D5 FD
-label126:
-    BTCLR [HL].6,$label126      ;31 E5 FD
-label127:
-    BTCLR [HL].7,$label127      ;31 F5 FD
 
 label48:
     BF 0fe20h.0,$label48        ;31 03 20 FC    saddr

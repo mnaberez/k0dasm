@@ -1370,6 +1370,167 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, "MOV 0%04xH,#0abH" % (saddr))
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_31_0a_add_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x0a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ADD A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_0b_add_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x0b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ADD A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_1a_sub_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x1a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "SUB A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_1b_sub_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x1b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "SUB A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_2a_addc_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x2a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ADDC A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_2b_addc_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x2b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ADDC A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_3a_subc_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x3a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "SUBC A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_3b_subc_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x3b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "SUBC A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_4a_cmp_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x4a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "CMP A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_4b_cmp_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x4b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "CMP A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_5a_and_a_hl_plus_a(self):
+        pc = 0x1000
+        mem = [0x31, 0x5a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "AND A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_5b_and_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x5b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "AND A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_6a_or_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x6a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "OR A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_6b_or_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x6b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "OR A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_7a_xor_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x7a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "XOR A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_7b_xor_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x7b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "XOR A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_8a_xch_a_hl_plus_c(self):
+        pc = 0x1000
+        mem = [0x31, 0x8a]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "XCH A,[HL+C]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_8b_xch_a_hl_plus_b(self):
+        pc = 0x1000
+        mem = [0x31, 0x8b]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "XCH A,[HL+B]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_80_ror4_hl(self):
+        pc = 0x1000
+        mem = [0x31, 0x80]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ROL4 [HL]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_82_mulu_x(self):
+        pc = 0x1000
+        mem = [0x31, 0x82]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "DIVUW C")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_88_mulu_x(self):
+        pc = 0x1000
+        mem = [0x31, 0x88]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "MULU X")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_90_ror4_hl(self):
+        pc = 0x1000
+        mem = [0x31, 0x90]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "ROR4 [HL]")
+        self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_98_ror4_hl(self):
+        pc = 0x1000
+        mem = [0x31, 0x98]
+        disasm, new_pc = disassemble(mem, pc)
+        self.assertEqual(disasm, "BR AX")
+        self.assertEqual(new_pc, pc + len(mem))
+
     def test_7a_ei_alias_for_set1_psw_bit_7(self):
         pc = 0x1000
         mem = [0x7a, 0x1e]
