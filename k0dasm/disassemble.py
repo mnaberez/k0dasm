@@ -801,6 +801,37 @@ def disassemble(mem, pc):
             return ('STOP', pc+2)
         elif mem[1] == 0x10:
             return ('HALT', pc+2)
+        elif mem[1] in (0x82, 0x92, 0xa2, 0xb2, 0xc2, 0xd2, 0xe2, 0xf2):
+            bit = (mem[1] >> 4) - 8
+            return ('SET1 [HL].%d' % bit, pc+2)
+        elif mem[1] in (0x83, 0x93, 0xa3, 0xb3, 0xc3, 0xd3, 0xe3, 0xf3):
+            bit = (mem[1] >> 4) - 8
+            return ('CLR1 [HL].%d' % bit, pc+2)
+        elif (mem[1] >> 4) in range(8, 0x0f+1) and (mem[1] & 0x0f) in (0x4, 0x5, 0x6, 0x7):
+            bit = (mem[1] >> 4) - 8
+            inst = (mem[1] & 0x0f) - 4
+            names = ('MOV1', 'AND1', 'OR1', 'XOR1')
+            instname = names[inst]
+            return ('%s CY,[HL].%d' % (instname, bit), pc+2)
+        elif (mem[1] >> 4) in range(8, 0x0f+1) and (mem[1] & 0x0f) == 1:
+            bit = (mem[1] >> 4) - 8
+            return ('MOV1 [HL].%d,CY' % bit, pc+2)
+        elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) in (0x0a, 0x0b):
+            bit = (mem[1] >> 4)
+            instname = 'SET1' if (mem[1] & 0x0f) == 0x0a else 'CLR1'
+            sfr = _sfr(mem[2])
+            return ('%s 0%04xH.%d' % (instname, sfr, bit), pc+3)
+        elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) == 0x09:
+            bit = (mem[1] >> 4)
+            sfr = _sfr(mem[2])
+            return ('MOV1 0%04xH.%d,CY' % (sfr, bit), pc+3)
+        elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) in range(0x0c, 0x0f+1):
+            bit = (mem[1] >> 4)
+            sfr = _sfr(mem[2])
+            inst = (mem[1] & 0x0f) - 0x0c
+            names = ('MOV1', 'AND1', 'OR1', 'XOR1')
+            instname = names[inst]
+            return ('%s CY,0%04xH.%d' % (instname, sfr, bit), pc+3)
         else:
             raise NotImplementedError("71 %02x" % mem[1])
 

@@ -817,6 +817,102 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(disasm, 'HALT')
         self.assertEqual(new_pc, pc + len(mem))
 
+    def test_71_09_thru_79_mov1_sfr_bit_cy(self):
+        operands = (0x09, 0x19, 0x29, 0x39, 0x49, 0x59, 0x69, 0x79)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for sfr in range(0xff00, 0x10000):
+                sfr_low = sfr & 0xff
+                mem = [0x71, operand, sfr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, 'MOV1 0%04xH.%d,CY' % (sfr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_0a_set1_sfr_bit(self):
+        operands = (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for sfr in range(0xff00, 0x10000):
+                sfr_low = sfr & 0xff
+                mem = [0x71, operand, sfr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, 'SET1 0%04xH.%d' % (sfr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_0c_thru_7c_mov1_cy_sfr_bit(self):
+        operands = (0x0c, 0x1c, 0x2c, 0x3c, 0x4c, 0x5c, 0x6c, 0x7c)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            for sfr in range(0xff00, 0x10000):
+                sfr_low = sfr & 0xff
+                mem = [0x71, operand, sfr_low]
+                disasm, new_pc = disassemble(mem, pc)
+                self.assertEqual(disasm, 'MOV1 CY,0%04xH.%d' % (sfr, bit))
+                self.assertEqual(new_pc, pc + len(mem))
+
+    def test_72_82_thru_f3_clr1_hl_bit(self):
+        operands = (0x82, 0x92, 0xa2, 0xb2, 0xc2, 0xd2, 0xe2, 0xf2)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'SET1 [HL].%d' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_83_thru_f3_clr1_hl_bit(self):
+        operands = (0x83, 0x93, 0xa3, 0xb3, 0xc3, 0xd3, 0xe3, 0xf3)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'CLR1 [HL].%d' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_84_thru_f4_mov1_hl_bit(self):
+        operands = (0x84, 0x94, 0xa4, 0xb4, 0xc4, 0xd4, 0xe4, 0xf4)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'MOV1 CY,[HL].%d' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_84_thru_f4_and1_hl_bit(self):
+        operands = (0x85, 0x95, 0xa5, 0xb5, 0xc5, 0xd5, 0xe5, 0xf5)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'AND1 CY,[HL].%d' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_86_thru_f6_and1_hl_bit(self):
+        operands = (0x86, 0x96, 0xa6, 0xb6, 0xc6, 0xd6, 0xe6, 0xf6)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'OR1 CY,[HL].%d' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_87_thru_f7_and1_hl_bit(self):
+        operands = (0x87, 0x97, 0xa7, 0xb7, 0xc7, 0xd7, 0xe7, 0xf7)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'XOR1 CY,[HL].%d' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_81_thru_f1_mov1_hl_bit_cy(self):
+        operands = (0x81, 0x91, 0xa1, 0xb1, 0xc1, 0xd1, 0xe1, 0xf1)
+        pc = 0x1000
+        for bit, operand in enumerate(operands):
+            mem = [0x71, operand]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, 'MOV1 [HL].%d,CY' % bit)
+            self.assertEqual(new_pc, pc + len(mem))
+
     def test_78_xor_a_addr16(self):
         pc = 0x1000
         for addr16 in (0x0000, 0xabcd, 0xffff):
