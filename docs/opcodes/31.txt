@@ -1,0 +1,246 @@
+    ADD A,[HL+B]                ;31 0B
+    SUB A,[HL+B]                ;31 1B
+    ADDC A,[HL+B]               ;31 2B
+    SUBC A,[HL+B]               ;31 3B
+    CMP A,[HL+B]                ;31 4B
+    AND A,[HL+B]                ;31 5B
+    OR A,[HL+B]                 ;31 6B
+    XOR A,[HL+B]                ;31 7B
+    XCH A,[HL+B]                ;31 8B
+
+    ADD A,[HL+C]                ;31 0A
+    SUB A,[HL+C]                ;31 1A
+    ADDC A,[HL+C]               ;31 2A
+    SUBC A,[HL+C]               ;31 3A
+    CMP A,[HL+C]                ;31 4A
+    AND A,[HL+C]                ;31 5A
+    OR A,[HL+C]                 ;31 6A
+    XOR A,[HL+C]                ;31 7A
+    XCH A,[HL+C]                ;31 8A
+
+    MULU X                      ;31 88
+    DIVUW C                     ;31 82
+    ROR4 [HL]                   ;31 90
+    ROL4 [HL]                   ;31 80
+    BR AX                       ;31 98
+
+label32:
+    BT A.0,$label32             ;31 0E FD
+label33:
+    BT A.1,$label33             ;31 1E FD
+label34:
+    BT A.2,$label34             ;31 2E FD
+label35:
+    BT A.3,$label35             ;31 3E FD
+label36:
+    BT A.4,$label36             ;31 4E FD
+label37:
+    BT A.5,$label37             ;31 5E FD
+label38:
+    BT A.6,$label38             ;31 6E FD
+label39:
+    BT A.7,$label39             ;31 7E FD
+
+label64:
+    BF A.0,$label64             ;31 0F FD
+label65:
+    BF A.1,$label65             ;31 1F FD
+label66:
+    BF A.2,$label66             ;31 2F FD
+label67:
+    BF A.3,$label67             ;31 3F FD
+label68:
+    BF A.4,$label68             ;31 4F FD
+label69:
+    BF A.5,$label69             ;31 5F FD
+label70:
+    BF A.6,$label70             ;31 6F FD
+label71:
+    BF A.7,$label71             ;31 7F FD
+
+label104:
+    BTCLR A.0,$label104         ;31 0D FD
+label105:
+    BTCLR A.1,$label105         ;31 1D FD
+label106:
+    BTCLR A.2,$label106         ;31 2D FD
+label107:
+    BTCLR A.3,$label107         ;31 3D FD
+label108:
+    BTCLR A.4,$label108         ;31 4D FD
+label109:
+    BTCLR A.5,$label109         ;31 5D FD
+label110:
+    BTCLR A.6,$label110         ;31 6D FD
+label111:
+    BTCLR A.7,$label111         ;31 7D FD
+
+label40:
+    BT [HL].0,$label40          ;31 86 FD
+label41:
+    BT [HL].1,$label41          ;31 96 FD
+label42:
+    BT [HL].2,$label42          ;31 A6 FD
+label43:
+    BT [HL].3,$label43          ;31 B6 FD
+label44:
+    BT [HL].4,$label44          ;31 C6 FD
+label45:
+    BT [HL].5,$label45          ;31 D6 FD
+label46:
+    BT [HL].6,$label46          ;31 E6 FD
+label47:
+    BT [HL].7,$label47          ;31 F6 FD
+
+label80:
+    BF [HL].0,$label80          ;31 87 FD
+label81:
+    BF [HL].1,$label81          ;31 97 FD
+label82:
+    BF [HL].2,$label82          ;31 A7 FD
+label83:
+    BF [HL].3,$label83          ;31 B7 FD
+label84:
+    BF [HL].4,$label84          ;31 C7 FD
+label85:
+    BF [HL].5,$label85          ;31 D7 FD
+label86:
+    BF [HL].6,$label86          ;31 E7 FD
+label87:
+    BF [HL].7,$label87          ;31 F7 FD
+
+label120:
+    BTCLR [HL].0,$label120      ;31 85 FD
+label121:
+    BTCLR [HL].1,$label121      ;31 95 FD
+label122:
+    BTCLR [HL].2,$label122      ;31 A5 FD
+label123:
+    BTCLR [HL].3,$label123      ;31 B5 FD
+label124:
+    BTCLR [HL].4,$label124      ;31 C5 FD
+label125:
+    BTCLR [HL].5,$label125      ;31 D5 FD
+label126:
+    BTCLR [HL].6,$label126      ;31 E5 FD
+label127:
+    BTCLR [HL].7,$label127      ;31 F5 FD
+
+label48:
+    BF 0fe20h.0,$label48        ;31 03 20 FC    saddr
+label49:
+    BF 0fe20h.1,$label49        ;31 13 20 FC    saddr
+label50:
+    BF 0fe20h.2,$label50        ;31 23 20 FC    saddr
+label51:
+    BF 0fe20h.3,$label51        ;31 33 20 FC    saddr
+label52:
+    BF 0fe20h.4,$label52        ;31 43 20 FC    saddr
+label53:
+    BF 0fe20h.5,$label53        ;31 53 20 FC    saddr
+label54:
+    BF 0fe20h.6,$label54        ;31 63 20 FC    saddr
+label55:
+    BF 0fe20h.7,$label55        ;31 73 20 FC    saddr
+
+label88:
+    BTCLR 0fe20h.0,$label88     ;31 01 20 FC    saddr
+label89:
+    BTCLR 0fe20h.1,$label89     ;31 11 20 FC    saddr
+label90:
+    BTCLR 0fe20h.2,$label90     ;31 21 20 FC    saddr
+label91:
+    BTCLR 0fe20h.3,$label91     ;31 31 20 FC    saddr
+label92:
+    BTCLR 0fe20h.4,$label92     ;31 41 20 FC    saddr
+label93:
+    BTCLR 0fe20h.5,$label93     ;31 51 20 FC    saddr
+label94:
+    BTCLR 0fe20h.6,$label94     ;31 61 20 FC    saddr
+label95:
+    BTCLR 0fe20h.7,$label95     ;31 71 20 FC    saddr
+
+label24:
+    BT 0fffeh.0,$label24        ;31 06 FE FC    sfr
+label25:
+    BT 0fffeh.1,$label25        ;31 16 FE FC    sfr
+label26:
+    BT 0fffeh.2,$label26        ;31 26 FE FC    sfr
+label27:
+    BT 0fffeh.3,$label27        ;31 36 FE FC    sfr
+label28:
+    BT 0fffeh.4,$label28        ;31 46 FE FC    sfr
+label29:
+    BT 0fffeh.5,$label29        ;31 56 FE FC    sfr
+label30:
+    BT 0fffeh.6,$label30        ;31 66 FE FC    sfr
+label31:
+    BT 0fffeh.7,$label31        ;31 76 FE FC    sfr
+
+label56:
+    BF 0fffeh.0,$label56        ;31 07 FE FC    sfr
+label57:
+    BF 0fffeh.1,$label57        ;31 17 FE FC    sfr
+label58:
+    BF 0fffeh.2,$label58        ;31 27 FE FC    sfr
+label59:
+    BF 0fffeh.3,$label59        ;31 37 FE FC    sfr
+label60:
+    BF 0fffeh.4,$label60        ;31 47 FE FC    sfr
+label61:
+    BF 0fffeh.5,$label61        ;31 57 FE FC    sfr
+label62:
+    BF 0fffeh.6,$label62        ;31 67 FE FC    sfr
+label63:
+    BF 0fffeh.7,$label63        ;31 77 FE FC    sfr
+
+label96:
+    BTCLR 0fffeh.0,$label96     ;31 05 FE FC    sfr
+label97:
+    BTCLR 0fffeh.1,$label97     ;31 15 FE FC    sfr
+label98:
+    BTCLR 0fffeh.2,$label98     ;31 25 FE FC    sfr
+label99:
+    BTCLR 0fffeh.3,$label99     ;31 35 FE FC    sfr
+label100:
+    BTCLR 0fffeh.4,$label100    ;31 45 FE FC    sfr
+label101:
+    BTCLR 0fffeh.5,$label101    ;31 55 FE FC    sfr
+label102:
+    BTCLR 0fffeh.6,$label102    ;31 65 FE FC    sfr
+label103:
+    BTCLR 0fffeh.7,$label103    ;31 75 FE FC    sfr
+
+label112:
+    BTCLR PSW.0,$label112       ;31 01 1E FC
+label113:
+    BTCLR PSW.1,$label113       ;31 11 1E FC
+label114:
+    BTCLR PSW.2,$label114       ;31 21 1E FC
+label115:
+    BTCLR PSW.3,$label115       ;31 31 1E FC
+label116:
+    BTCLR PSW.4,$label116       ;31 41 1E FC
+label117:
+    BTCLR PSW.5,$label117       ;31 51 1E FC
+label118:
+    BTCLR PSW.6,$label118       ;31 61 1E FC
+label119:
+    BTCLR PSW.7,$label119       ;31 71 1E FC
+
+label72:
+    BF PSW.0,$label72           ;31 03 1E FC
+label73:
+    BF PSW.1,$label73           ;31 13 1E FC
+label74:
+    BF PSW.2,$label74           ;31 23 1E FC
+label75:
+    BF PSW.3,$label75           ;31 33 1E FC
+label76:
+    BF PSW.4,$label76           ;31 43 1E FC
+label77:
+    BF PSW.5,$label77           ;31 53 1E FC
+label78:
+    BF PSW.6,$label78           ;31 63 1E FC
+label79:
+    BF PSW.7,$label79           ;31 73 1E FC
