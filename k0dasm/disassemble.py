@@ -1,8 +1,5 @@
 
 def disassemble(mem, pc):
-    #
-    # Instructions that require only the first byte to recognize
-    #
 
     # nop                         ;00
     if mem[0] == 0x00:
@@ -52,6 +49,36 @@ def disassemble(mem, pc):
         byte = mem[1]
         return ("ADD A,[HL+0%02xH]" % byte, pc+2)
 
+    # SET1 0fe20h.7               ;7A 20          saddr
+    # SET1 PSW.7                  ;7A 1E
+    # EI                          ;7A 1E          alias for SET1 PSW.7
+    elif mem[0] in (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a):
+        bit = _bit(mem[0])
+        saddr = _saddr(mem[1])
+        new_pc = pc + 2
+        if saddr == 0xff1e:
+            if bit == 7:
+                return ("EI", new_pc) # alias for SET1 PSW.7
+            else:
+                return ('SET1 PSW.%d' % bit, new_pc)
+        else:
+            return ('SET1 0%04xH.%d' % (saddr, bit), new_pc)
+
+    # CLR1 0fe20h.7               ;7B 20          saddr
+    # CLR1 PSW.7                  ;7B 1E
+    # DI                          ;7B 1E          alias for CLR1 PSW.7
+    elif mem[0] in (0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b):
+        bit = _bit(mem[0])
+        saddr = _saddr(mem[1])
+        new_pc = pc + 2
+        if saddr == 0xff1e:
+            if bit == 7:
+                return ("DI", new_pc) # alias for CLR1 PSW.7
+            else:
+                return ('CLR1 PSW.%d' % bit, new_pc)
+        else:
+            return ('CLR1 0%04xH.%d' % (saddr, bit), new_pc)
+
     # callt [0040H]               ;C1
     # CALLT [{addr5}]             0b11ttttt1                            1
     elif (mem[0] & 0b11000001) == 0b11000001:
@@ -92,6 +119,23 @@ def disassemble(mem, pc):
         regpair = _regpair(mem[0])
         imm16 = mem[1] + (mem[2] << 8)
         return ("MOVW %s,#0%04xH" % (regpair, imm16), pc+3)
+
+    # MOV 0fe20h,#0abh            ;11 20 AB       saddr
+    # MOV PSW,#0abh               ;11 1E AB
+    elif mem[0] == 0x11:
+        saddr = _saddr(mem[1])
+        imm8 = mem[2]
+        new_pc = pc + 3
+        if saddr == 0xff1e:
+            return ('MOV PSW,#0%02xH' % imm8, new_pc)
+        else:
+            return ('MOV 0%04xH,#0%02xH' % (saddr, imm8), new_pc)
+
+    # 0x13: 'MOV sfr,#byte'
+    elif mem[0] == 0x13:
+        sfr = _sfr(mem[1])
+        imm8 = mem[2]
+        return ("MOV 0%04xH,#0%02xH" % (sfr, imm8), pc+3)
 
     # 0x15: ILLEGAL
     elif mem[0] == 0x15:
@@ -356,6 +400,16 @@ def disassemble(mem, pc):
         imm8 = mem[2]
         return ('ADD 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
 
+    # MOVW AX,0fe20h              ;89 20          saddrp
+    # MOVW AX,SP                  ;89 1C
+    elif mem[0] == 0x89:
+        saddrp = _saddrp(mem[1])
+        new_pc = pc + 2
+        if saddrp == 0xff1c:
+            return ('MOVW AX,SP', new_pc)
+        else:
+            return ('MOVW AX,0%04xH' % saddrp, new_pc)
+
     # 0x8a: 'DBNZ C,$rel   '
     elif mem[0] == 0x8a:
         disp = mem[1]
@@ -369,6 +423,19 @@ def disassemble(mem, pc):
         new_pc = pc + 2
         target = _resolve_rel(new_pc, disp)
         return ('DBNZ B,$0%04xH' % target, new_pc)
+
+    # BT 0fe20h.0,$label8         ;8C 20 FD       saddr
+    # BT PSW.0,$label9            ;8C 1E FD
+    elif mem[0] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
+        bit = _bit(mem[0])
+        saddr = _saddr(mem[1])
+        disp = mem[2]
+        new_pc = pc + 3
+        target = _resolve_rel(new_pc, disp)
+        if saddr == 0xff1e:
+            return ('BT PSW.%d,$0%04xH' % (bit, target), new_pc)
+        else:
+            return ('BT 0%04xH.%d,$0%04xH' % (saddr, bit, target), new_pc)
 
     # 0x8d: 'BC $rel'
     elif mem[0] == 0x8d:
@@ -400,12 +467,6 @@ def disassemble(mem, pc):
         sfr = _sfr(mem[1])
         return ("XCH A,0%04xH" % sfr, pc+2)
 
-    # 0x13: 'MOV sfr,#byte'
-    elif mem[0] == 0x13:
-        sfr = _sfr(mem[1])
-        imm8 = mem[2]
-        return ("MOV 0%04xH,#0%02xH" % (sfr, imm8), pc+3)
-
     # 0x95: MOV [DE],A
     elif mem[0] == 0x95:
         return ('MOV [DE],A', pc+1)
@@ -419,6 +480,16 @@ def disassemble(mem, pc):
         saddr = _saddr(mem[1])
         imm8 = mem[2]
         return ('SUB 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
+
+    # MOVW 0fe20h,AX              ;99 20          saddrp
+    # MOVW SP,AX                  ;99 1C
+    elif mem[0] == 0x99:
+        saddrp = _saddrp(mem[1])
+        new_pc = pc + 2
+        if saddrp == 0xff1c:
+            return ('MOVW SP,AX', new_pc)
+        else:
+            return ('MOVW 0%04xH,AX' % saddrp, new_pc)
 
     # 0x9a: 'CALL !addr16'
     elif mem[0] == 0x9a:
@@ -539,7 +610,7 @@ def disassemble(mem, pc):
         return ('CMP 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
 
     # ADDW AX,#0abcdh             ;CA CD AB
-    elif mem[0] == 0xCA:
+    elif mem[0] == 0xca:
         imm16 = mem[1] + (mem[2] << 8)
         return ("ADDW AX,#0%04xH" % imm16, pc+3)
 
@@ -562,7 +633,7 @@ def disassemble(mem, pc):
         return ('AND 0%04xH,#0%02xH' % (saddr, imm8), pc+3)
 
     # SUBW AX,#0abcdh             ;DA CD AB
-    elif mem[0] == 0xDA:
+    elif mem[0] == 0xda:
         imm16 = mem[1] + (mem[2] << 8)
         return ("SUBW AX,#0%04xH" % imm16, pc+3)
 
@@ -588,6 +659,37 @@ def disassemble(mem, pc):
     elif mem[0] == 0xea:
         imm16 = mem[1] + (mem[2] << 8)
         return ("CMPW AX,#0%04xH" % imm16, pc+3)
+
+    # MOVW 0fe20h,#0abcdh         ;EE 20 CD AB    saddrp
+    # MOVW SP,#0abcdh             ;EE 1C CD AB
+    elif mem[0] == 0xee:
+        saddrp = _saddrp(mem[1])
+        imm16 = mem[2] + (mem[3] << 8)
+        new_pc = pc + 4
+        if saddrp == 0xff1c:
+            return ('MOVW SP,#0%04xH' % imm16, new_pc)
+        else:
+            return ('MOVW 0%04xH,#0%04xH' % (saddrp, imm16), new_pc)
+
+    # mov a,0fe20h                ;F0 20          saddr
+    # mov a,psw                   ;F0 1E
+    elif mem[0] == 0xf0:
+        saddr = _saddr(mem[1])
+        new_pc = pc + 2
+        if saddr == 0xff1e:
+            return ('MOV A,PSW', new_pc)
+        else:
+            return ('MOV A,0%04xH' % saddr, new_pc)
+
+    # MOV 0fe20h,A                ;F2 20          saddr
+    # MOV PSW,A                   ;F2 1E
+    elif mem[0] == 0xf2:
+        saddr = _saddr(mem[1])
+        new_pc = pc + 2
+        if saddr == 0xff1e:
+            return ('MOV PSW,A', new_pc)
+        else:
+            return ('MOV 0%04xH,A' % saddr, new_pc)
 
     # 0xf4: 'MOV A,sfr'
     elif mem[0] == 0xf4:
@@ -617,51 +719,6 @@ def disassemble(mem, pc):
         sfrp = _sfrp(mem[1])
         imm16 = mem[2] + (mem[3] << 8)
         return ('MOVW 0%04xH,#0%04xH' % (sfrp, imm16), pc+4)
-
-    #
-    # Instructions that require multiple bytes to recognize
-    #
-
-    # MOV 0fe20h,#0abh            ;11 20 AB       saddr
-    # MOV PSW,#0abh               ;11 1E AB
-    elif mem[0] == 0x11:
-        saddr = _saddr(mem[1])
-        imm8 = mem[2]
-        new_pc = pc + 3
-        if saddr == 0xff1e:
-            return ('MOV PSW,#0%02xH' % imm8, new_pc)
-        else:
-            return ('MOV 0%04xH,#0%02xH' % (saddr, imm8), new_pc)
-
-    # SET1 0fe20h.7               ;7A 20          saddr
-    # SET1 PSW.7                  ;7A 1E
-    # EI                          ;7A 1E          alias for SET1 PSW.7
-    elif mem[0] in (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a):
-        bit = _bit(mem[0])
-        saddr = _saddr(mem[1])
-        new_pc = pc + 2
-        if saddr == 0xff1e:
-            if bit == 7:
-                return ("EI", new_pc) # alias for SET1 PSW.7
-            else:
-                return ('SET1 PSW.%d' % bit, new_pc)
-        else:
-            return ('SET1 0%04xH.%d' % (saddr, bit), new_pc)
-
-    # CLR1 0fe20h.7               ;7B 20          saddr
-    # CLR1 PSW.7                  ;7B 1E
-    # DI                          ;7B 1E          alias for CLR1 PSW.7
-    elif mem[0] in (0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b):
-        bit = _bit(mem[0])
-        saddr = _saddr(mem[1])
-        new_pc = pc + 2
-        if saddr == 0xff1e:
-            if bit == 7:
-                return ("DI", new_pc) # alias for CLR1 PSW.7
-            else:
-                return ('CLR1 PSW.%d' % bit, new_pc)
-        else:
-            return ('CLR1 0%04xH.%d' % (saddr, bit), new_pc)
 
     elif mem[0] == 0x31:
         if mem[1] == 0x80:
@@ -836,70 +893,6 @@ def disassemble(mem, pc):
                 return ('%s CY,0%04xH.%d' % (instname, saddr, bit), new_pc)
         else:
             raise NotImplementedError("71 %02x" % mem[1])
-
-    # MOVW AX,0fe20h              ;89 20          saddrp
-    # MOVW AX,SP                  ;89 1C
-    elif mem[0] == 0x89:
-        saddrp = _saddrp(mem[1])
-        new_pc = pc + 2
-        if saddrp == 0xff1c:
-            return ('MOVW AX,SP', new_pc)
-        else:
-            return ('MOVW AX,0%04xH' % saddrp, new_pc)
-
-    # BT 0fe20h.0,$label8         ;8C 20 FD       saddr
-    # BT PSW.0,$label9            ;8C 1E FD
-    elif mem[0] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
-        bit = _bit(mem[0])
-        saddr = _saddr(mem[1])
-        disp = mem[2]
-        new_pc = pc + 3
-        target = _resolve_rel(new_pc, disp)
-        if saddr == 0xff1e:
-            return ('BT PSW.%d,$0%04xH' % (bit, target), new_pc)
-        else:
-            return ('BT 0%04xH.%d,$0%04xH' % (saddr, bit, target), new_pc)
-
-    # MOVW 0fe20h,AX              ;99 20          saddrp
-    # MOVW SP,AX                  ;99 1C
-    elif mem[0] == 0x99:
-        saddrp = _saddrp(mem[1])
-        new_pc = pc + 2
-        if saddrp == 0xff1c:
-            return ('MOVW SP,AX', new_pc)
-        else:
-            return ('MOVW 0%04xH,AX' % saddrp, new_pc)
-
-    # MOVW 0fe20h,#0abcdh         ;EE 20 CD AB    saddrp
-    # MOVW SP,#0abcdh             ;EE 1C CD AB
-    elif mem[0] == 0xee:
-        saddrp = _saddrp(mem[1])
-        imm16 = mem[2] + (mem[3] << 8)
-        new_pc = pc + 4
-        if saddrp == 0xff1c:
-            return ('MOVW SP,#0%04xH' % imm16, new_pc)
-        else:
-            return ('MOVW 0%04xH,#0%04xH' % (saddrp, imm16), new_pc)
-
-    # mov a,0fe20h                ;F0 20          saddr
-    # mov a,psw                   ;F0 1E
-    elif mem[0] == 0xf0:
-        saddr = _saddr(mem[1])
-        new_pc = pc + 2
-        if saddr == 0xff1e:
-            return ('MOV A,PSW', new_pc)
-        else:
-            return ('MOV A,0%04xH' % saddr, new_pc)
-
-    # MOV 0fe20h,A                ;F2 20          saddr
-    # MOV PSW,A                   ;F2 1E
-    elif mem[0] == 0xf2:
-        saddr = _saddr(mem[1])
-        new_pc = pc + 2
-        if saddr == 0xff1e:
-            return ('MOV PSW,A', new_pc)
-        else:
-            return ('MOV 0%04xH,A' % saddr, new_pc)
 
     else:
         raise NotImplementedError(hex(mem[0]))
