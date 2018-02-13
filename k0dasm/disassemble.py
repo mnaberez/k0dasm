@@ -89,10 +89,9 @@ def disassemble(mem, pc):
     # MOVW DE,#0abcdh             ;14 CD AB
     # MOVW HL,#0abcdh             ;16 CD AB
     elif (mem[0] & 0b11111001) == 0b00010000:
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
+        regpair = _regpair(mem[0])
         imm16 = mem[1] + (mem[2] << 8)
-        return ("MOVW %s,#0%04xH" % (regpairname, imm16), pc+3)
+        return ("MOVW %s,#0%04xH" % (regpair, imm16), pc+3)
 
     # 0x15: ILLEGAL
     elif mem[0] == 0x15:
@@ -188,9 +187,8 @@ def disassemble(mem, pc):
     # 0x30: 'XCH A,X' .. 0x37: 'XCH A,H'
     # except 0x31
     elif mem[0] in (0x30, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37):
-        reg = mem[0] & 0b111
-        regname = _regname(reg)
-        return ("XCH A,%s" % regname, pc+1)
+        reg = _reg(mem[0])
+        return ("XCH A,%s" % reg, pc+1)
 
     # 0x39: 'SUBC A,[HL+byte]'
     elif mem[0] == 0x39:
@@ -213,9 +211,8 @@ def disassemble(mem, pc):
 
     # 0x40: 'INC X' .. 0x47: 'INC H'
     elif mem[0] in (0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47):
-        reg = mem[0] & 0b111
-        regname = _regname(reg)
-        return ("INC %s" % regname, pc+1)
+        reg = _reg(mem[0])
+        return ("INC %s" % reg, pc+1)
 
     # 0x48: 'CMP A,!addr16'
     elif mem[0] == 0x48:
@@ -243,9 +240,8 @@ def disassemble(mem, pc):
 
     # 0x50: 'DEC X' .. 0x57: 'DEC H'
     elif mem[0] in (0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57):
-        reg = mem[0] & 0b111
-        regname = _regname(reg)
-        return ("DEC %s" % regname, pc+1)
+        reg = _reg(mem[0])
+        return ("DEC %s" % reg, pc+1)
 
     # 0x58: 'AND A,!addr16'
     elif mem[0] == 0x58:
@@ -274,9 +270,8 @@ def disassemble(mem, pc):
     # 0x60: 'MOV A,X' .. 0x67: 'MOV A,H'
     # except 0x61
     elif mem[0] in (0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67):
-        reg = mem[0] & 0b111
-        regname = _regname(reg)
-        return ("MOV A,%s" % regname, pc+1)
+        reg = _reg(mem[0])
+        return ("MOV A,%s" % reg, pc+1)
 
     # 0x68: 'OR A,!addr16'
     elif mem[0] == 0x68:
@@ -310,9 +305,8 @@ def disassemble(mem, pc):
     # 0x70: 'MOV X,A' .. 0x77: 'MOV H,A'
     # except 0x71
     elif mem[0] in (0x70, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77):
-        reg = mem[0] & 0b111
-        regname = _regname(reg)
-        return ("MOV %s,A" % regname, pc+1)
+        reg = _reg(mem[0])
+        return ("MOV %s,A" % reg, pc+1)
 
     # 0x78: 'XOR A,!addr16'
     elif mem[0] == 0x78:
@@ -334,9 +328,8 @@ def disassemble(mem, pc):
         return ('XOR A,[HL]', pc+1)
 
     elif mem[0] in (0x80, 0x82, 0x84, 0x86):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("INCW %s" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("INCW %s" % regpair, pc+1)
 
     # 0x81: 'INC saddr'
     # INC 0fe20h                  ;81 20          saddr
@@ -393,9 +386,8 @@ def disassemble(mem, pc):
         return ("RETI", pc+1)
 
     elif mem[0] in (0x90, 0x92, 0x94, 0x96):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("DECW %s" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("DECW %s" % regpair, pc+1)
 
     # 0x91: 'DEC saddr'
     # DEC 0fe20h                  ;91 20          saddr
@@ -454,10 +446,9 @@ def disassemble(mem, pc):
         return ("RETB", pc+1)
 
     elif mem[0] in (0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7):
-        reg = mem[0] & 0b111
-        regname = _regname(reg)
+        reg = _reg(mem[0])
         byte = mem[1]
-        return ("MOV %s,#0%02xH" % (regname, byte), pc+2)
+        return ("MOV %s,#0%02xH" % (reg, byte), pc+2)
 
     # 0xa8: 'ADDC saddr,#byte'
     elif mem[0] == 0xa8:
@@ -492,14 +483,12 @@ def disassemble(mem, pc):
         return ("RET", pc+1)
 
     elif mem[0] in (0xb0, 0xb2, 0xb4, 0xb6):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("POP %s" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("POP %s" % regpair, pc+1)
 
     elif mem[0]in (0xb1, 0xb3, 0xb5, 0xb7):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("PUSH %s" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("PUSH %s" % regpair, pc+1)
 
     # 0xb8: 'SUBC saddr,#byte'
     elif mem[0] == 0xb8:
@@ -540,9 +529,8 @@ def disassemble(mem, pc):
         return ("ILLEGAL 0xc0", pc+1)
 
     elif mem[0] in (0xc2, 0xc4, 0xc6):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("MOVW AX,%s" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("MOVW AX,%s" % regpair, pc+1)
 
     # 0xc8: 'CMP saddr,#byte'
     elif mem[0] == 0xc8:
@@ -564,9 +552,8 @@ def disassemble(mem, pc):
         return ("ILLEGAL 0xd0", pc+1)
 
     elif mem[0] in (0xd2, 0xd4, 0xd6):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("MOVW %s,AX" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("MOVW %s,AX" % regpair, pc+1)
 
     # 0xd8: 'AND saddr,#byte'
     elif mem[0] == 0xd8:
@@ -588,9 +575,8 @@ def disassemble(mem, pc):
         return ("ILLEGAL 0xe0", pc+1)
 
     elif mem[0] in (0xe2, 0xe4, 0xe6):
-        regpair = (mem[0] >> 1) & 0b11
-        regpairname = _regpairname(regpair)
-        return ("XCHW AX,%s" % regpairname, pc+1)
+        regpair = _regpair(mem[0])
+        return ("XCHW AX,%s" % regpair, pc+1)
 
     # 0xe8: 'OR saddr,#byte'
     elif mem[0] == 0xe8:
@@ -693,8 +679,8 @@ def disassemble(mem, pc):
         elif (mem[1] >> 4) < 0x09 and (mem[1] & 0x0f) in (0x0a, 0x0b):
             new_pc = pc + 2
             inst = mem[1] >> 4
-            names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR', 'XCH')
-            instname = names[inst]
+            instname = ('ADD', 'SUB', 'ADDC', 'SUBC',
+                        'CMP', 'AND', 'OR', 'XOR', 'XCH')[inst]
 
             mode = mem[1] & 0x0f
             modename = "A,[HL+B]" if mode == 0x0b else "A,[HL+C]"
@@ -704,8 +690,7 @@ def disassemble(mem, pc):
             new_pc = pc + 3
 
             inst = (mem[1] & 0x0f) - 0x0d
-            names = ('BTCLR', 'BT', 'BF')
-            instname = names[inst]
+            instname = ('BTCLR', 'BT', 'BF')[inst]
 
             bit = mem[1] >> 4
             disp = mem[2]
@@ -729,8 +714,7 @@ def disassemble(mem, pc):
             new_pc = pc + 4
 
             inst = (mem[1] & 0x0f) - 0x05
-            names = ('BTCLR', 'BT', 'BF')
-            instname = names[inst]
+            instname = ('BTCLR', 'BT', 'BF')[inst]
 
             bit = mem[1] >> 4
             sfr = _sfr(mem[2])
@@ -742,8 +726,7 @@ def disassemble(mem, pc):
             new_pc = pc + 3
 
             inst = (mem[1] & 0x0f) - 0x05
-            names = ('BTCLR', 'BT', 'BF')
-            instname = names[inst]
+            instname = ('BTCLR', 'BT', 'BF')[inst]
 
             bit = (mem[1] >> 4) - 0x08
             disp = mem[2]
@@ -756,7 +739,7 @@ def disassemble(mem, pc):
     elif mem[0] == 0x61:
         new_pc = pc + 2
         bit = _bit(mem[1])
-        regname = _regname(mem[1] & 0b111)
+        reg = _reg(mem[1])
         if mem[1] == 0x80:
             return ('ADJBA', new_pc)
         elif mem[1] == 0x90:
@@ -771,14 +754,14 @@ def disassemble(mem, pc):
             return ('SEL RB3', new_pc)
         elif mem[1] in range(0x00, 0x80):
             inst = mem[1] >> 4
-            names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR')
-            instname = names[inst]
+            instname = ('ADD', 'SUB', 'ADDC', 'SUBC',
+                        'CMP', 'AND', 'OR', 'XOR')[inst]
 
             mode = mem[1] & 0x0f
             modetpl = "%s,A" if mode in range(0x00, 0x08) else "A,%s"
 
             template = instname + " " + modetpl
-            return (template % regname), new_pc
+            return (template % reg), new_pc
         elif mem[1] in (0x89, 0x99, 0xa9, 0xb9, 0xc9, 0xd9, 0xe9, 0xf9):
             return ('MOV1 A.%d,CY' % bit, new_pc)
         elif mem[1] in (0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa):
@@ -810,8 +793,7 @@ def disassemble(mem, pc):
         elif (mem[1] >> 4) in range(8, 0x0f+1) and (mem[1] & 0x0f) in (0x4, 0x5, 0x6, 0x7):
             bit = (mem[1] >> 4) - 8
             inst = (mem[1] & 0x0f) - 4
-            names = ('MOV1', 'AND1', 'OR1', 'XOR1')
-            instname = names[inst]
+            instname = ('MOV1', 'AND1', 'OR1', 'XOR1')[inst]
             return ('%s CY,[HL].%d' % (instname, bit), pc+2)
         elif (mem[1] >> 4) in range(8, 0x0f+1) and (mem[1] & 0x0f) == 1:
             bit = (mem[1] >> 4) - 8
@@ -829,8 +811,7 @@ def disassemble(mem, pc):
             bit = (mem[1] >> 4)
             sfr = _sfr(mem[2])
             inst = (mem[1] & 0x0f) - 0x0c
-            names = ('MOV1', 'AND1', 'OR1', 'XOR1')
-            instname = names[inst]
+            instname = ('MOV1', 'AND1', 'OR1', 'XOR1')[inst]
             return ('%s CY,0%04xH.%d' % (instname, sfr, bit), pc+3)
         elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) == 1:
             bit = (mem[1] >> 4)
@@ -842,8 +823,7 @@ def disassemble(mem, pc):
         elif (mem[1] >> 4) < 8 and (mem[1] & 0x0f) in (0x4, 0x5, 0x6, 0x7):
             bit = (mem[1] >> 4)
             inst = (mem[1] & 0x0f) - 4
-            names = ('MOV1', 'AND1', 'OR1', 'XOR1')
-            instname = names[inst]
+            instname = ('MOV1', 'AND1', 'OR1', 'XOR1')[inst]
             saddr = _saddr(mem[2])
             if saddr == 0xff1e:
                 return ('%s CY,PSW.%d' % (instname, bit), pc+3)
@@ -915,26 +895,28 @@ def disassemble(mem, pc):
         raise NotImplementedError(hex(mem[0]))
 
 
-def _regpairname(regpair):
-    return ('AX', 'BC', 'DE', 'HL')[regpair]
+def _reg(opcode):
+    r = opcode & 0b111
+    return ('X', 'A', 'C', 'B', 'E', 'D', 'L', 'H')[r]
 
-def _regname(reg):
-    return ('X', 'A', 'C', 'B', 'E', 'D', 'L', 'H')[reg]
+def _regpair(opcode):
+    rp = (opcode >> 1) & 0b11
+    return ('AX', 'BC', 'DE', 'HL')[rp]
 
-def _saddr(byte):
-    saddr = 0xfe00 + byte
-    if byte < 0x20:
+def _bit(opcode):
+    return (opcode & 0b01110000) >> 4
+
+def _saddr(operand):
+    saddr = 0xfe00 + operand
+    if operand < 0x20:
         saddr += 0x100
     return saddr
 _saddrp = _saddr
 
-def _sfr(byte):
-    sfr = 0xff00 + byte
+def _sfr(operand):
+    sfr = 0xff00 + operand
     return sfr
 _sfrp = _sfr
-
-def _bit(byte):
-    return (byte & 0b01110000) >> 4
 
 def _resolve_rel(pc, displacement):
     if displacement & 0x80:
