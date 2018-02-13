@@ -21,19 +21,15 @@ def disassemble(mem, pc):
 
     # DBNZ 0fe20h,$label0         ;04 20 FD       saddr
     elif mem[0] == 0x04:
-        saddr = _saddr(mem[1])
-        disp = mem[2]
         new_pc = pc + 3
-        target = _resolve_rel(new_pc, disp)
-        return ('DBNZ 0%04xH,$0%04xH' % (saddr, target), new_pc)
+        saddr = _saddr(mem[1])
+        reldisp = mem[2]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('DBNZ 0%04xH,$0%04xH' % (saddr, reltarget), new_pc)
 
     # XCH A,[DE]
     elif mem[0] == 0x05:
         return ("XCH A,[DE]", pc+1)
-
-    # ILLEGAL
-    elif mem[0] == 0x06:
-        return ("ILLEGAL 0x06", pc+1)
 
     # 'XCH A,[HL]'
     elif mem[0] == 0x07:
@@ -136,14 +132,6 @@ def disassemble(mem, pc):
         sfr = _sfr(mem[1])
         imm8 = mem[2]
         return ("MOV 0%04xH,#0%02xH" % (sfr, imm8), pc+3)
-
-    # 0x15: ILLEGAL
-    elif mem[0] == 0x15:
-        return ("ILLEGAL 0x15", pc+1)
-
-    # 0x17: ILLEGAL
-    elif mem[0] == 0x17:
-        return ("ILLEGAL 0x17", pc+1)
 
     # 0x18: 'SUB A,!addr16'
     elif mem[0] == 0x18:
@@ -412,37 +400,37 @@ def disassemble(mem, pc):
 
     # 0x8a: 'DBNZ C,$rel   '
     elif mem[0] == 0x8a:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('DBNZ C,$0%04xH' % target, new_pc)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('DBNZ C,$0%04xH' % reltarget, new_pc)
 
     # 0x8b: 'DBNZ B,$rel   '
     elif mem[0] == 0x8b:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('DBNZ B,$0%04xH' % target, new_pc)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('DBNZ B,$0%04xH' % reltarget, new_pc)
 
     # BT 0fe20h.0,$label8         ;8C 20 FD       saddr
     # BT PSW.0,$label9            ;8C 1E FD
     elif mem[0] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
+        new_pc = pc + 3
         bit = _bit(mem[0])
         saddr = _saddr(mem[1])
-        disp = mem[2]
-        new_pc = pc + 3
-        target = _resolve_rel(new_pc, disp)
+        reldisp = mem[2]
+        reltarget = _resolve_rel(new_pc, reldisp)
         if saddr == 0xff1e:
-            return ('BT PSW.%d,$0%04xH' % (bit, target), new_pc)
+            return ('BT PSW.%d,$0%04xH' % (bit, reltarget), new_pc)
         else:
-            return ('BT 0%04xH.%d,$0%04xH' % (saddr, bit, target), new_pc)
+            return ('BT 0%04xH.%d,$0%04xH' % (saddr, bit, reltarget), new_pc)
 
     # 0x8d: 'BC $rel'
     elif mem[0] == 0x8d:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('BC $0%04xH' % target, pc+2)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('BC $0%04xH' % reltarget, pc+2)
 
     # 0x8e: 'MOV A,!addr16'
     elif mem[0] == 0x8e:
@@ -503,10 +491,10 @@ def disassemble(mem, pc):
 
     # 0x9d: 'BNC $rel'
     elif mem[0] == 0x9d:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('BNC $0%04xH' % target, new_pc)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('BNC $0%04xH' % reltarget, new_pc)
 
     # 0x9e: 'MOV !addr16,A'
     elif mem[0] == 0x9e:
@@ -540,10 +528,10 @@ def disassemble(mem, pc):
 
     # 0xad: 'BZ $rel   '
     elif mem[0] == 0xad:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('BZ $0%04xH' % target, new_pc)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('BZ $0%04xH' % reltarget, new_pc)
 
     # 0xae: 'MOV A,[HL+byte]'
     elif mem[0] == 0xae:
@@ -583,10 +571,10 @@ def disassemble(mem, pc):
 
     # 0xbd: 'BNZ $rel'
     elif mem[0] == 0xbd:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('BNZ $0%04xH' % target, new_pc)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('BNZ $0%04xH' % reltarget, new_pc)
 
     # 0xbe: 'MOV [HL+byte],A'
     elif mem[0] == 0xbe:
@@ -595,9 +583,6 @@ def disassemble(mem, pc):
 
     elif mem[0] == 0xbf:
         return ("BRK", pc+1)
-
-    elif mem[0] == 0xc0:
-        return ("ILLEGAL 0xc0", pc+1)
 
     elif mem[0] in (0xc2, 0xc4, 0xc6):
         regpair = _regpair(mem[0])
@@ -619,9 +604,6 @@ def disassemble(mem, pc):
         addr16 = mem[1] + (mem[2] << 8)
         return ('XCH A,!0%04xH' % addr16, pc+3)
 
-    elif mem[0] == 0xd0:
-        return ("ILLEGAL 0xd0", pc+1)
-
     elif mem[0] in (0xd2, 0xd4, 0xd6):
         regpair = _regpair(mem[0])
         return ("MOVW %s,AX" % regpair, pc+1)
@@ -641,9 +623,6 @@ def disassemble(mem, pc):
     elif mem[0] == 0xde:
         imm8 = mem[1]
         return ("XCH A,[HL+0%02xH]" % imm8, pc+2)
-
-    elif mem[0] == 0xe0:
-        return ("ILLEGAL 0xe0", pc+1)
 
     elif mem[0] in (0xe2, 0xe4, 0xe6):
         regpair = _regpair(mem[0])
@@ -709,10 +688,10 @@ def disassemble(mem, pc):
 
     # 0xfa: 'BR $rel'
     elif mem[0] == 0xfa:
-        disp = mem[1]
         new_pc = pc + 2
-        target = _resolve_rel(new_pc, disp)
-        return ('BR $0%04xH' % target, new_pc)
+        reldisp = mem[1]
+        reltarget = _resolve_rel(new_pc, reldisp)
+        return ('BR $0%04xH' % reltarget, new_pc)
 
     # MOVW 0fffeh,#0abcdh         ;FE FE CD AB    sfrp
     elif mem[0] == 0xfe:
@@ -753,23 +732,23 @@ def disassemble(mem, pc):
             instname = ('BTCLR', 'BT', 'BF')[inst]
 
             bit = mem[1] >> 4
-            disp = mem[2]
-            target = _resolve_rel(new_pc, disp)
+            reldisp = mem[2]
+            reltarget = _resolve_rel(new_pc, reldisp)
 
-            return ("%s A.%d,$0%04xH" % (instname, bit, target), new_pc)
+            return ("%s A.%d,$0%04xH" % (instname, bit, reltarget), new_pc)
         elif (mem[1] >> 4) < 0x08 and (mem[1] & 0x0f) in (0x01, 0x03):
             new_pc = pc + 4
 
             instname = 'BTCLR' if (mem[1] & 0x0f) == 0x01 else 'BF'
             bit = mem[1] >> 4
             saddr = _saddr(mem[2])
-            disp = mem[3]
-            target = _resolve_rel(new_pc, disp)
+            reldisp = mem[3]
+            reltarget = _resolve_rel(new_pc, reldisp)
 
             if saddr == 0xff1e:
-                return ("%s PSW.%d,$0%04xH" % (instname, bit, target), new_pc)
+                return ("%s PSW.%d,$0%04xH" % (instname, bit, reltarget), new_pc)
             else:
-                return ("%s 0%04xH.%d,$0%04xH" % (instname, saddr, bit, target), new_pc)
+                return ("%s 0%04xH.%d,$0%04xH" % (instname, saddr, bit, reltarget), new_pc)
         elif (mem[1] >> 4) < 0x08 and (mem[1] & 0x0f) in (0x5, 0x6, 0x7):
             new_pc = pc + 4
 
@@ -778,10 +757,10 @@ def disassemble(mem, pc):
 
             bit = mem[1] >> 4
             sfr = _sfr(mem[2])
-            disp = mem[3]
-            target = _resolve_rel(new_pc, disp)
+            reldisp = mem[3]
+            reltarget = _resolve_rel(new_pc, reldisp)
 
-            return ("%s 0%04xH.%d,$0%04xH" % (instname, sfr, bit, target), new_pc)
+            return ("%s 0%04xH.%d,$0%04xH" % (instname, sfr, bit, reltarget), new_pc)
         elif (mem[1] >> 4) in range(0x8, 0xf+1) and (mem[1] & 0x0f) in (0x5, 0x6, 0x7):
             new_pc = pc + 3
 
@@ -789,10 +768,10 @@ def disassemble(mem, pc):
             instname = ('BTCLR', 'BT', 'BF')[inst]
 
             bit = (mem[1] >> 4) - 0x08
-            disp = mem[2]
-            target = _resolve_rel(new_pc, disp)
+            reldisp = mem[2]
+            reltarget = _resolve_rel(new_pc, reldisp)
 
-            return ("%s [HL].%d,$0%04xH" % (instname, bit, target), new_pc)
+            return ("%s [HL].%d,$0%04xH" % (instname, bit, reltarget), new_pc)
         else:
             raise NotImplementedError("31 %02x" % mem[1])
 
@@ -895,7 +874,7 @@ def disassemble(mem, pc):
             raise NotImplementedError("71 %02x" % mem[1])
 
     else:
-        raise NotImplementedError(hex(mem[0]))
+        return ("ILLEGAL 0x%02x" % mem[0], pc+1)
 
 
 def _reg(opcode):

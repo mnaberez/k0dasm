@@ -47,13 +47,6 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(disasm, "XCH A,[DE]")
         self.assertEqual(new_pc, pc + len(mem))
 
-    def test_06_illegal(self):
-        pc = 0x1000
-        mem = [0x06]
-        disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "ILLEGAL 0x06")
-        self.assertEqual(new_pc, pc + len(mem))
-
     def test_07_xch_a_hl(self):
         pc = 0x1000
         mem = [0x07]
@@ -155,20 +148,6 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(disasm, "MOV 0%04xH,#0abH" % sfr)
             self.assertEqual(new_pc, pc + len(mem))
-
-    def test_15_illegal(self):
-        pc = 0x1000
-        mem = [0x15]
-        disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "ILLEGAL 0x15")
-        self.assertEqual(new_pc, pc + len(mem))
-
-    def test_17_illegal(self):
-        pc = 0x1000
-        mem = [0x17]
-        disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "ILLEGAL 0x17")
-        self.assertEqual(new_pc, pc + len(mem))
 
     def test_18_sub_a_addr16(self):
         pc = 0x1000
@@ -1391,13 +1370,6 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(disasm, "BRK")
         self.assertEqual(new_pc, pc + len(mem))
 
-    def test_c0_illegal(self):
-        pc = 0x1000
-        mem = [0xc0]
-        disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "ILLEGAL 0xc0")
-        self.assertEqual(new_pc, pc + len(mem))
-
     def test_c2_c4_c6_mov_ax_regpair(self):
         d = {0xC2: "MOVW AX,BC", 0xC4: "MOVW AX,DE", 0xC6: "MOVW AX,HL"}
 
@@ -1437,13 +1409,6 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(disasm, 'XCH A,!0%04xH' % addr16)
             self.assertEqual(new_pc, pc + len(mem))
 
-    def test_d0_illegal(self):
-        pc = 0x1000
-        mem = [0xd0]
-        disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "ILLEGAL 0xd0")
-        self.assertEqual(new_pc, pc + len(mem))
-
     def test_d2_d4_d6_mov_regpair(self):
         d = {0xD2: "MOVW BC,AX", 0xD4: "MOVW DE,AX", 0xD6: "MOVW HL,AX"}
 
@@ -1478,13 +1443,6 @@ class disassemble_tests(unittest.TestCase):
         mem = [0xde, 0xab]
         disasm, new_pc = disassemble(mem, pc)
         self.assertEqual(disasm, "XCH A,[HL+0abH]")
-        self.assertEqual(new_pc, pc + len(mem))
-
-    def test_e0_illegal(self):
-        pc = 0x1000
-        mem = [0xe0]
-        disasm, new_pc = disassemble(mem, pc)
-        self.assertEqual(disasm, "ILLEGAL 0xe0")
         self.assertEqual(new_pc, pc + len(mem))
 
     def test_e2_e4_e6_xchw_ax_regpair(self):
@@ -2040,6 +1998,14 @@ class disassemble_tests(unittest.TestCase):
             mem = [0xf2, saddr_low]
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(disasm, "MOV 0%04xH,A" % saddr)
+            self.assertEqual(new_pc, pc + len(mem))
+
+    def test_illegals(self):
+        for opcode in (0x06, 0x15, 0x17, 0xc0, 0xd0, 0xe0):
+            pc = 0x1000
+            mem = [opcode]
+            disasm, new_pc = disassemble(mem, pc)
+            self.assertEqual(disasm, "ILLEGAL 0x%02x" % opcode)
             self.assertEqual(new_pc, pc + len(mem))
 
 
