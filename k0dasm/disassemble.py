@@ -650,7 +650,7 @@ def disassemble(mem, pc):
     # SET1 PSW.7                  ;7A 1E
     # EI                          ;7A 1E          alias for SET1 PSW.7
     elif mem[0] in (0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a):
-        bit = ((mem[0] & 0b01110000) >> 4) & 0xff
+        bit = _bit(mem[0])
         saddr = _saddr(mem[1])
         if saddr == 0xff1e:
             if bit == 7:
@@ -664,7 +664,7 @@ def disassemble(mem, pc):
     # CLR1 PSW.7                  ;7B 1E
     # DI                          ;7B 1E          alias for CLR1 PSW.7
     elif mem[0] in (0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b):
-        bit = ((mem[0] & 0b01110000) >> 4) & 0xff
+        bit = _bit(mem[0])
         saddr = _saddr(mem[1])
         if saddr == 0xff1e:
             if bit == 7:
@@ -755,7 +755,7 @@ def disassemble(mem, pc):
 
     elif mem[0] == 0x61:
         new_pc = pc + 2
-        bit = ((mem[1] & 0b01110000) >> 4) & 0xff
+        bit = _bit(mem[1])
         regname = _regname(mem[1] & 0b111)
         if mem[1] == 0x80:
             return ('ADJBA', new_pc)
@@ -770,7 +770,7 @@ def disassemble(mem, pc):
         elif mem[1] == 0xf8:
             return ('SEL RB3', new_pc)
         elif mem[1] in range(0x00, 0x80):
-            inst = (mem[1] >> 4) & 0x0f
+            inst = mem[1] >> 4
             names = ('ADD', 'SUB', 'ADDC', 'SUBC', 'CMP', 'AND', 'OR', 'XOR')
             instname = names[inst]
 
@@ -864,7 +864,7 @@ def disassemble(mem, pc):
     # BT 0fe20h.0,$label8         ;8C 20 FD       saddr
     # BT PSW.0,$label9            ;8C 1E FD
     elif mem[0] in (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc):
-        bit = ((mem[0] & 0b01110000) >> 4) & 0xff
+        bit = _bit(mem[0])
         saddr = _saddr(mem[1])
         disp = mem[2]
         new_pc = pc + 3
@@ -932,6 +932,9 @@ def _sfr(byte):
     sfr = 0xff00 + byte
     return sfr
 _sfrp = _sfr
+
+def _bit(byte):
+    return (byte & 0b01110000) >> 4
 
 def _resolve_rel(pc, displacement):
     if displacement & 0x80:
