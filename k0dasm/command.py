@@ -10,8 +10,10 @@ def main():
     print("    org 0%04xh" % pc)
     while pc < len(data):
         disasm, new_pc = disassemble(data[pc:], pc)
+        if hasattr(disasm, 'ljust'):
+            raise Exception(hex(data[pc]))
         length = new_pc - pc
         inst = ' '.join(['%02x' % x for x in data[pc:pc+length]])
-        print("    %s ;%04x %s" % (disasm.ljust(22), pc, inst))
+        print("    %s ;%04x %s" % (str(disasm).ljust(22), pc, inst))
         pc = new_pc
     print("    end")
