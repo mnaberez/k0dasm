@@ -12,6 +12,6 @@ def main():
         disasm, new_pc = disassemble(data[pc:], pc)
         length = new_pc - pc
         inst = ' '.join(['%02x' % x for x in data[pc:pc+length]])
-        print("    %s ;%04x %s" % (disasm.ljust(20), pc, inst))
+        print("    %s ;%04x %s" % (disasm.ljust(22), pc, inst))
         pc = new_pc
     print("    end")
