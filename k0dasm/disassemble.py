@@ -15,14 +15,14 @@ def disassemble(mem, pc):
     # movw ax,0fe20h              ;02 CE AB       saddrp
     elif mem[0] == 0x02:
         new_pc = pc + 3
-        saddrp = mem[1] + (mem[2] << 8)
+        saddrp = _saddrp_abs(mem[1], mem[2])
         inst = Instruction('movw ax,{saddrp}', saddrp=saddrp)
         return (inst, new_pc)
 
     # MOVW 0fe20h,AX              ;03 CE AB       saddrp
     elif mem[0] == 0x03:
         new_pc = pc + 3
-        saddrp = mem[1] + (mem[2] << 8)
+        saddrp = _saddrp_abs(mem[1], mem[2])
         inst = Instruction('movw {saddrp},ax', saddrp=saddrp)
         return (inst, new_pc)
 
@@ -1183,17 +1183,33 @@ def _regpair(opcode):
 def _bit(opcode):
     return (opcode & 0b01110000) >> 4
 
-def _saddr(operand):
-    saddr = 0xfe00 + operand
-    if operand < 0x20:
+def _saddr(low):
+    saddr = 0xfe00 + low
+    if low < 0x20:
         saddr += 0x100
     return saddr
-_saddrp = _saddr
 
-def _sfr(operand):
-    sfr = 0xff00 + operand
+def _saddrp(low):
+    saddrp = _saddr(low)
+    if saddrp & 1 != 0:
+        raise IllegalInstructionError("saddrp must be an even address")
+    return _saddr(low)
+
+def _saddrp_abs(low, high):
+    saddrp = low + (high << 8)
+    if saddrp & 1 != 0:
+        raise IllegalInstructionError("saddrp must be an even address")
+    return saddrp
+
+def _sfr(low):
+    sfr = 0xff00 + low
     return sfr
-_sfrp = _sfr
+
+def _sfrp(low):
+    sfrp = _sfr(low)
+    if sfrp & 1 != 0:
+        raise IllegalInstructionError("sfrp must be an even address")
+    return sfrp
 
 def _resolve_rel(pc, displacement):
     if displacement & 0x80:
@@ -1254,3 +1270,7 @@ class Instruction(object):
         if self.sfrp is not None:
             disasm = disasm.replace('{sfrp}', '0%04xh' % self.sfrp)
         return disasm
+
+
+class IllegalInstructionError(Exception):
+    pass

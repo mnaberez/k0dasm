@@ -1,6 +1,9 @@
 import sys
 import unittest
-from k0dasm.disassemble import disassemble
+from k0dasm.disassemble import (
+    disassemble,
+    IllegalInstructionError,
+)
 
 class disassemble_tests(unittest.TestCase):
     def test_00_nop(self):
@@ -24,12 +27,24 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(str(disasm), "movw ax,0fe20h")
         self.assertEqual(new_pc, pc + len(mem))
 
+    def test_02_movw_ax_saddrp_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0x02, 0x21, 0xfe]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
+
     def test_03_movw_saddrp_ax(self):
         pc = 0x1000
         mem = [0x03, 0x20, 0xfe]
         disasm, new_pc = disassemble(mem, pc)
         self.assertEqual(str(disasm), "movw 0fe20h,ax")
         self.assertEqual(new_pc, pc + len(mem))
+
+    def test_03_movw_saddrp_ax_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0x03, 0x21, 0xfe]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_04_dbnz_saddr_disp(self):
         pc = 0x1000
@@ -1270,6 +1285,12 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(str(disasm), "movw ax,0%04xh" % sfrp)
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_a9_movw_ax_sfrp_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0xa9, 0x01]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
+
     def test_aa_mov_a_hl_plus_c(self):
         pc = 0x1000
         mem = [0xaa]
@@ -1344,6 +1365,12 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(str(disasm), "movw 0%04xh,ax" % sfrp)
             self.assertEqual(new_pc, pc + len(mem))
+
+    def test_b9_movw_sfrp_ax_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0xb9, 0x01]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_ba_mov_hl_plus_c_a(self):
         pc = 0x1000
@@ -1519,6 +1546,12 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(str(disasm), "movw 0%04xh,#0abcdh" % sfrp)
             self.assertEqual(new_pc, pc + len(mem))
+
+    def test_fe_movw_sfrp_imm16_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0xfe, 0x01, 0xcd, 0xab]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_fa_br_rel(self):
         pc = 0x1000
@@ -1913,6 +1946,12 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(str(disasm), "movw ax,0%04xh" % saddrp)
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_89_xx_movw_ax_saddrp_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0x89, 0x01]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
+
     def test_bt_psw_bit_rel(self):
         opcodes = (0x8c, 0x9c, 0xac, 0xbc, 0xcc, 0xdc, 0xec, 0xfc)
         pc = 0x1000
@@ -1943,7 +1982,7 @@ class disassemble_tests(unittest.TestCase):
 
     def test_99_xx_movw_saddrp_ax(self):
         pc = 0x1000
-        for saddrp in range(0xfe20, 0xff20):
+        for saddrp in range(0xfe20, 0xff20, 2):
             if saddrp == 0xff1c:
                 continue # special case; would disassemble as MOVW AX,SP
             saddrp_low = saddrp & 0xff
@@ -1951,6 +1990,12 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(str(disasm), "movw 0%04xh,ax" % saddrp)
             self.assertEqual(new_pc, pc + len(mem))
+
+    def test_99_xx_movw_saddrp_ax_raises_for_odd_address(self):
+        pc = 0x1000
+        mem = [0x99, 0x01]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_ee_1c_movw_sp_imm16(self):
         pc = 0x1000
@@ -1961,7 +2006,7 @@ class disassemble_tests(unittest.TestCase):
 
     def test_ee_xx_movw_saddrp_imm16(self):
         pc = 0x1000
-        for saddrp in range(0xfe20, 0xff20):
+        for saddrp in range(0xfe20, 0xff20, 2):
             if saddrp == 0xff1c:
                 continue # special case; would disassemble as MOVW SP,#imm16
             saddrp_low = saddrp & 0xff
@@ -1969,6 +2014,12 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(str(disasm), "movw 0%04xh,#0abcdh" % saddrp)
             self.assertEqual(new_pc, pc + len(mem))
+
+    def test_ee_xx_movw_saddrp_imm16_raise_for_odd_address(self):
+        pc = 0x1000
+        mem = [0xee, 0x01, 0xcd, 0xab]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_f0_e1_mov_a_psw(self):
         pc = 0x1000
