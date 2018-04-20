@@ -2079,9 +2079,8 @@ class disassemble_tests(unittest.TestCase):
         for opcode in (0x06, 0x15, 0x17, 0xc0, 0xd0, 0xe0):
             pc = 0x1000
             mem = [opcode]
-            disasm, new_pc = disassemble(mem, pc)
-            self.assertEqual(disasm, "illegal 0x%02x" % opcode)
-            self.assertEqual(new_pc, pc + len(mem))
+            with self.assertRaises(IllegalInstructionError):
+                disassemble(mem, pc)
 
 
 def test_suite():

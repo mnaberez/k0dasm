@@ -1168,9 +1168,7 @@ def disassemble(mem, pc):
             raise IllegalInstructionError("Illegal byte follows opcode 0x71: 0x%02x" % mem[1])
 
     else:
-        new_pc = pc + 1
-        # TODO fixme
-        return ("illegal 0x%02x" % mem[0], new_pc)
+        raise IllegalInstructionError("Illegal opcode 0x%02x" % mem[0])
 
 
 def _reg(opcode):
