@@ -1198,6 +1198,8 @@ def _saddrp_abs(low, high):
     saddrp = low + (high << 8)
     if saddrp & 1 != 0:
         raise IllegalInstructionError("saddrp must be an even address")
+    if (saddrp < 0xfe20) or (saddrp > 0xff1f):
+        raise IllegalInstructionError("saddrp must be in range 0xfe20-0xff1f")
     return saddrp
 
 def _sfr(low):

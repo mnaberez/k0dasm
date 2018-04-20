@@ -33,6 +33,12 @@ class disassemble_tests(unittest.TestCase):
         with self.assertRaises(IllegalInstructionError):
             disassemble(mem, pc)
 
+    def test_02_movw_ax_saddrp_raises_for_out_of_range_address(self):
+        pc = 0x1000
+        mem = [0x02, 0x19, 0xfe]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
+
     def test_03_movw_saddrp_ax(self):
         pc = 0x1000
         mem = [0x03, 0x20, 0xfe]
@@ -43,6 +49,12 @@ class disassemble_tests(unittest.TestCase):
     def test_03_movw_saddrp_ax_raises_for_odd_address(self):
         pc = 0x1000
         mem = [0x03, 0x21, 0xfe]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
+
+    def test_03_movw_saddrp_ax_raises_for_out_of_range_address(self):
+        pc = 0x1000
+        mem = [0x03, 0x19, 0xfe]
         with self.assertRaises(IllegalInstructionError):
             disassemble(mem, pc)
 
