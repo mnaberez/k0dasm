@@ -14,12 +14,21 @@ def main():
     while pc < len(data):
         try:
             disasm, new_pc = disassemble(data[pc:], pc)
-        except IllegalInstructionError:
+            illegal = False
+        except IllegalInstructionError as e:
             disasm = "db 0%02xh ;illegal" % data[pc]
             new_pc = pc + 1
+            illegal = True
 
         length = new_pc - pc
-        inst = ' '.join(['%02x' % x for x in data[pc:pc+length]])
+        instdata = data[pc:pc+length]
+
+        if not illegal: # if illegal, instdata will only one byte
+            if (instdata[0] == 0x03) and (instdata[2] == 0xff):
+                disasm = "db 0%02xh, 0%02xh, 0%02xh ;ambiguous %s" % (
+                    instdata[0], instdata[1], instdata[2], disasm)
+
+        inst = ' '.join(['%02x' % x for x in instdata])
         print("    %s ;%04x %s" % (str(disasm).ljust(22), pc, inst))
         pc = new_pc
     print("    end")

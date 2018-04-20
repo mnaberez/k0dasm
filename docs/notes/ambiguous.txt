@@ -2,3 +2,22 @@ sfr (opcode f4) vs saddr (opcode f0)
 
 weird case of ff1e = psw for set1,clr1
 weird case of ff1c = sp  for MOVW AX,SP
+
+
+Reassembly Error from VW Premium 5 ROM
+--------------------------------------
+
+18974 AEF3  9902              movw 0ff02h,ax         ;aef3 03 02 ff
+
+    def test_03_movw_saddrp_ax(self):
+    def test_99_xx_movw_saddrp_ax(self):
+
+    original:
+        movw 0ff02h,ax         ;aef3 03 02 ff
+
+    can also be assembled as:
+        movw 0ff02h,ax         ;aef3 99 92
+
+    if opcode is 0x03, and saddrp high byte is 0xff,
+    it can also be written as 0x99 so it is ambiguous
+
