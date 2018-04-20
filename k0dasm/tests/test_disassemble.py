@@ -755,6 +755,12 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(str(disasm), "xor1 cy,a.%d" % bit)
             self.assertEqual(new_pc, pc + len(mem))
 
+    def test_61_raises_for_illegal_second_opcode(self):
+        pc = 0x1000
+        mem = [0x61, 0x81]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
+
     def test_68_or_a_addr16(self):
         pc = 0x1000
         for addr16 in (0x0000, 0xabcd, 0xffff):
@@ -1026,6 +1032,12 @@ class disassemble_tests(unittest.TestCase):
             disasm, new_pc = disassemble(mem, pc)
             self.assertEqual(str(disasm), 'mov1 [hl].%d,cy' % bit)
             self.assertEqual(new_pc, pc + len(mem))
+
+    def test_71_raises_for_illegal_second_opcode(self):
+        pc = 0x1000
+        mem = [0x71, 0xb0]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_78_xor_a_addr16(self):
         pc = 0x1000
@@ -1878,6 +1890,12 @@ class disassemble_tests(unittest.TestCase):
         disasm, new_pc = disassemble(mem, pc)
         self.assertEqual(str(disasm), "br ax")
         self.assertEqual(new_pc, pc + len(mem))
+
+    def test_31_raises_for_illegal_second_opcode(self):
+        pc = 0x1000
+        mem = [0x31, 0x38]
+        with self.assertRaises(IllegalInstructionError):
+            disassemble(mem, pc)
 
     def test_7a_ei_alias_for_set1_psw_bit_7(self):
         pc = 0x1000

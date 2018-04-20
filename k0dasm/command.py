@@ -15,7 +15,7 @@ def main():
         try:
             disasm, new_pc = disassemble(data[pc:], pc)
         except IllegalInstructionError:
-            disasm = "    db %02x" % data[pc]
+            disasm = "db %02x ;illegal" % data[pc]
             new_pc = pc + 1
 
         length = new_pc - pc

@@ -1033,7 +1033,7 @@ def disassemble(mem, pc):
             inst = Instruction(name + " [hl].{bit},{reltarget}", bit=bit, reltarget=reltarget)
             return (inst, new_pc)
         else:
-            raise NotImplementedError("31 %02x" % mem[1])
+            raise IllegalInstructionError("Illegal byte follows opcode 0x31: 0x%02x" % mem[1])
 
     elif mem[0] == 0x61:
         new_pc = pc + 2
@@ -1088,7 +1088,7 @@ def disassemble(mem, pc):
             inst = Instruction('xor1 cy,a.{bit}', bit=bit)
             return (inst, new_pc)
         else:
-            raise NotImplementedError("61 %02x" % mem[1])
+            raise IllegalInstructionError("Illegal byte follows opcode 0x61: 0x%02x" % mem[1])
 
     elif mem[0] == 0x71:
         if mem[1] == 0x00:
@@ -1165,10 +1165,11 @@ def disassemble(mem, pc):
                 inst = Instruction(instname + ' cy,{saddr}.{bit}', saddr=saddr, bit=bit)
                 return (inst, new_pc)
         else:
-            raise NotImplementedError("71 %02x" % mem[1])
+            raise IllegalInstructionError("Illegal byte follows opcode 0x71: 0x%02x" % mem[1])
 
     else:
         new_pc = pc + 1
+        # TODO fixme
         return ("illegal 0x%02x" % mem[0], new_pc)
 
 
