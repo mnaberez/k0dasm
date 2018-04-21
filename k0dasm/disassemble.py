@@ -1,5 +1,7 @@
 
 def disassemble(mem, pc):
+    mem = mem.contents[pc:] # XXX hack
+
     # nop                         ;00
     if mem[0] == 0x00:
         inst = Instruction("nop",
@@ -1835,6 +1837,17 @@ class Instruction(object):
             disasm = disasm.replace('{sfrp}', '0%04xh' % self.sfrp)
         return disasm
 
+    @property
+    def address(self): # XXX hack
+        if self.addr5 is not None:
+            return self.addr5
+        if self.addr11 is not None:
+            return self.addr11
+        if self.addr16 is not None:
+            return self.addr16
+        if self.reltarget is not None:
+            return self.reltarget
+        raise NotImplementedError(str(self))
 
 class IllegalInstructionError(Exception):
     pass
