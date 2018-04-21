@@ -1849,6 +1849,10 @@ class Instruction(object):
             return self.reltarget
         raise NotImplementedError(str(self))
 
+    @property
+    def all_bytes(self):
+        return [self.opcode] + list(self.operands)
+
 class IllegalInstructionError(Exception):
     pass
 
