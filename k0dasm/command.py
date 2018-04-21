@@ -14,8 +14,10 @@ def main():
 
     start_address = 0
     entry_points = []
-    vectors = [
+
+    hardware_vectors = [
         0x0000, # RST
+        0x0002, # (unused)
         0x0004, # INTWDT
         0x0004, # INTWDT
         0x0006, # INTP0
@@ -40,10 +42,19 @@ def main():
         0x002c, # INTTM011
         0x002e, # INTAD00
         0x0030, # INTAD01
+        0x0032, # (unused)
         0x0034, # INTWTN0
         0x0036, # INTKR
+        0x0038, # (unused)
+        0x003a, # (unused)
+        0x003c, # (unused)
         0x003e,  # BRK_I
     ]
+
+    callt_vectors = list(range(0x40,0x7f, 2))
+
+    vectors = hardware_vectors + callt_vectors
+
 
     traceable_range = range(start_address, start_address + len(rom) + 1)
     tracer = Tracer(memory, entry_points, vectors, traceable_range)
