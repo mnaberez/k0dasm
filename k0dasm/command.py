@@ -1,27 +1,26 @@
 import sys
-from k0dasm.disassemble import (
-    disassemble,
-    IllegalInstructionError,
-)
+
+from k0dasm.disassemble import disassemble, IllegalInstructionError
 
 def main():
     with open(sys.argv[1], 'rb') as f:
-        data = bytearray(f.read())
+        rom = bytearray(f.read())
 
-    pc = data[0] + (data[1] << 8) # reset vector
+    pc = rom[0] + (rom[1] << 8) # reset vector
 
     print("    org 0%04xh" % pc)
-    while pc < len(data):
+    while pc < len(rom):
         try:
-            disasm, new_pc = disassemble(data[pc:], pc)
+            disasm = disassemble(rom[pc:], pc)
+            new_pc = pc + len(disasm)
             illegal = False
         except IllegalInstructionError as e:
-            disasm = "db 0%02xh ;illegal" % data[pc]
+            disasm = "db 0%02xh ;illegal" % rom[pc]
             new_pc = pc + 1
             illegal = True
 
         length = new_pc - pc
-        instdata = data[pc:pc+length]
+        instdata = rom[pc:pc+length]
 
         if not illegal: # if illegal, instdata will only one byte
             if (instdata[0] == 0x03) and (instdata[2] == 0xff):
