@@ -1,25 +1,21 @@
 import struct
 
 class Printer(object):
-    def __init__(self, memory, start_address, symbol_table):
+    def __init__(self, memory, start_address, end_address, symbol_table):
         self.memory = memory
         self.start_address = start_address
+        self.end_address = end_address
         self.symbol_table = symbol_table
         self.last_line_type = None
 
-        class Foo:
-            symbols = {}
-        self.symbol_table = Foo
-
-
     def print_listing(self):
         self.print_header()
-        #self.print_symbols()
+        self.print_symbols()
 
         address = self.start_address
-        while address < len(self.memory):
-            #self.print_blank(address)
-            #self.print_label(address)
+        while address <= self.end_address:
+            self.print_blank(address)
+            self.print_label(address)
 
             if self.memory.is_instruction_start(address):
                 inst = self.memory.get_instruction(address)
@@ -45,16 +41,15 @@ class Printer(object):
         print('    end')
 
     def print_symbols(self):
-        return
         used_symbols = set()
         for address, inst in self.memory.iter_instructions():
             if inst.address in self.symbol_table.symbols:
                 used_symbols.add(inst.address)
-            if inst.bittest_address in self.symbol_table.symbols:
-                used_symbols.add(inst.bittest_address)
-            if inst.stores_immediate_word_in_pointer:
-                if inst.immediate in self.symbol_table.symbols:
-                    used_symbols.add(inst.immediate)
+            # if inst.bittest_address in self.symbol_table.symbols:
+            #     used_symbols.add(inst.bittest_address)
+            # if inst.stores_immediate_word_in_pointer:
+            #     if inst.immediate in self.symbol_table.symbols:
+            #         used_symbols.add(inst.immediate)
 
         for address, target in self.memory.iter_vectors():
             if target in self.symbol_table.symbols:
@@ -78,8 +73,19 @@ class Printer(object):
         self.last_line_type = typ
 
     def print_label(self, address):
-        if address in self.symbol_table.symbols:
-            print("\n%s:" % self.format_ext_address(address))
+        symbol = self.symbol_table.symbols.get(address)
+        if symbol is None:
+            return
+
+        # special case to hide unnecessary labels for vectors
+        if self.memory.is_vector_start(address):
+            jumped = self.memory.is_jump_target(address)
+            called = self.memory.is_call_target(address)
+            if not jumped or called: # XXX may also be read as data
+                return
+
+        name, desc = symbol
+        print("\n%s:" % name)
 
     def print_data_line(self, address):
         line = ('    db 0%02xh' % self.memory[address]).ljust(28)

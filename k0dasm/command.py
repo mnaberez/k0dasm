@@ -4,6 +4,7 @@ from k0dasm.disassemble import disassemble
 from k0dasm.memory import Memory
 from k0dasm.trace import Tracer
 from k0dasm.listing import Printer
+from k0dasm.symbols import SymbolTable, D78F0831Y_SYMBOLS
 
 def main():
     with open(sys.argv[1], 'rb') as f:
@@ -51,7 +52,7 @@ def main():
         0x003e,  # BRK_I
     ]
 
-    callt_vectors = list(range(0x40,0x7f, 2))
+    callt_vectors = list(range(0x40, 0x7f, 2))
 
     vectors = hardware_vectors + callt_vectors
 
@@ -60,9 +61,13 @@ def main():
     tracer = Tracer(memory, entry_points, vectors, traceable_range)
     tracer.trace(disassemble)
 
+    symbol_table = SymbolTable(D78F0831Y_SYMBOLS)
+    symbol_table.generate(memory, start_address) # xxx should pass traceable_range
+
     printer = Printer(memory,
                       start_address,
-                      None, # symbol_table
+                      traceable_range[-1] - 1,
+                      symbol_table
                       )
     printer.print_listing()
 

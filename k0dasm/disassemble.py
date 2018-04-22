@@ -1847,7 +1847,7 @@ class Instruction(object):
             return self.addr16
         if self.reltarget is not None:
             return self.reltarget
-        raise NotImplementedError(str(self))
+        return None
 
     @property
     def all_bytes(self):
