@@ -147,12 +147,19 @@ def disassemble(mem, pc):
     # callt [0040H]               ;C1
     # CALLT [{addr5}]             0b11ttttt1                            1
     elif (mem[pc+0] & 0b11000001) == 0b11000001:
+        # parse vector address from opcode
         offset = (mem[pc+0] & 0b00111110) >> 1
         addr5 = 0x40 + (offset * 2)
+
+        # read address in vector
+        target_low, target_high = mem[addr5], mem[addr5+1]
+        target = (target_high << 8) + target_low
+
         inst = Instruction("callt {addr5}",
                            opcode=mem[pc+0],
                            operands=(),
                            addr5=addr5,
+                           addr5target=target,
                            flow_type=FlowTypes.SubroutineCall,)
         return inst
 
@@ -1776,7 +1783,7 @@ def _resolve_rel(pc, displacement):
 
 
 class Instruction(object):
-    def __init__(self, template, saddrp=None, saddr=None, reltarget=None,
+    def __init__(self, template, saddrp=None, saddr=None, reltarget=None, addr5target=None,
                                  addr5=None, addr11=None, addr16=None,
                                  offset=None, bit=None, imm8=None, imm16=None,
                                  sfr=None, sfrp=None, reg=None, regpair=None,
@@ -1785,6 +1792,7 @@ class Instruction(object):
         self.saddrp = saddrp
         self.saddr = saddr
         self.reltarget = reltarget
+        self.addr5target = addr5target
         self.addr5 = addr5
         self.addr11 = addr11
         self.addr16 = addr16
@@ -1837,12 +1845,14 @@ class Instruction(object):
 
     @property
     def address(self): # XXX hack
-        if self.addr5 is not None:
-            return self.addr5
-        if self.addr11 is not None:
-            return self.addr11
+        # direct addresses
         if self.addr16 is not None:
             return self.addr16
+        if self.addr11 is not None:
+            return self.addr11
+        # indirect addresses
+        if self.addr5target is not None:
+            return self.addr5target
         if self.reltarget is not None:
             return self.reltarget
         return None
