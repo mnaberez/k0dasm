@@ -46,20 +46,16 @@ class Printer(object):
     def print_symbols(self):
         used_symbols = set()
         for address, inst in self.memory.iter_instructions():
-            if inst.address in self.symbol_table.symbols:
+            if (inst.address is not None) and (inst.address in self.symbol_table.symbols.values()):
                 used_symbols.add(inst.address)
-            # if inst.bittest_address in self.symbol_table.symbols:
-            #     used_symbols.add(inst.bittest_address)
-            # if inst.stores_immediate_word_in_pointer:
-            #     if inst.immediate in self.symbol_table.symbols:
-            #         used_symbols.add(inst.immediate)
+            # TODO actually compute used symbols
 
         for address, target in self.memory.iter_vectors():
             if target in self.symbol_table.symbols:
                 used_symbols.add(target)
 
         for address in sorted(used_symbols):
-            if address < self.start_address:
+            if address > self.end_address:
                 name, comment = self.symbol_table.symbols[address]
                 line = ("    %s = 0x%02x" % (name, address)).ljust(28)
                 if comment:
@@ -103,8 +99,8 @@ class Printer(object):
 
     def print_vector_line(self, address):
         target = struct.unpack('<H', self.memory[address:address+2])[0]
-        #target = self.format_ext_address(target) XXX
-        line = ('    dw %s' % intel_word(target)).ljust(28)
+        target = self.format_ext_address(target)
+        line = ('    dw %s' % target).ljust(28)
         line += ';%04x  %02x %02x       VECTOR' % (address, self.memory[address], self.memory[address+1])
         name, comment = self.symbol_table.symbols.get(address, ('',''))
         if comment:
@@ -122,8 +118,7 @@ class Printer(object):
         #         name, comment = self.symbol_table.symbols[inst.immediate]
         #         inst.disasm_template = inst.disasm_template.replace("IMW", name)
 
-        disasm = str(inst)
-        #disasm = self.format_instruction(inst)
+        disasm = self.format_instruction(inst)
         hexdump = (' '.join([ '%02x' % h for h in inst.all_bytes ])).ljust(8)
 
         # TODO handle amgibuous reassembly
@@ -136,41 +131,40 @@ class Printer(object):
 
         print(line)
 
-    # TODO leftovers from f2mc8dasm
-    # def format_instruction(self, inst):
-    #     d = {'OPC': '0x%02x' % inst.opcode}
-    #
-    #     if inst.immediate is not None:
-    #         d['IMB'] = '0x%02x' % inst.immediate
-    #         d['IMW'] = '0x%04x' % inst.immediate
-    #     if inst.address is not None:
-    #         d['EXT'] = self.format_ext_address(inst.address)
-    #         d['REL'] = self.format_ext_address(inst.address)
-    #         d['DIR'] = self.format_dir_address(inst.address)
-    #     if inst.bittest_address is not None:
-    #         d['DIR'] = self.format_ext_address(inst.bittest_address)
-    #     if inst.ixd_offset is not None:
-    #         d['IXD'] = '0x%02x' % inst.ixd_offset
-    #     if inst.callv is not None:
-    #         d['VEC'] = '%d' % inst.callv
-    #     if inst.bit is not None:
-    #         d['BIT'] = '%d' % inst.bit
-    #     if inst.register is not None:
-    #         d['REG'] = '%d' % inst.register
-    #
-    #     disasm = inst.disasm_template
-    #     for k, v in d.items():
-    #         disasm = disasm.replace(k, v)
-    #     return disasm
-    #
-    # def format_ext_address(self, address):
-    #     if address in self.symbol_table.symbols:
-    #         name, comment = self.symbol_table.symbols[address]
-    #         return name
-    #     return '0x%04x' % address
-    #
-    # def format_dir_address(self, address):
-    #     if address in self.symbol_table.symbols:
-    #         name, comment = self.symbol_table.symbols[address]
-    #         return name
-    #     return '0x%02x' % address
+    def format_instruction(self, inst):
+        disasm = inst.template
+        if inst.saddrp is not None:
+            disasm = disasm.replace('{saddrp}', self.format_ext_address(inst.saddrp))
+        if inst.saddr is not None:
+            disasm = disasm.replace('{saddr}', self.format_ext_address(inst.saddr))
+        if inst.reltarget is not None:
+            disasm = disasm.replace('{reltarget}', '$' + self.format_ext_address(inst.reltarget))
+        if inst.addr5 is not None:
+            disasm = disasm.replace('{addr5}', '[%s]' % intel_word(inst.addr5))
+        if inst.addr11 is not None:
+            disasm = disasm.replace('{addr11}', '!' + self.format_ext_address(inst.addr11))
+        if inst.addr16 is not None:
+            disasm = disasm.replace('{addr16}', '!' + self.format_ext_address(inst.addr16))
+        if inst.offset is not None:
+            disasm = disasm.replace('{offset}', intel_byte(inst.offset))
+        if inst.bit is not None:
+            disasm = disasm.replace('{bit}', '%d' % inst.bit)
+        if inst.imm8 is not None:
+            disasm = disasm.replace('{imm8}', '#' + intel_byte(inst.imm8))
+        if inst.imm16 is not None:
+            disasm = disasm.replace('{imm16}', '#' + intel_word(inst.imm16))
+        if inst.reg is not None:
+            disasm = disasm.replace('{reg}', inst.reg)
+        if inst.regpair is not None:
+            disasm = disasm.replace('{regpair}', inst.regpair)
+        if inst.sfr is not None:
+            disasm = disasm.replace('{sfr}', self.format_ext_address(inst.sfr))
+        if inst.sfrp is not None:
+            disasm = disasm.replace('{sfrp}', self.format_ext_address(inst.sfrp))
+        return disasm
+
+    def format_ext_address(self, address):
+        if address in self.symbol_table.symbols:
+            name, comment = self.symbol_table.symbols[address]
+            return name
+        return intel_word(address)
