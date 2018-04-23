@@ -10,7 +10,7 @@ testprog.lmf: testprog.prn
 	lk78k0 testprog.rel
 
 testprog.prn:
-	ra78k0 -cf0833y testprog.asm
+	ra78k0 -cf0831y testprog.asm
 
 list: testprog.prn
 	cat testprog.prn
