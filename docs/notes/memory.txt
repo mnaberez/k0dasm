@@ -1,5 +1,33 @@
+Addressing
+----------
 
 saddr = Label or FE20H to FF1FH immediate data
 saddrp = Label or FE20H to FF1FH immediate data (even address only)
 
-callt area = 0040H-007FH
+
+Memory Map
+----------
+
+0040-007F  CALLT area
+    64 byte area
+
+0800-0FFF  CALLT area
+    2048 byte area
+
+-FE1F  Stack
+    Pushing decrements SP
+    Radio initializes SP to 0xFE1F
+
+F000-F7FF Internal expansion RAM area (2KB)
+    Radio clears this area with 0
+
+FB00-FECA
+    Radio clears this area with 0
+
+FE20-FEFF Internal high-speed RAM (seems wrong, should be 1KB)
+    Each 78K/0 Series product incorporates an internal high-speed RAM. In the 32-byte area
+    FEE0H to FEFFH of these areas, 4 banks of general-purpose registers, each bank consisting
+    of eight 8-bit registers, are allocated.  The internal high-speed RAM can also be used as
+    a stack memory.
+
+FF00-FF1F Special Function Register (SFR) area
