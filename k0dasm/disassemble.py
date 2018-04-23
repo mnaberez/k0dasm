@@ -1,3 +1,4 @@
+from k0dasm.utils import intel_byte, intel_word
 
 def disassemble(mem, pc):
     # nop                         ;00
@@ -1814,33 +1815,33 @@ class Instruction(object):
     def __str__(self):
         disasm = self.template
         if self.saddrp is not None:
-            disasm = disasm.replace('{saddrp}', '0%04xh' % self.saddrp)
+            disasm = disasm.replace('{saddrp}', intel_word(self.saddrp))
         if self.saddr is not None:
-            disasm = disasm.replace('{saddr}', '0%04xh' % self.saddr)
+            disasm = disasm.replace('{saddr}', intel_word(self.saddr))
         if self.reltarget is not None:
-            disasm = disasm.replace('{reltarget}', '$0%04xh' % self.reltarget)
+            disasm = disasm.replace('{reltarget}', '$' + intel_word(self.reltarget))
         if self.addr5 is not None:
-            disasm = disasm.replace('{addr5}', '[0%04xh]' % self.addr5)
+            disasm = disasm.replace('{addr5}', '[%s]' % intel_word(self.addr5))
         if self.addr11 is not None:
-            disasm = disasm.replace('{addr11}', '!0%04xh' % self.addr11)
+            disasm = disasm.replace('{addr11}', '!' + intel_word(self.addr11))
         if self.addr16 is not None:
-            disasm = disasm.replace('{addr16}', '!0%04xh' % self.addr16)
+            disasm = disasm.replace('{addr16}', '!' + intel_word(self.addr16))
         if self.offset is not None:
-            disasm = disasm.replace('{offset}', '0%02xh' % self.offset)
+            disasm = disasm.replace('{offset}', intel_byte(self.offset))
         if self.bit is not None:
             disasm = disasm.replace('{bit}', '%d' % self.bit)
         if self.imm8 is not None:
-            disasm = disasm.replace('{imm8}', '#0%02xh' % self.imm8)
+            disasm = disasm.replace('{imm8}', '#' + intel_byte(self.imm8))
         if self.imm16 is not None:
-            disasm = disasm.replace('{imm16}', '#0%04xh' % self.imm16)
+            disasm = disasm.replace('{imm16}', '#' + intel_word(self.imm16))
         if self.reg is not None:
-            disasm = disasm.replace('{reg}', '%s' % self.reg)
+            disasm = disasm.replace('{reg}', self.reg)
         if self.regpair is not None:
-            disasm = disasm.replace('{regpair}', '%s' % self.regpair)
+            disasm = disasm.replace('{regpair}', self.regpair)
         if self.sfr is not None:
-            disasm = disasm.replace('{sfr}', '0%04xh' % self.sfr)
+            disasm = disasm.replace('{sfr}', intel_word(self.sfr))
         if self.sfrp is not None:
-            disasm = disasm.replace('{sfrp}', '0%04xh' % self.sfrp)
+            disasm = disasm.replace('{sfrp}', intel_word(self.sfrp))
         return disasm
 
     @property
@@ -1873,3 +1874,4 @@ class FlowTypes(object):
     ConditionalJump = 4
     SubroutineCall = 5
     SubroutineReturn = 6
+

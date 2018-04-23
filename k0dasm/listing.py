@@ -1,5 +1,8 @@
 import struct
 
+from k0dasm.utils import intel_byte, intel_word
+
+
 class Printer(object):
     def __init__(self, memory, start_address, end_address, symbol_table):
         self.memory = memory
@@ -88,7 +91,7 @@ class Printer(object):
         print("\n%s:" % name)
 
     def print_data_line(self, address):
-        line = ('    db 0%02xh' % self.memory[address]).ljust(28)
+        line = ('    db %s' % intel_byte(self.memory[address])).ljust(28)
         line += ';%04x  %02x          DATA %s ' % (address, self.memory[address], self._data_byte_repr(self.memory[address]))
         print(line)
 
@@ -100,9 +103,8 @@ class Printer(object):
 
     def print_vector_line(self, address):
         target = struct.unpack('<H', self.memory[address:address+2])[0]
-        target = "0%04xh" % target
         #target = self.format_ext_address(target) XXX
-        line = ('    dw %s' % target).ljust(28)
+        line = ('    dw %s' % intel_word(target)).ljust(28)
         line += ';%04x  %02x %02x       VECTOR' % (address, self.memory[address], self.memory[address+1])
         name, comment = self.symbol_table.symbols.get(address, ('',''))
         if comment:
