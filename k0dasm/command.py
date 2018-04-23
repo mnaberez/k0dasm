@@ -9,12 +9,10 @@ from k0dasm.symbols import SymbolTable, D78F0831Y_SYMBOLS
 def main():
     with open(sys.argv[1], 'rb') as f:
         rom = bytearray(f.read())
-
-
     memory = Memory(rom)
 
     start_address = 0
-    entry_points = []
+    entry_points = [0x26c9, 0x26d6, 0x26e4, 0x26f9]
 
     hardware_vectors = [
         0x0000, # RST
@@ -51,14 +49,11 @@ def main():
         0x003c, # (unused)
         0x003e,  # BRK_I
     ]
-
     callt_vectors = list(range(0x40, 0x7f, 2))
-
-    vectors = hardware_vectors + callt_vectors
-
+    all_vectors = hardware_vectors + callt_vectors
 
     traceable_range = range(start_address, start_address + len(rom) + 1)
-    tracer = Tracer(memory, entry_points, vectors, traceable_range)
+    tracer = Tracer(memory, entry_points, all_vectors, traceable_range)
     tracer.trace(disassemble)
 
     symbol_table = SymbolTable(D78F0831Y_SYMBOLS)
@@ -70,28 +65,3 @@ def main():
                       symbol_table
                       )
     printer.print_listing()
-
-    #   pc = rom[0] + (rom[1] << 8) # reset vector
-    # print("    org 0%04xh" % pc)
-    # while pc < len(rom):
-    #     try:
-    #         disasm = disassemble(rom[pc:], pc)
-    #         new_pc = pc + len(disasm)
-    #         illegal = False
-    #     except IllegalInstructionError as e:
-    #         disasm = "db 0%02xh ;illegal" % rom[pc]
-    #         new_pc = pc + 1
-    #         illegal = True
-    #
-    #     length = new_pc - pc
-    #     instdata = rom[pc:pc+length]
-    #
-    #     if not illegal: # if illegal, instdata will only one byte
-    #         if (instdata[0] == 0x03) and (instdata[2] == 0xff):
-    #             disasm = "db 0%02xh, 0%02xh, 0%02xh ;ambiguous %s" % (
-    #                 instdata[0], instdata[1], instdata[2], disasm)
-    #
-    #     inst = ' '.join(['%02x' % x for x in instdata])
-    #     print("    %s ;%04x %s" % (str(disasm).ljust(22), pc, inst))
-    #     pc = new_pc
-    # print("    end")
