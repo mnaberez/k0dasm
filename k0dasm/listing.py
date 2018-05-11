@@ -152,7 +152,7 @@ class Printer(object):
         if inst.imm8 is not None:
             disasm = disasm.replace('{imm8}', '#' + intel_byte(inst.imm8))
         if inst.imm16 is not None:
-            disasm = disasm.replace('{imm16}', '#' + intel_word(inst.imm16))
+            disasm = disasm.replace('{imm16}', '#' + self.format_imm16(inst.imm16))
         if inst.reg is not None:
             disasm = disasm.replace('{reg}', inst.reg)
         if inst.regpair is not None:
@@ -162,6 +162,12 @@ class Printer(object):
         if inst.sfrp is not None:
             disasm = disasm.replace('{sfrp}', self.format_ext_address(inst.sfrp))
         return disasm
+
+    def format_imm16(self, imm16):
+        if imm16 in self.symbol_table.symbols:
+            name, comment = self.symbol_table.symbols[imm16]
+            return name
+        return intel_word(imm16)
 
     def format_ext_address(self, address):
         if address in self.symbol_table.symbols:
