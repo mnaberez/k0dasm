@@ -13,7 +13,7 @@ class SymbolTable(object):
             if memory.is_call_target(address):
                 if memory.is_instruction_start(address):
                     self.symbols[address] = ('sub_%04x' % address, '')
-            elif memory.is_jump_target(address):
+            elif memory.is_jump_target(address) or memory.is_entry_point(address):
                 if memory.is_instruction_start(address):
                     self.symbols[address] = ('lab_%04x' % address, '')
 

@@ -12,6 +12,7 @@ class Tracer(object):
             if address not in traceable_range:
                 msg = "Address 0x%04X outside of traceable range"
                 raise ValueError(msg % address)
+            self.memory.annotate_entry_point(address)
             self.enqueue_address(address)
 
         for address in vectors:
