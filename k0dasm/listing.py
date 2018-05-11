@@ -89,6 +89,8 @@ class Printer(object):
     def print_data_line(self, address):
         line = ('    db %s' % intel_byte(self.memory[address])).ljust(28)
         line += ';%04x  %02x          DATA %s ' % (address, self.memory[address], self._data_byte_repr(self.memory[address]))
+        if self.memory.is_illegal_instruction(address):
+            line += ' ILLEGAL_INSTRUCTION'
         print(line)
 
     def _data_byte_repr(self, b):

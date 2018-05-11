@@ -30,6 +30,7 @@ class Tracer(object):
             try:
                 inst = disassemble_func(self.memory, ps.pc)
             except IllegalInstructionError:
+                self.memory.annotate_illegal_instruction(ps.pc)
                 continue
 
             if "LOG" in os.environ: # XXX hack

@@ -124,6 +124,9 @@ class Memory(object):
     def annotate_call_target(self, address):
         self.annotations[address].add(LocationAnnotations.CallTarget)
 
+    def annotate_illegal_instruction(self, address):
+        self.annotations[address].add(LocationAnnotations.IllegalInstruction)
+
     def is_entry_point(self, address):
         return LocationAnnotations.EntryPoint in self.annotations[address]
 
@@ -132,6 +135,9 @@ class Memory(object):
 
     def is_call_target(self, address):
         return LocationAnnotations.CallTarget in self.annotations[address]
+
+    def is_illegal_instruction(self, address):
+        return LocationAnnotations.IllegalInstruction in self.annotations[address]
 
 
 class LocationTypes(object):
@@ -149,6 +155,7 @@ class LocationAnnotations(object):
     EntryPoint = 0
     JumpTarget = 1
     CallTarget = 2
+    IllegalInstruction = 3
 
 
 def _slice_to_range(slc):
