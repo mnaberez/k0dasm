@@ -17,7 +17,7 @@ def disassemble(mem, pc):
                            flow_type=FlowTypes.Continue,)
         return inst
 
-    # movw ax,0fe20h              ;02 CE AB       saddrp
+    # movw ax,0fe20h              ;02 CE AB       addr16p
     elif mem[pc+0] == 0x02:
         addr16p = _addr16p(mem[pc+1], mem[pc+2])
         inst = Instruction('movw ax,{addr16p}',
@@ -27,7 +27,7 @@ def disassemble(mem, pc):
                            flow_type=FlowTypes.Continue,)
         return inst
 
-    # MOVW 0fe20h,AX              ;03 CE AB       saddrp
+    # MOVW 0fe20h,AX              ;03 CE AB       addr16p
     elif mem[pc+0] == 0x03:
         addr16p = _addr16p(mem[pc+1], mem[pc+2])
         inst = Instruction('movw {addr16p},ax',
