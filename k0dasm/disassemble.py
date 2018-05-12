@@ -1846,6 +1846,23 @@ class Instruction(object):
         return disasm
 
     @property
+    def all_bytes(self):
+        return [self.opcode] + list(self.operands)
+
+    @property
+    def referenced_addresses(self):
+        '''Return all addresses that are read, written, or branched
+        by the instruction.  For indirect or relative addresses, only
+        the target is returned.'''
+        addresses = []
+        names = ('saddrp', 'saddr', 'reltarget', 'addr11', 'addr16', 'addr16p', 'sfr', 'sfrp')
+        for name in names:
+            address = getattr(self, name, None)
+            if address is not None:
+                addresses.append(address)
+        return addresses
+
+    @property
     def target_address(self):
         '''Return the branch target address, or None if instruction cannot branch'''
         # direct addresses
@@ -1856,13 +1873,11 @@ class Instruction(object):
         # indirect addresses
         if self.addr5target is not None:
             return self.addr5target
+        # relative addresses
         if self.reltarget is not None:
             return self.reltarget
         return None
 
-    @property
-    def all_bytes(self):
-        return [self.opcode] + list(self.operands)
 
 class IllegalInstructionError(Exception):
     pass
