@@ -44,20 +44,22 @@ class Printer(object):
         print('    end')
 
     def print_symbols(self):
-        used_symbols = set()
-        for address, inst in self.memory.iter_instructions():
-            if (inst.address is not None) and (inst.address in self.symbol_table.symbols.values()):
-                used_symbols.add(inst.address)
-            # TODO actually compute used symbols
+        symbol_addresses = set(self.symbol_table.symbols.keys())
+        used_addresses = set()
 
-        for address, target in self.memory.iter_vectors():
+        for _, inst in self.memory.iter_instructions():
+            for address in inst.referenced_addresses:
+                if address in symbol_addresses:
+                    used_addresses.add(address)
+
+        for _, target in self.memory.iter_vectors():
             if target in self.symbol_table.symbols:
-                used_symbols.add(target)
+                used_addresses.add(target)
 
-        for address in sorted(used_symbols):
+        for address in sorted(used_addresses):
             if address > self.end_address:
                 name, comment = self.symbol_table.symbols[address]
-                line = ("    %s = 0x%02x" % (name, address)).ljust(28)
+                line = ("    %s equ %s" % (name, intel_word(address))).ljust(28)
                 if comment:
                     line += ";%s" % comment
                 print(line)
@@ -168,7 +170,9 @@ class Printer(object):
         return disasm
 
     def format_imm16(self, imm16):
-        if imm16 in self.symbol_table.symbols:
+        if imm16 < 0x007f: # skip vector area
+            pass
+        elif imm16 in self.symbol_table.symbols:
             name, comment = self.symbol_table.symbols[imm16]
             return name
         return intel_word(imm16)

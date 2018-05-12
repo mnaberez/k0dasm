@@ -17,7 +17,7 @@ def disassemble(mem, pc):
                            flow_type=FlowTypes.Continue,)
         return inst
 
-    # movw ax,0fe20h              ;02 CE AB       saddrp
+    # movw ax,0fe20h              ;02 CE AB       addr16p
     elif mem[pc+0] == 0x02:
         addr16p = _addr16p(mem[pc+1], mem[pc+2])
         inst = Instruction('movw ax,{addr16p}',
@@ -27,7 +27,7 @@ def disassemble(mem, pc):
                            flow_type=FlowTypes.Continue,)
         return inst
 
-    # MOVW 0fe20h,AX              ;03 CE AB       saddrp
+    # MOVW 0fe20h,AX              ;03 CE AB       addr16p
     elif mem[pc+0] == 0x03:
         addr16p = _addr16p(mem[pc+1], mem[pc+2])
         inst = Instruction('movw {addr16p},ax',
@@ -1846,7 +1846,25 @@ class Instruction(object):
         return disasm
 
     @property
-    def address(self): # XXX hack
+    def all_bytes(self):
+        return [self.opcode] + list(self.operands)
+
+    @property
+    def referenced_addresses(self):
+        '''Return all addresses that are read, written, or branched
+        by the instruction.  For indirect or relative addresses, only
+        the target is returned.'''
+        addresses = []
+        names = ('saddrp', 'saddr', 'reltarget', 'addr11', 'addr16', 'addr16p', 'sfr', 'sfrp')
+        for name in names:
+            address = getattr(self, name, None)
+            if address is not None:
+                addresses.append(address)
+        return addresses
+
+    @property
+    def target_address(self):
+        '''Return the branch target address, or None if instruction cannot branch'''
         # direct addresses
         if self.addr16 is not None:
             return self.addr16
@@ -1855,13 +1873,11 @@ class Instruction(object):
         # indirect addresses
         if self.addr5target is not None:
             return self.addr5target
+        # relative addresses
         if self.reltarget is not None:
             return self.reltarget
         return None
 
-    @property
-    def all_bytes(self):
-        return [self.opcode] + list(self.operands)
 
 class IllegalInstructionError(Exception):
     pass
