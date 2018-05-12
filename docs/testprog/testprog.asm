@@ -3,8 +3,8 @@
     nop                         ;00             two nops are also reset vector
     nop                         ;00
     not1 cy                     ;01
-    movw ax,0fe20h              ;02 ce ab       saddrp
-    movw 0fe20h,ax              ;03 ce ab       saddrp
+    movw ax,!0abceh             ;02 ce ab       addr16p
+    movw !0abceh,ax             ;03 ce ab       addr16p
 label0:
     dbnz 0fe20h,$label0         ;04 20 fd       saddr
     xch a,[de]                  ;05

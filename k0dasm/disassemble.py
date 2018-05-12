@@ -19,21 +19,21 @@ def disassemble(mem, pc):
 
     # movw ax,0fe20h              ;02 CE AB       saddrp
     elif mem[pc+0] == 0x02:
-        saddrp = _saddrp_abs(mem[pc+1], mem[pc+2])
-        inst = Instruction('movw ax,{saddrp}',
+        addr16p = _addr16p(mem[pc+1], mem[pc+2])
+        inst = Instruction('movw ax,{addr16p}',
                            opcode=mem[pc+0],
                            operands=(mem[pc+1], mem[pc+2]),
-                           saddrp=saddrp,
+                           addr16p=addr16p,
                            flow_type=FlowTypes.Continue,)
         return inst
 
     # MOVW 0fe20h,AX              ;03 CE AB       saddrp
     elif mem[pc+0] == 0x03:
-        saddrp = _saddrp_abs(mem[pc+1], mem[pc+2])
-        inst = Instruction('movw {saddrp},ax',
+        addr16p = _addr16p(mem[pc+1], mem[pc+2])
+        inst = Instruction('movw {addr16p},ax',
                            opcode=mem[pc+0],
                            operands=(mem[pc+1], mem[pc+2]),
-                           saddrp=saddrp,
+                           addr16p=addr16p,
                            flow_type=FlowTypes.Continue,)
         return inst
 
@@ -1758,13 +1758,11 @@ def _saddrp(low):
         raise IllegalInstructionError("saddrp must be an even address")
     return _saddr(low)
 
-def _saddrp_abs(low, high):
-    saddrp = low + (high << 8)
-    if saddrp & 1 != 0:
-        raise IllegalInstructionError("saddrp must be an even address")
-    if (saddrp < 0xfe20) or (saddrp > 0xff1f):
-        raise IllegalInstructionError("saddrp must be in range 0xfe20-0xff1f")
-    return saddrp
+def _addr16p(low, high):
+    addr16p = low + (high << 8)
+    if addr16p & 1 != 0:
+        raise IllegalInstructionError("addr16p must be an even address")
+    return addr16p
 
 def _sfr(low):
     sfr = 0xff00 + low
@@ -1785,7 +1783,7 @@ def _resolve_rel(pc, displacement):
 
 class Instruction(object):
     def __init__(self, template, saddrp=None, saddr=None, reltarget=None, addr5target=None,
-                                 addr5=None, addr11=None, addr16=None,
+                                 addr5=None, addr11=None, addr16=None, addr16p=None,
                                  offset=None, bit=None, imm8=None, imm16=None,
                                  sfr=None, sfrp=None, reg=None, regpair=None,
                                  flow_type=None, opcode=None, operands=()):
@@ -1797,6 +1795,7 @@ class Instruction(object):
         self.addr5 = addr5
         self.addr11 = addr11
         self.addr16 = addr16
+        self.addr16p = addr16p
         self.offset = offset
         self.bit = bit
         self.imm8 = imm8
@@ -1826,6 +1825,8 @@ class Instruction(object):
             disasm = disasm.replace('{addr11}', '!' + intel_word(self.addr11))
         if self.addr16 is not None:
             disasm = disasm.replace('{addr16}', '!' + intel_word(self.addr16))
+        if self.addr16p is not None:
+            disasm = disasm.replace('{addr16p}', '!' + intel_word(self.addr16p))
         if self.offset is not None:
             disasm = disasm.replace('{offset}', intel_byte(self.offset))
         if self.bit is not None:

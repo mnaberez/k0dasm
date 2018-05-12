@@ -147,6 +147,8 @@ class Printer(object):
             disasm = disasm.replace('{addr11}', '!' + self.format_ext_address(inst.addr11))
         if inst.addr16 is not None:
             disasm = disasm.replace('{addr16}', '!' + self.format_ext_address(inst.addr16))
+        if inst.addr16p is not None:
+            disasm = disasm.replace('{addr16p}', '!' + self.format_ext_address(inst.addr16p))
         if inst.offset is not None:
             disasm = disasm.replace('{offset}', intel_byte(inst.offset))
         if inst.bit is not None:

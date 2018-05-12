@@ -20,15 +20,15 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
-    def test_02_movw_ax_saddrp(self):
-        mem = [0x02, 0x20, 0xfe]
+    def test_02_movw_ax_addr16p(self):
+        mem = [0x02, 0xce, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "movw ax,0fe20h")
+        self.assertEqual(str(inst), "movw ax,!0abceh")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
-    def test_02_movw_ax_saddrp_raises_for_odd_address(self):
-        mem = [0x02, 0x21, 0xfe]
+    def test_02_movw_ax_addr16p_raises_for_odd_address(self):
+        mem = [0x02, 0xcd, 0xab]
         with self.assertRaises(IllegalInstructionError):
             disassemble(mem, pc=0)
 
@@ -37,15 +37,15 @@ class disassemble_tests(unittest.TestCase):
         with self.assertRaises(IllegalInstructionError):
             disassemble(mem, pc=0)
 
-    def test_03_movw_saddrp_ax(self):
-        mem = [0x03, 0x20, 0xfe]
+    def test_03_movw_addr16p_ax(self):
+        mem = [0x03, 0xce, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "movw 0fe20h,ax")
+        self.assertEqual(str(inst), "movw !0abceh,ax")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_03_movw_saddrp_ax_raises_for_odd_address(self):
-        mem = [0x03, 0x21, 0xfe]
+        mem = [0x03, 0xcd, 0xab]
         with self.assertRaises(IllegalInstructionError):
             disassemble(mem, pc=0)
 
