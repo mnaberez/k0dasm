@@ -44,17 +44,19 @@ class Printer(object):
         print('    end')
 
     def print_symbols(self):
-        used_symbols = set()
+        symbol_addresses = set(self.symbol_table.symbols.values())
+        used_addresses = set()
+
         for address, inst in self.memory.iter_instructions():
-            if (inst.address is not None) and (inst.address in self.symbol_table.symbols.values()):
-                used_symbols.add(inst.address)
+            if inst.target_address in symbol_addresses:
+                used_addresses.add(inst.target_address)
             # TODO actually compute used symbols
 
         for address, target in self.memory.iter_vectors():
             if target in self.symbol_table.symbols:
-                used_symbols.add(target)
+                used_addresses.add(target)
 
-        for address in sorted(used_symbols):
+        for address in sorted(used_addresses):
             if address > self.end_address:
                 name, comment = self.symbol_table.symbols[address]
                 line = ("    %s = 0x%02x" % (name, address)).ljust(28)

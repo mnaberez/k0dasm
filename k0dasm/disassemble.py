@@ -1846,7 +1846,8 @@ class Instruction(object):
         return disasm
 
     @property
-    def address(self): # XXX hack
+    def target_address(self):
+        '''Return the branch target address, or None if instruction cannot branch'''
         # direct addresses
         if self.addr16 is not None:
             return self.addr16
