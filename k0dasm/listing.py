@@ -112,16 +112,6 @@ class Printer(object):
         print(line)
 
     def print_instruction_line(self, address, inst):
-        # TODO leftovers from f2mc8dasm
-        # if inst.stores_immediate_word_in_pointer:
-        #     if inst.immediate in self.symbol_table.symbols:
-        #         name, comment = self.symbol_table.symbols[inst.immediate]
-        #         inst.disasm_template = inst.disasm_template.replace("IMW", name)
-        # if inst.stores_immediate_word_in_a:
-        #     if inst.immediate in self.symbol_table.symbols and (inst.immediate >= self.start_address):
-        #         name, comment = self.symbol_table.symbols[inst.immediate]
-        #         inst.disasm_template = inst.disasm_template.replace("IMW", name)
-
         disasm = self.format_instruction(inst)
         hexdump = (' '.join([ '%02x' % h for h in inst.all_bytes ])).ljust(8)
 
