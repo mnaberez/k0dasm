@@ -7,6 +7,7 @@ class SymbolTable(object):
 
     def generate(self, memory, start_address):
         self.generate_code_symbols(memory, start_address)
+        self.generate_data_symbols(memory, start_address)
 
     def generate_code_symbols(self, memory, start_address):
         for address in range(start_address, len(memory)):
@@ -16,6 +17,33 @@ class SymbolTable(object):
             elif memory.is_jump_target(address) or memory.is_entry_point(address):
                 if memory.is_instruction_start(address):
                     self.symbols[address] = ('lab_%04x' % address, '')
+        # XXX do not overwrite
+
+    def generate_data_symbols(self, memory, start_address):
+        data_addresses = set()
+        modes_always_data = ('saddrp', 'saddr', 'addrp16', 'sfr', 'sfrp',)
+        modes_sometimes_data = ('addr16', )
+        # never data: addr16
+        # todo: imm16
+
+        for _, inst in memory.iter_instructions():
+            for mode in modes_always_data:
+                address = getattr(inst, mode, None)
+                if address is not None:
+                    data_addresses.add(address)
+
+            for mode in modes_sometimes_data:
+                address = getattr(inst, mode, None)
+                if address is not None:
+                    jumped = memory.is_jump_target(address)
+                    called = memory.is_call_target(address)
+                    if (not jumped) and (not called):
+                        data_addresses.add(address)
+
+        for address in data_addresses:
+            if address not in self.symbols:
+                self.symbols[address] = ('mem_%04x' % address, '')
+
 
 NEC78K0_COMMON_SYMBOLS = {}
 for i, address in enumerate(range(0x40, 0x7f, 2)):
