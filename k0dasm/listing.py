@@ -75,18 +75,9 @@ class Printer(object):
 
     def print_label(self, address):
         symbol = self.symbol_table.symbols.get(address)
-        if symbol is None:
-            return
-
-        # special case to hide unnecessary labels for vectors
-        if self.memory.is_vector_start(address):
-            jumped = self.memory.is_jump_target(address)
-            called = self.memory.is_call_target(address)
-            if not jumped or called: # XXX may also be read as data
-                return
-
-        name, desc = symbol
-        print("\n%s:" % name)
+        if symbol is not None:
+            name, desc = symbol
+            print("\n%s:" % name)
 
     def print_data_line(self, address):
         line = ('    db %s' % intel_byte(self.memory[address])).ljust(28)
