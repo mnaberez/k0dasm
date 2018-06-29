@@ -29,7 +29,7 @@ setup(
     name='k0dasm',
     version=__version__,
     license='License :: OSI Approved :: BSD License',
-    url='',
+    url='https://github.com/mnaberez/k0dasm',
     description=DESC,
     long_description=DESC,
     classifiers=CLASSIFIERS,
