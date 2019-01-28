@@ -1,7 +1,10 @@
 *.bin
 *.egg-info
 *.hex
+*.hlr
+*.ihx
 *.lmf
+*.lst
 *.map
 *.prn
 *.pyc
