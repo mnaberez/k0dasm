@@ -45,15 +45,8 @@ label0:
     sub a,[hl]                  ;1f
     set1 cy                     ;20
     clr1 cy                     ;21
-
-;XXX
-;    push psw                   ;22
-    .byte 0x22
-
-;XXX
-;   pop psw                     ;23
-    .byte 0x23
-
+    push psw                    ;22
+    pop psw                     ;23
     ror a,1                     ;24
     rorc a,1                    ;25
     rol a,1                     ;26
@@ -319,14 +312,8 @@ label127:
     xch a,b                     ;33
     xch a,e                     ;34
     xch a,d                     ;35
-
-;XXX
-;    xch a,l                     ;36
-    .byte 0x36
-
-;XXX
-;    xch a,h                     ;37
-    .byte 0x37
+    xch a,l                     ;36
+    xch a,h                     ;37
 
     subc a,!0xabcd              ;38 cd ab
     subc a,[hl+0xab]            ;39 ab
@@ -339,20 +326,15 @@ label127:
     subc a,#0xab                ;3d ab
     subc a,@0xfe20              ;3e 20          saddr
     subc a,[hl]                 ;3f
+
     inc x                       ;40
     inc a                       ;41
     inc c                       ;42
     inc b                       ;43
     inc e                       ;44
     inc d                       ;45
-
-;XXX
-;   inc l                       ;46
-    .byte 0x46
-
-;XXX
-;   inc h                       ;47
-    .byte 0x47
+    inc l                       ;46
+    inc h                       ;47
 
     cmp a,!0xabcd               ;48 cd ab
     cmp a,[hl+0xab]             ;49 ab
@@ -365,20 +347,15 @@ label127:
     cmp a,#0xab                 ;4d ab
     cmp a,0xfe20                ;4e 20          saddr
     cmp a,[hl]                  ;4f
+
     dec x                       ;50
     dec a                       ;51
     dec c                       ;52
     dec b                       ;53
     dec e                       ;54
     dec d                       ;55
-
-;XXX
-;   dec l                       ;56
-    .byte 0x56
-
-;XXX
-;   dec h                       ;57
-    .byte 0x57
+    dec l                       ;56
+    dec h                       ;57
 
     and a,!0xabcd               ;58 cd ab
     and a,[hl+0xab]             ;59 ab
@@ -470,14 +447,8 @@ label127:
     add a,b                     ;61 0b
     add a,e                     ;61 0c
     add a,d                     ;61 0d
-
-;XXX
-;   add a,l                     ;61 0e
-    .byte 0x61, 0x0e
-
-;XXX
-;   add a,h                     ;61 0f
-    .byte 0x61, 0x0f
+    add a,l                     ;61 0e
+    add a,h                     ;61 0f
 
     add x,a                     ;61 00
     add a,a                     ;61 01
@@ -485,14 +456,8 @@ label127:
     add b,a                     ;61 03
     add e,a                     ;61 04
     add d,a                     ;61 05
-
-;XXX
-;    add l,a                     ;61 06
-    .byte 0x61, 0x06
-
-;XXX
-;    add h,a                     ;61 07
-    .byte 0x61, 0x07
+    add l,a                     ;61 06
+    add h,a                     ;61 07
 
     addc a,x                    ;61 28
     addc a,a                    ;61 21
@@ -500,14 +465,8 @@ label127:
     addc a,b                    ;61 2b
     addc a,e                    ;61 2c
     addc a,d                    ;61 2d
-
-;XXX
-;   addc a,l                    ;61 2e
-    .byte 0x61, 0x2e
-
-;XXX
-;   addc a,h                    ;61 2f
-    .byte 0x61, 0x2f
+    addc a,l                    ;61 2e
+    addc a,h                    ;61 2f
 
     addc x,a                    ;61 20
     addc a,a                    ;61 21
@@ -515,14 +474,8 @@ label127:
     addc b,a                    ;61 23
     addc e,a                    ;61 24
     addc d,a                    ;61 25
-
-;XXX
-;   addc l,a                    ;61 26
-    .byte 0x61, 0x26
-
-;XXX
-;   addc h,a                    ;61 27
-    .byte 0x61, 0x27
+    addc l,a                    ;61 26
+    addc h,a                    ;61 27
 
     sub a,x                     ;61 18
     sub a,a                     ;61 11
@@ -530,14 +483,8 @@ label127:
     sub a,b                     ;61 1b
     sub a,e                     ;61 1c
     sub a,d                     ;61 1d
-
-;XXX
-;   sub a,l                     ;61 1e
-    .byte 0x61, 0x1e
-
-;XXX
-;   sub a,h                     ;61 1f
-    .byte 0x61, 0x1f
+    sub a,l                     ;61 1e
+    sub a,h                     ;61 1f
 
     sub x,a                     ;61 10
     sub a,a                     ;61 11
@@ -545,14 +492,8 @@ label127:
     sub b,a                     ;61 13
     sub e,a                     ;61 14
     sub d,a                     ;61 15
-
-;XXX
-;    sub l,a                     ;61 16
-    .byte 0x61, 0x16
-
-;XXX
-;    sub h,a                     ;61 17
-    .byte 0x61, 0x17
+    sub l,a                     ;61 16
+    sub h,a                     ;61 17
 
     subc a,x                    ;61 38
     subc a,a                    ;61 31
@@ -560,14 +501,8 @@ label127:
     subc a,b                    ;61 3b
     subc a,e                    ;61 3c
     subc a,d                    ;61 3d
-
-;XXX
-;    subc a,l                    ;61 3e
-    .byte 0x61, 0x3e
-
-;XXX
-;    subc a,h                    ;61 3f
-    .byte 0x61, 0x3f
+    subc a,l                    ;61 3e
+    subc a,h                    ;61 3f
 
     subc x,a                    ;61 30
     subc a,a                    ;61 31
@@ -575,14 +510,8 @@ label127:
     subc b,a                    ;61 33
     subc e,a                    ;61 34
     subc d,a                    ;61 35
-
-;XXX
-;   subc l,a                    ;61 36
-    .byte 0x61, 0x36
-
-;XXX
-;   subc h,a                    ;61 37
-    .byte 0x61, 0x37
+    subc l,a                    ;61 36
+    subc h,a                    ;61 37
 
     and x,a                     ;61 50
     and a,a                     ;61 51
@@ -590,14 +519,8 @@ label127:
     and b,a                     ;61 53
     and e,a                     ;61 54
     and d,a                     ;61 55
-
-;XXX
-;    and l,a                     ;61 56
-    .byte 0x61, 0x56
-
-;XXX
-;   and h,a                     ;61 57
-    .byte 0x61, 0x57
+    and l,a                     ;61 56
+    and h,a                     ;61 57
 
     and a,x                     ;61 58
     and a,a                     ;61 51
@@ -605,14 +528,8 @@ label127:
     and a,b                     ;61 5b
     and a,e                     ;61 5c
     and a,d                     ;61 5d
-
-;XXX
-;    and a,l                     ;61 5e
-    .byte 0x61, 0x5e
-
-;XXX
-;    and a,h                     ;61 5f
-    .byte 0x61, 0x5f
+    and a,l                     ;61 5e
+    and a,h                     ;61 5f
 
     or a,x                      ;61 68
     or a,a                      ;61 61
@@ -620,29 +537,16 @@ label127:
     or a,b                      ;61 6b
     or a,e                      ;61 6c
     or a,d                      ;61 6d
-
-;XXX
-;    or a,l                      ;61 6e
-    .byte 0x61, 0x6e
-
-;XXX
-;   or a,h                      ;61 6f
-    .byte 0x61, 0x6f
-
+    or a,l                      ;61 6e
+    or a,h                      ;61 6f
     or x,a                      ;61 60
     or a,a                      ;61 61
     or c,a                      ;61 62
     or b,a                      ;61 63
     or e,a                      ;61 64
     or d,a                      ;61 65
-
-;XXX
-;    or l,a                      ;61 66
-    .byte 0x61, 0x66
-
-;XXX
-;    or h,a                      ;61 67
-    .byte 0x61, 0x67
+    or l,a                      ;61 66
+    or h,a                      ;61 67
 
     xor a,x                     ;61 78
     xor a,a                     ;61 71
@@ -650,14 +554,8 @@ label127:
     xor a,b                     ;61 7b
     xor a,e                     ;61 7c
     xor a,d                     ;61 7d
-
-;XXX
-;   xor a,l                     ;61 7e
-    .byte 0x61, 0x7e
-
-;XXX
-;   xor a,h                     ;61 7f
-    .byte 0x61, 0x7f
+    xor a,l                     ;61 7e
+    xor a,h                     ;61 7f
 
     xor x,a                     ;61 70
     xor a,a                     ;61 71
@@ -665,14 +563,8 @@ label127:
     xor b,a                     ;61 73
     xor e,a                     ;61 74
     xor d,a                     ;61 75
-
-;XXX
-;    xor l,a                     ;61 76
-    .byte 0x61, 0x76
-
-;XXX
-;    xor h,a                     ;61 77
-    .byte 0x61, 0x77
+    xor l,a                     ;61 76
+    xor h,a                     ;61 77
 
     cmp a,x                     ;61 48
     cmp a,a                     ;61 41
@@ -680,14 +572,8 @@ label127:
     cmp a,b                     ;61 4b
     cmp a,e                     ;61 4c
     cmp a,d                     ;61 4d
-
-;XXX
-;    cmp a,l                     ;61 4e
-    .byte 0x61, 0x4e
-
-;XXX
-;    cmp a,h                     ;61 4f
-    .byte 0x61, 0x4f
+    cmp a,l                     ;61 4e
+    cmp a,h                     ;61 4f
 
     cmp x,a                     ;61 40
     cmp a,a                     ;61 41
@@ -695,27 +581,15 @@ label127:
     cmp b,a                     ;61 43
     cmp e,a                     ;61 44
     cmp d,a                     ;61 45
-
-;XXX
-;    cmp l,a                     ;61 46
-    .byte 0x61, 0x46
-
-;XXX
-;    cmp h,a                     ;61 47
-    .byte 0x61, 0x47
+    cmp l,a                     ;61 46
+    cmp h,a                     ;61 47
 
     mov a,c                     ;62
     mov a,b                     ;63
     mov a,e                     ;64
     mov a,d                     ;65
-
-;XXX
-;   mov a,l                     ;66
-    .byte 0x66
-
-;XXX
-;   mov a,h                     ;67
-    .byte 0x67
+    mov a,l                     ;66
+    mov a,h                     ;67
 
     or a,!0xabcd                ;68 cd ab
     or a,[hl+0xab]              ;69 ab
@@ -953,14 +827,8 @@ label127:
     mov b,a                     ;73
     mov e,a                     ;74
     mov d,a                     ;75
-
-;XXX
-;   mov l,a                     ;76
-    .byte 0x76
-
-;XXX
-;   mov h,a                     ;77
-    .byte 0x77
+    mov l,a                     ;76
+    mov h,a                     ;77
 
     xor a,!0xabcd               ;78 cd ab
     xor a,[hl+0xab]             ;79 ab
@@ -1033,14 +901,8 @@ label4:
     mov b,#0xab                 ;a3 ab
     mov e,#0xab                 ;a4 ab
     mov d,#0xab                 ;a5 ab
-
-;XXX
-;   mov l,#0xab                 ;a6 ab
-    .byte 0xa6, 0xab
-
-;XXX
-;   mov h,#0xab                 ;a7 ab
-    .byte 0xa7, 0xab
+    mov l,#0xab                 ;a6 ab
+    mov h,#0xab                 ;a7 ab
 
     addc @0xfe20,#0xab           ;a8 20 ab       saddr
     movw ax,*0xfffe              ;a9 fe          sfrp
