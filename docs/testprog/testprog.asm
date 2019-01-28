@@ -24,7 +24,8 @@ label0:
     movw ax,#0xabcd             ;10 cd ab
     mov @0xfe20,#0xab           ;11 20 ab       saddr
 
-;XXX
+;XXX ?ASxxxx-Error-<a> in line 28 of out.asm
+;              <a> machine specific addressing or addressing mode error
 ;    mov psw,#0xab               ;11 1e ab
     .byte 0x11, 0x1e, 0xab
 
@@ -854,7 +855,8 @@ label127:
     add @0xfe20,#0xab           ;88 20 ab       saddr
     movw ax,@0xfe20              ;89 20          saddrp
 
-;XXX
+;XXX ?ASxxxx-Error-<a> in line 859 of out.asm
+;              <a> machine specific addressing or addressing mode error
 ;     movw ax,sp                  ;89 1c
     .byte 0x89, 0x1c
 
@@ -881,7 +883,8 @@ label3:
     sub 0xfe20,#0xab            ;98 20 ab       saddr
     movw @0xfe20,ax             ;99 20          saddrp
 
-;XXX
+;XXX ?ASxxxx-Error-<a> in line 887 of out.asm
+;             <a> machine specific addressing or addressing mode error
 ;     movw sp,ax                  ;99 1c
     .byte 0x99, 0x1c
 
@@ -990,21 +993,23 @@ label23:
     callt [0x06c]               ;ed
     movw @0xfe20,#0xabcd        ;ee 20 cd ab    saddrp
 
-;XXX
+;XXX ?ASxxxx-Error-<a> in line 997 of out.asm
+;              <a> machine specific addressing or addressing mode error
 ;    movw sp,#0xabcd            ;ee 1c cd ab
     .byte 0xee, 0x1c, 0xcd, 0xab
 
     callt [0x006e]              ;ef
     mov a,@0xfe20               ;f0 20          saddr
 
-;XXX
+;XXX assembles as 11 1E instead of F0 1E
 ;    mov a,psw                   ;f0 1e
     .byte 0xf0, 0x1e
 
     callt [0x0070]              ;f1
     mov 0xfe20,a                ;f2 20          saddr
 
-;XXX
+;XXX ?ASxxxx-Error-<a> in line 1012 of out.asm
+;              <a> machine specific addressing or addressing mode error
 ;    mov psw,a                   ;f2 1e
     .byte 0xf2, 0x1e
 
