@@ -1,19 +1,11 @@
-all: clean testprog.bin list
+all: clean out.bin
 
-testprog.bin: testprog.hex
-	srec_cat testprog.hex -intel -o testprog.bin -binary
-
-testprog.hex: testprog.lmf
-	oc78k0 testprog.lmf
-
-testprog.lmf: testprog.prn
-	lk78k0 testprog.rel
-
-testprog.prn:
-	ra78k0 -cf0831y testprog.asm
-
-list: testprog.prn
-	cat testprog.prn
+out.bin:
+	cp -f testprog.asm out.asm
+	as78k0 -l -o out.asm
+	rm -f out.asm
+	aslink out -i
+	srec_cat out.ihx -intel -o out.bin -binary
 
 clean:
-	rm -f *.bin *.hex *.lmf *.map *.prn *.rel *.sym
+	rm -f out.*
