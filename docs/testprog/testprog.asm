@@ -986,11 +986,7 @@ label23:
     movw sp,#0xabcd             ;ee 1c cd ab
     callt [0x006e]              ;ef
     mov a,@0xfe20               ;f0 20          saddr
-
-;XXX assembles as 11 1E instead of F0 1E
-;    mov a,psw                   ;f0 1e
-    .byte 0xf0, 0x1e
-
+    mov a,psw                   ;f0 1e
     callt [0x0070]              ;f1
     mov 0xfe20,a                ;f2 20          saddr
 
