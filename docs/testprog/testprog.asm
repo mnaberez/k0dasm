@@ -854,11 +854,7 @@ label127:
     mov a,[hl]                  ;87
     add @0xfe20,#0xab           ;88 20 ab       saddr
     movw ax,@0xfe20              ;89 20          saddrp
-
-;XXX ?ASxxxx-Error-<a> in line 859 of out.asm
-;              <a> machine specific addressing or addressing mode error
-;     movw ax,sp                  ;89 1c
-    .byte 0x89, 0x1c
+    movw ax,sp                  ;89 1c
 
 label1:
     dbnz c,label1              ;8a fe
@@ -882,12 +878,7 @@ label3:
     mov [hl],a                  ;97
     sub 0xfe20,#0xab            ;98 20 ab       saddr
     movw @0xfe20,ax             ;99 20          saddrp
-
-;XXX ?ASxxxx-Error-<a> in line 887 of out.asm
-;             <a> machine specific addressing or addressing mode error
-;     movw sp,ax                  ;99 1c
-    .byte 0x99, 0x1c
-
+    movw sp,ax                  ;99 1c
     call !0xabcd                ;9a cd ab
     br !0xabcd                  ;9b cd ab
 label10:
@@ -992,12 +983,7 @@ label23:
     bt psw.6,label23            ;ec 1e fd
     callt [0x06c]               ;ed
     movw @0xfe20,#0xabcd        ;ee 20 cd ab    saddrp
-
-;XXX ?ASxxxx-Error-<a> in line 997 of out.asm
-;              <a> machine specific addressing or addressing mode error
-;    movw sp,#0xabcd            ;ee 1c cd ab
-    .byte 0xee, 0x1c, 0xcd, 0xab
-
+    movw sp,#0xabcd             ;ee 1c cd ab
     callt [0x006e]              ;ef
     mov a,@0xfe20               ;f0 20          saddr
 
