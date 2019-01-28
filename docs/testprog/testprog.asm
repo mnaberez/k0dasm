@@ -23,12 +23,7 @@ label0:
     add a,[hl]                  ;0f
     movw ax,#0xabcd             ;10 cd ab
     mov @0xfe20,#0xab           ;11 20 ab       saddr
-
-;XXX ?ASxxxx-Error-<a> in line 28 of out.asm
-;              <a> machine specific addressing or addressing mode error
-;    mov psw,#0xab               ;11 1e ab
-    .byte 0x11, 0x1e, 0xab
-
+    mov psw,#0xab               ;11 1e ab
     movw bc,#0xabcd             ;12 cd ab
     mov *0xfffe, #0xab          ;13 fe ab       sfr
     movw de,#0xabcd             ;14 cd ab
@@ -989,12 +984,7 @@ label23:
     mov a,psw                   ;f0 1e
     callt [0x0070]              ;f1
     mov 0xfe20,a                ;f2 20          saddr
-
-;XXX ?ASxxxx-Error-<a> in line 1012 of out.asm
-;              <a> machine specific addressing or addressing mode error
-;    mov psw,a                   ;f2 1e
-    .byte 0xf2, 0x1e
-
+    mov psw,a                   ;f2 1e
     callt [0x0072]              ;f3
     mov a,*0x0fffe              ;f4 ff          sfr
     callt [0x0074]              ;f5
