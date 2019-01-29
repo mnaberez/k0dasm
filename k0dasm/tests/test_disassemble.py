@@ -61,7 +61,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "dbnz 0x%04x,$0x1000" % saddr)
+            self.assertEqual(str(inst), "dbnz 0x%04x,0x1000" % saddr)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1151,7 +1151,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "dbnz c,$0x1000")
+        self.assertEqual(str(inst), "dbnz c,0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1161,7 +1161,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "dbnz b,$0x1000")
+        self.assertEqual(str(inst), "dbnz b,0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1171,7 +1171,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), 'bc $0x1000')
+        self.assertEqual(str(inst), 'bc 0x1000')
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1270,7 +1270,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "bnc $0x1000")
+        self.assertEqual(str(inst), "bnc 0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1348,7 +1348,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "bz $0x1000")
+        self.assertEqual(str(inst), "bz 0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1431,7 +1431,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "bnz $0x1000")
+        self.assertEqual(str(inst), "bnz 0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1600,7 +1600,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "br $0x1000")
+        self.assertEqual(str(inst), "br 0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.UnconditionalJump)
 
@@ -1643,7 +1643,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "btclr 0x%04x.%d,$0x1000" % (saddr, bit))
+                self.assertEqual(str(inst), "btclr 0x%04x.%d,0x1000" % (saddr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1655,7 +1655,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "btclr psw.%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "btclr psw.%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1671,7 +1671,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bf 0x%04x.%d,$0x1000" % (saddr, bit))
+                self.assertEqual(str(inst), "bf 0x%04x.%d,0x1000" % (saddr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1683,7 +1683,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bf psw.%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "bf psw.%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1697,7 +1697,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "btclr 0x%04x.%d,$0x1000" % (sfr, bit))
+                self.assertEqual(str(inst), "btclr 0x%04x.%d,0x1000" % (sfr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1711,7 +1711,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bt 0x%04x.%d,$0x1000" % (sfr, bit))
+                self.assertEqual(str(inst), "bt 0x%04x.%d,0x1000" % (sfr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1725,7 +1725,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bf 0x%04x.%d,$0x1000" % (sfr, bit))
+                self.assertEqual(str(inst), "bf 0x%04x.%d,0x1000" % (sfr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1757,7 +1757,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "btclr a.%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "btclr a.%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1769,7 +1769,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "btclr [hl].%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "btclr [hl].%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1781,7 +1781,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bt [hl].%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "bt [hl].%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1793,7 +1793,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bf [hl].%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "bf [hl].%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1805,7 +1805,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bt a.%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "bt a.%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1817,7 +1817,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bf a.%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "bf a.%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -2053,7 +2053,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bt psw.%d,$0x1000" % bit)
+            self.assertEqual(str(inst), "bt psw.%d,0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -2069,7 +2069,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bt 0x%04x.%d,$0x1000" % (saddr, bit))
+                self.assertEqual(str(inst), "bt 0x%04x.%d,0x1000" % (saddr, bit))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
     def test_99_1c_movw_sp_ax(self):

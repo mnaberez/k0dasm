@@ -118,7 +118,7 @@ class Printer(object):
         if inst.saddr is not None:
             disasm = disasm.replace('{saddr}', self.format_ext_address(inst.saddr))
         if inst.reltarget is not None:
-            disasm = disasm.replace('{reltarget}', '$' + self.format_ext_address(inst.reltarget))
+            disasm = disasm.replace('{reltarget}', self.format_ext_address(inst.reltarget))
         if inst.addr5 is not None:
             disasm = disasm.replace('{addr5}', '[0x%04x]' % inst.addr5)
         if inst.addr11 is not None:

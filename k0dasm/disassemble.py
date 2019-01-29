@@ -1817,7 +1817,7 @@ class Instruction(object):
         if self.saddr is not None:
             disasm = disasm.replace('{saddr}', '0x%04x' % self.saddr)
         if self.reltarget is not None:
-            disasm = disasm.replace('{reltarget}', '$0x%04x' % self.reltarget)
+            disasm = disasm.replace('{reltarget}', '0x%04x' % self.reltarget)
         if self.addr5 is not None:
             disasm = disasm.replace('{addr5}', '[0x%04x]' % self.addr5)
         if self.addr11 is not None:
