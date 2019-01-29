@@ -1,5 +1,7 @@
+dist: trusty
+sudo: required
+
 language: python
-sudo: false
 matrix:
   include:
     - python: 3.4
@@ -8,7 +10,19 @@ matrix:
       env: TOXENV=py35
     - python: 3.6
       env: TOXENV=py36
+
+before_install:
+  # srec_cat
+  - sudo apt-get install -qq -y srecord
+
+  # asxxxx
+  - git clone https://github.com/mnaberez/asxxxx.git
+  - make -C asxxxx/asxv5pxx/asxmak/linux/build all
+  - export PATH=$PATH:$PWD/asxxxx/asxv5pxx/asxmak/linux/build
+
 install:
   - travis_retry pip install tox
+
 script:
+  - make -C docs/testprog
   - travis_retry tox
