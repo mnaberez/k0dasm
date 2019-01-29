@@ -75,7 +75,7 @@ class Printer(object):
             print("\n%s:" % name)
 
     def print_data_line(self, address):
-        line = ('    db 0x%02x' % self.memory[address]).ljust(28)
+        line = ('    .byte 0x%02x' % self.memory[address]).ljust(28)
         line += ';%04x  %02x          DATA %s ' % (address, self.memory[address], self._data_byte_repr(self.memory[address]))
         if self.memory.is_illegal_instruction(address):
             line += ' ILLEGAL_INSTRUCTION'
@@ -90,7 +90,7 @@ class Printer(object):
     def print_vector_line(self, address):
         target = struct.unpack('<H', self.memory[address:address+2])[0]
         target = self.format_ext_address(target)
-        line = ('    dw %s' % target).ljust(28)
+        line = ('    .word %s' % target).ljust(28)
         line += ';%04x  %02x %02x       VECTOR' % (address, self.memory[address], self.memory[address+1])
         name, comment = self.symbol_table.symbols.get(address, ('',''))
         if comment:
