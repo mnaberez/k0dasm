@@ -2,7 +2,6 @@ import sys
 import unittest
 
 from k0dasm.disassemble import disassemble, FlowTypes, IllegalInstructionError
-from k0dasm.utils import intel_byte, intel_word
 
 
 class disassemble_tests(unittest.TestCase):
@@ -23,7 +22,7 @@ class disassemble_tests(unittest.TestCase):
     def test_02_movw_ax_addr16p(self):
         mem = [0x02, 0xce, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "movw ax,!0abceh")
+        self.assertEqual(str(inst), "movw ax,!0xabce")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -40,7 +39,7 @@ class disassemble_tests(unittest.TestCase):
     def test_03_movw_addr16p_ax(self):
         mem = [0x03, 0xce, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "movw !0abceh,ax")
+        self.assertEqual(str(inst), "movw !0xabce,ax")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -62,7 +61,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "dbnz 0%04xh,$1000h" % saddr)
+            self.assertEqual(str(inst), "dbnz 0x%04x,$0x1000" % saddr)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -86,7 +85,7 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x08, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "add a,!%s" % intel_word(addr16))
+            self.assertEqual(str(inst), "add a,!0x%04x" % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -94,7 +93,7 @@ class disassemble_tests(unittest.TestCase):
         for byte in (0x00, 0xab, 0xff):
             mem = [0x09, byte]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "add a,[hl+%s]" % intel_byte(byte))
+            self.assertEqual(str(inst), "add a,[hl+0x%02x]" % byte)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -107,7 +106,7 @@ class disassemble_tests(unittest.TestCase):
                 mem = [opcode, offset]
                 inst = disassemble(mem, pc=0)
                 address = base + offset
-                self.assertEqual(str(inst), "callf !%s" % intel_word(address))
+                self.assertEqual(str(inst), "callf !0x%04x" % address)
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.SubroutineCall)
 
@@ -131,7 +130,7 @@ class disassemble_tests(unittest.TestCase):
             mem[vector+1] = target >> 8
 
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "callt [%s]" % intel_word(vector))
+            self.assertEqual(str(inst), "callt [0x%04x]" % vector)
             self.assertEqual(len(inst), 1)
             self.assertEqual(inst.flow_type, FlowTypes.SubroutineCall)
             self.assertEqual(inst.addr5target, target)
@@ -140,7 +139,7 @@ class disassemble_tests(unittest.TestCase):
         for byte in (0, 0xab, 0xff):
             mem = [0x0d, byte]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'add a,#%s' % intel_byte(byte))
+            self.assertEqual(str(inst), 'add a,#0x%02x' % byte)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -149,7 +148,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x0e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'add a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'add a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -169,7 +168,7 @@ class disassemble_tests(unittest.TestCase):
                 high = (imm16 >> 8) & 0xff
                 mem = [opcode, low, high]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), 'movw %s,#%s' % (regpairname, intel_word(imm16)))
+                self.assertEqual(str(inst), 'movw %s,#0x%04x' % (regpairname, imm16))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -178,7 +177,7 @@ class disassemble_tests(unittest.TestCase):
             sfr_low = sfr & 0xff
             mem = [0x13, sfr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "mov 0%04xh,#0abh" % sfr)
+            self.assertEqual(str(inst), "mov 0x%04x,#0xab" % sfr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -188,21 +187,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x18, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'sub a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'sub a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_19_sub_a_hl_plus_offset(self):
         mem = [0x19, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'sub a,[hl+0abh]')
+        self.assertEqual(str(inst), 'sub a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_1d_sub_a_imm8(self):
         mem = [0x1d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'sub a,#0abh')
+        self.assertEqual(str(inst), 'sub a,#0xab')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -211,7 +210,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x1e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'sub a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'sub a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -291,21 +290,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x28, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'addc a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'addc a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_29_sub_a_hl_plus_offset(self):
         mem = [0x29, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'addc a,[hl+0abh]')
+        self.assertEqual(str(inst), 'addc a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_2d_a_imm8(self):
         mem = [0x2d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "addc a,#0abh")
+        self.assertEqual(str(inst), "addc a,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -314,7 +313,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x2e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'addc a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'addc a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -336,21 +335,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x38, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "subc a,!%s" % intel_word(addr16))
+            self.assertEqual(str(inst), "subc a,!0x%04x" % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_39_subc_a_hl_plus_offset(self):
         mem = [0x39, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'subc a,[hl+0abh]')
+        self.assertEqual(str(inst), 'subc a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_3d_subc_a_imm8(self):
         mem = [0x3d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "subc a,#0abh")
+        self.assertEqual(str(inst), "subc a,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -359,7 +358,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x3e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'subc a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'subc a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -388,21 +387,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x48, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'cmp a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'cmp a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_49_cmp_a_hl_plus_offset(self):
         mem = [0x49, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'cmp a,[hl+0abh]')
+        self.assertEqual(str(inst), 'cmp a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_4d_cmp_a_imm8(self):
         mem = [0x4d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "cmp a,#0abh")
+        self.assertEqual(str(inst), "cmp a,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -411,7 +410,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x4e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'cmp a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'cmp a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -440,21 +439,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x58, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'and a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'and a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_59_and_a_hl_plus_offset(self):
         mem = [0x59, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'and a,[hl+0abh]')
+        self.assertEqual(str(inst), 'and a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_5d_and_a_imm8(self):
         mem = [0x5d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "and a,#0abh")
+        self.assertEqual(str(inst), "and a,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -463,7 +462,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x5e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'and a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'and a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -783,21 +782,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x68, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'or a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'or a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_69_or_a_hl_plus_offset(self):
         mem = [0x69, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'or a,[hl+0abh]')
+        self.assertEqual(str(inst), 'or a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_6d_or_a_imm8(self):
         mem = [0x6d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "or a,#0abh")
+        self.assertEqual(str(inst), "or a,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -806,7 +805,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x6e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'or a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'or a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -845,7 +844,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [0x71, operand, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "mov1 0%04xh.%d,cy" % (saddr, bit))
+                self.assertEqual(str(inst), "mov1 0x%04x.%d,cy" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -867,7 +866,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [0x71, operand, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "mov1 cy,0%04xh.%d" % (saddr, bit))
+                self.assertEqual(str(inst), "mov1 cy,0x%04x.%d" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -889,7 +888,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [0x71, operand, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "and1 cy,0%04xh.%d" % (saddr, bit))
+                self.assertEqual(str(inst), "and1 cy,0x%04x.%d" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -911,7 +910,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [0x71, operand, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "or1 cy,0%04xh.%d" % (saddr, bit))
+                self.assertEqual(str(inst), "or1 cy,0x%04x.%d" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -933,7 +932,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [0x71, operand, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "xor1 cy,0%04xh.%d" % (saddr, bit))
+                self.assertEqual(str(inst), "xor1 cy,0x%04x.%d" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -960,7 +959,7 @@ class disassemble_tests(unittest.TestCase):
                 sfr_low = sfr & 0xff
                 mem = [0x71, operand, sfr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), 'mov1 0%04xh.%d,cy' % (sfr, bit))
+                self.assertEqual(str(inst), 'mov1 0x%04x.%d,cy' % (sfr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -971,7 +970,7 @@ class disassemble_tests(unittest.TestCase):
                 sfr_low = sfr & 0xff
                 mem = [0x71, operand, sfr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), 'set1 0%04xh.%d' % (sfr, bit))
+                self.assertEqual(str(inst), 'set1 0x%04x.%d' % (sfr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -982,7 +981,7 @@ class disassemble_tests(unittest.TestCase):
                 sfr_low = sfr & 0xff
                 mem = [0x71, operand, sfr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), 'mov1 cy,0%04xh.%d' % (sfr, bit))
+                self.assertEqual(str(inst), 'mov1 cy,0x%04x.%d' % (sfr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1060,21 +1059,21 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x78, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'xor a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'xor a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_79_xor_a_hl_plus_offset(self):
         mem = [0x79, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), 'xor a,[hl+0abh]')
+        self.assertEqual(str(inst), 'xor a,[hl+0xab]')
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_7d_xor_a_imm8(self):
         mem = [0x7d, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "xor a,#0abh")
+        self.assertEqual(str(inst), "xor a,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1083,7 +1082,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x7e, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'xor a,0%04xh' % saddr)
+            self.assertEqual(str(inst), 'xor a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1110,7 +1109,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x81, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "inc 0%04xh" % saddr)
+            self.assertEqual(str(inst), "inc 0x%04x" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1119,7 +1118,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x83, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "xch a,0%04xh" % saddr)
+            self.assertEqual(str(inst), "xch a,0x%04x" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1142,7 +1141,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x88, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "add 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "add 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1152,7 +1151,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "dbnz c,$1000h")
+        self.assertEqual(str(inst), "dbnz c,$0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1162,7 +1161,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "dbnz b,$1000h")
+        self.assertEqual(str(inst), "dbnz b,$0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1172,7 +1171,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), 'bc $1000h')
+        self.assertEqual(str(inst), 'bc $0x1000')
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1182,7 +1181,7 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x8e, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'mov a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'mov a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1209,7 +1208,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x91, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "dec 0%04xh" % saddr)
+            self.assertEqual(str(inst), "dec 0x%04x" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1218,7 +1217,7 @@ class disassemble_tests(unittest.TestCase):
             sfr_low = sfr & 0xff
             mem = [0x93, sfr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "xch a,0%04xh" % sfr)
+            self.assertEqual(str(inst), "xch a,0x%04x" % sfr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1241,7 +1240,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x98, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "sub 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "sub 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1251,7 +1250,7 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x9a, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'call !%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'call !0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.SubroutineCall)
 
@@ -1261,7 +1260,7 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x9b, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'br !%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'br !0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.UnconditionalJump)
 
@@ -1271,7 +1270,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "bnc $1000h")
+        self.assertEqual(str(inst), "bnc $0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1281,7 +1280,7 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0x9e, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'mov !%s,a' % intel_word(addr16))
+            self.assertEqual(str(inst), 'mov !0x%04x,a' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1293,16 +1292,16 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(inst.flow_type, FlowTypes.SubroutineReturn)
 
     def test_a0_a7_mov_reg_imm8(self):
-        d = {0xa0: 'mov x,#%s', 0xa1: 'mov a,#%s',
-             0xa2: 'mov c,#%s', 0xa3: 'mov b,#%s',
-             0xa4: 'mov e,#%s', 0xa5: 'mov d,#%s',
-             0xa6: 'mov l,#%s', 0xa7: 'mov h,#%s'}
+        d = {0xa0: 'mov x,#0x%02x', 0xa1: 'mov a,#0x%02x',
+             0xa2: 'mov c,#0x%02x', 0xa3: 'mov b,#0x%02x',
+             0xa4: 'mov e,#0x%02x', 0xa5: 'mov d,#0x%02x',
+             0xa6: 'mov l,#0x%02x', 0xa7: 'mov h,#0x%02x'}
 
         for opcode, expected_inst_fmt in d.items():
             for imm8 in (0x00, 0xab, 0xff):
                 mem = [opcode, imm8]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), expected_inst_fmt % intel_byte(imm8))
+                self.assertEqual(str(inst), expected_inst_fmt % imm8)
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1311,7 +1310,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xa8, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "addc 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "addc 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1320,7 +1319,7 @@ class disassemble_tests(unittest.TestCase):
             sfrp_low = sfrp & 0xff
             mem = [0xa9, sfrp_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "movw ax,0%04xh" % sfrp)
+            self.assertEqual(str(inst), "movw ax,0x%04x" % sfrp)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1349,14 +1348,14 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "bz $1000h")
+        self.assertEqual(str(inst), "bz $0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
     def test_ae_mov_a_hl_plus_byte(self):
         mem = [0xAE, 0xAB]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "mov a,[hl+0abh]")
+        self.assertEqual(str(inst), "mov a,[hl+0xab]")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1394,7 +1393,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xb8, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "subc 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "subc 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1403,7 +1402,7 @@ class disassemble_tests(unittest.TestCase):
             sfrp_low = sfrp & 0xff
             mem = [0xb9, sfrp_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "movw 0%04xh,ax" % sfrp)
+            self.assertEqual(str(inst), "movw 0x%04x,ax" % sfrp)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1432,14 +1431,14 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "bnz $1000h")
+        self.assertEqual(str(inst), "bnz $0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
     def test_be_mov_hl_plus_byte_a(self):
         mem = [0xBE, 0xAB]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "mov [hl+0abh],a")
+        self.assertEqual(str(inst), "mov [hl+0xab],a")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1465,7 +1464,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xc8, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "cmp 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "cmp 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1475,7 +1474,7 @@ class disassemble_tests(unittest.TestCase):
             low = imm16 & 0xff
             mem = [0xca, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "addw ax,#%s" % intel_word(imm16))
+            self.assertEqual(str(inst), "addw ax,#0x%04x" % imm16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1485,7 +1484,7 @@ class disassemble_tests(unittest.TestCase):
             high = (addr16 >> 8) & 0xff
             mem = [0xce, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), 'xch a,!%s' % intel_word(addr16))
+            self.assertEqual(str(inst), 'xch a,!0x%04x' % addr16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1504,7 +1503,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xd8, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "and 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "and 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1514,14 +1513,14 @@ class disassemble_tests(unittest.TestCase):
             low = imm16 & 0xff
             mem = [0xda, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "subw ax,#%s" % intel_word(imm16))
+            self.assertEqual(str(inst), "subw ax,#0x%04x" % imm16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_de_xch_a_hl_plus_byte(self):
         mem = [0xde, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "xch a,[hl+0abh]")
+        self.assertEqual(str(inst), "xch a,[hl+0xab]")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1540,7 +1539,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xe8, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "or 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "or 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1550,7 +1549,7 @@ class disassemble_tests(unittest.TestCase):
             low = imm16 & 0xff
             mem = [0xea, low, high]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "cmpw ax,#%s" % intel_word(imm16))
+            self.assertEqual(str(inst), "cmpw ax,#0x%04x" % imm16)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1559,7 +1558,7 @@ class disassemble_tests(unittest.TestCase):
             sfr_low = sfr & 0xff
             mem = [0xf4, sfr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "mov a,0%04xh" % sfr)
+            self.assertEqual(str(inst), "mov a,0x%04x" % sfr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1568,7 +1567,7 @@ class disassemble_tests(unittest.TestCase):
             sfr_low = sfr & 0xff
             mem = [0xf6, sfr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "mov 0%04xh,a" % sfr)
+            self.assertEqual(str(inst), "mov 0x%04x,a" % sfr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1577,7 +1576,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xf8, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "xor 0%04xh,#0abh" % saddr)
+            self.assertEqual(str(inst), "xor 0x%04x,#0xab" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1586,7 +1585,7 @@ class disassemble_tests(unittest.TestCase):
             sfrp_low = sfrp & 0xff
             mem = [0xfe, sfrp_low, 0xcd, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "movw 0%04xh,#0abcdh" % sfrp)
+            self.assertEqual(str(inst), "movw 0x%04x,#0xabcd" % sfrp)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1601,7 +1600,7 @@ class disassemble_tests(unittest.TestCase):
         for address, c in enumerate(code, 0x1000):
             mem[address] = c
         inst = disassemble(mem, pc=0x1000)
-        self.assertEqual(str(inst), "br $1000h")
+        self.assertEqual(str(inst), "br $0x1000")
         self.assertEqual(len(inst), len(code))
         self.assertEqual(inst.flow_type, FlowTypes.UnconditionalJump)
 
@@ -1617,7 +1616,7 @@ class disassemble_tests(unittest.TestCase):
     def test_11_1e_mov_psw_imm8(self):
         mem = [0x11, 0x1e, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "mov psw,#0abh")
+        self.assertEqual(str(inst), "mov psw,#0xab")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1628,7 +1627,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0x11, saddr_low, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "mov 0%04xh,#0abh" % (saddr))
+            self.assertEqual(str(inst), "mov 0x%04x,#0xab" % (saddr))
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -1644,7 +1643,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "btclr 0%04xh.%d,$1000h" % (saddr, bit))
+                self.assertEqual(str(inst), "btclr 0x%04x.%d,$0x1000" % (saddr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1656,7 +1655,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "btclr psw.%d,$1000h" % bit)
+            self.assertEqual(str(inst), "btclr psw.%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1672,7 +1671,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bf 0%04xh.%d,$1000h" % (saddr, bit))
+                self.assertEqual(str(inst), "bf 0x%04x.%d,$0x1000" % (saddr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1684,7 +1683,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bf psw.%d,$1000h" % bit)
+            self.assertEqual(str(inst), "bf psw.%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1698,7 +1697,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "btclr 0%04xh.%d,$1000h" % (sfr, bit))
+                self.assertEqual(str(inst), "btclr 0x%04x.%d,$0x1000" % (sfr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1712,7 +1711,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bt 0%04xh.%d,$1000h" % (sfr, bit))
+                self.assertEqual(str(inst), "bt 0x%04x.%d,$0x1000" % (sfr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1726,7 +1725,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bf 0%04xh.%d,$1000h" % (sfr, bit))
+                self.assertEqual(str(inst), "bf 0x%04x.%d,$0x1000" % (sfr, bit))
                 self.assertEqual(len(inst), len(code))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1758,7 +1757,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "btclr a.%d,$1000h" % bit)
+            self.assertEqual(str(inst), "btclr a.%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1770,7 +1769,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "btclr [hl].%d,$1000h" % bit)
+            self.assertEqual(str(inst), "btclr [hl].%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1782,7 +1781,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bt [hl].%d,$1000h" % bit)
+            self.assertEqual(str(inst), "bt [hl].%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1794,7 +1793,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bf [hl].%d,$1000h" % bit)
+            self.assertEqual(str(inst), "bf [hl].%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1806,7 +1805,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bt a.%d,$1000h" % bit)
+            self.assertEqual(str(inst), "bt a.%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1818,7 +1817,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bf a.%d,$1000h" % bit)
+            self.assertEqual(str(inst), "bf a.%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -1990,7 +1989,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [opcode, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "set1 0%04xh.%d" % (saddr, bit))
+                self.assertEqual(str(inst), "set1 0x%04x.%d" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2019,7 +2018,7 @@ class disassemble_tests(unittest.TestCase):
                 saddr_low = saddr & 0xff
                 mem = [opcode, saddr_low]
                 inst = disassemble(mem, pc=0)
-                self.assertEqual(str(inst), "clr1 0%04xh.%d" % (saddr, bit))
+                self.assertEqual(str(inst), "clr1 0x%04x.%d" % (saddr, bit))
                 self.assertEqual(len(inst), len(mem))
                 self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2037,7 +2036,7 @@ class disassemble_tests(unittest.TestCase):
             saddrp_low = saddrp & 0xff
             mem = [0x89, saddrp_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "movw ax,0%04xh" % saddrp)
+            self.assertEqual(str(inst), "movw ax,0x%04x" % saddrp)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2054,7 +2053,7 @@ class disassemble_tests(unittest.TestCase):
             for address, c in enumerate(code, 0x1000):
                 mem[address] = c
             inst = disassemble(mem, pc=0x1000)
-            self.assertEqual(str(inst), "bt psw.%d,$1000h" % bit)
+            self.assertEqual(str(inst), "bt psw.%d,$0x1000" % bit)
             self.assertEqual(len(inst), len(code))
             self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
@@ -2070,7 +2069,7 @@ class disassemble_tests(unittest.TestCase):
                 for address, c in enumerate(code, 0x1000):
                     mem[address] = c
                 inst = disassemble(mem, pc=0x1000)
-                self.assertEqual(str(inst), "bt %s.%d,$1000h" % (intel_word(saddr), bit))
+                self.assertEqual(str(inst), "bt 0x%04x.%d,$0x1000" % (saddr, bit))
                 self.assertEqual(inst.flow_type, FlowTypes.ConditionalJump)
 
     def test_99_1c_movw_sp_ax(self):
@@ -2087,7 +2086,7 @@ class disassemble_tests(unittest.TestCase):
             saddrp_low = saddrp & 0xff
             mem = [0x99, saddrp_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "movw 0%04xh,ax" % saddrp)
+            self.assertEqual(str(inst), "movw 0x%04x,ax" % saddrp)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2099,7 +2098,7 @@ class disassemble_tests(unittest.TestCase):
     def test_ee_1c_movw_sp_imm16(self):
         mem = [0xee, 0x1c, 0xcd, 0xab]
         inst = disassemble(mem, pc=0)
-        self.assertEqual(str(inst), "movw sp,#0abcdh")
+        self.assertEqual(str(inst), "movw sp,#0xabcd")
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2110,7 +2109,7 @@ class disassemble_tests(unittest.TestCase):
             saddrp_low = saddrp & 0xff
             mem = [0xee, saddrp_low, 0xcd, 0xab]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "movw 0%04xh,#0abcdh" % saddrp)
+            self.assertEqual(str(inst), "movw 0x%04x,#0xabcd" % saddrp)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2133,7 +2132,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xf0, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "mov a,0%04xh" % saddr)
+            self.assertEqual(str(inst), "mov a,0x%04x" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
@@ -2151,7 +2150,7 @@ class disassemble_tests(unittest.TestCase):
             saddr_low = saddr & 0xff
             mem = [0xf2, saddr_low]
             inst = disassemble(mem, pc=0)
-            self.assertEqual(str(inst), "mov 0%04xh,a" % saddr)
+            self.assertEqual(str(inst), "mov 0x%04x,a" % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
 

@@ -1,7 +1,5 @@
 import struct
 
-from k0dasm.utils import intel_byte, intel_word
-
 
 class Printer(object):
     def __init__(self, memory, start_address, end_address, symbol_table):
@@ -59,7 +57,7 @@ class Printer(object):
         for address in sorted(used_addresses):
             if address > self.end_address:
                 name, comment = self.symbol_table.symbols[address]
-                line = ("    %s equ %s" % (name, intel_word(address))).ljust(28)
+                line = ("    %s equ 0x%04x" % (name, address)).ljust(28)
                 if comment:
                     line += ";%s" % comment
                 print(line)
@@ -80,7 +78,7 @@ class Printer(object):
             print("\n%s:" % name)
 
     def print_data_line(self, address):
-        line = ('    db %s' % intel_byte(self.memory[address])).ljust(28)
+        line = ('    db 0x%02x' % self.memory[address]).ljust(28)
         line += ';%04x  %02x          DATA %s ' % (address, self.memory[address], self._data_byte_repr(self.memory[address]))
         if self.memory.is_illegal_instruction(address):
             line += ' ILLEGAL_INSTRUCTION'
@@ -125,7 +123,7 @@ class Printer(object):
         if inst.reltarget is not None:
             disasm = disasm.replace('{reltarget}', '$' + self.format_ext_address(inst.reltarget))
         if inst.addr5 is not None:
-            disasm = disasm.replace('{addr5}', '[%s]' % intel_word(inst.addr5))
+            disasm = disasm.replace('{addr5}', '[0x%04x]' % inst.addr5)
         if inst.addr11 is not None:
             disasm = disasm.replace('{addr11}', '!' + self.format_ext_address(inst.addr11))
         if inst.addr16 is not None:
@@ -133,11 +131,11 @@ class Printer(object):
         if inst.addr16p is not None:
             disasm = disasm.replace('{addr16p}', '!' + self.format_ext_address(inst.addr16p))
         if inst.offset is not None:
-            disasm = disasm.replace('{offset}', intel_byte(inst.offset))
+            disasm = disasm.replace('{offset}', '0x%02x' % inst.offset)
         if inst.bit is not None:
             disasm = disasm.replace('{bit}', '%d' % inst.bit)
         if inst.imm8 is not None:
-            disasm = disasm.replace('{imm8}', '#' + intel_byte(inst.imm8))
+            disasm = disasm.replace('{imm8}', '#' + '0x%02x' % inst.imm8)
         if inst.imm16 is not None:
             disasm = disasm.replace('{imm16}', '#' + self.format_imm16(inst.imm16))
         if inst.reg is not None:
@@ -156,10 +154,10 @@ class Printer(object):
         elif imm16 in self.symbol_table.symbols:
             name, comment = self.symbol_table.symbols[imm16]
             return name
-        return intel_word(imm16)
+        return '0x%04x' % imm16
 
     def format_ext_address(self, address):
         if address in self.symbol_table.symbols:
             name, comment = self.symbol_table.symbols[address]
             return name
-        return intel_word(address)
+        return '0x%04x' % address
