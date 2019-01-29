@@ -54,7 +54,7 @@ class Printer(object):
         for address in sorted(used_addresses):
             if address > self.end_address:
                 name, comment = self.symbol_table.symbols[address]
-                line = ("    %s equ 0x%04x" % (name, address)).ljust(28)
+                line = ("    %s = 0x%04x" % (name, address)).ljust(28)
                 if comment:
                     line += ";%s" % comment
                 print(line)
