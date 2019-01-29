@@ -12,7 +12,7 @@ undocumented NEC µPD78F0831Y microcontroller, which is similar to the [µPD78F0
 
  - Identical Reassembly.  The assembly language output of k0dasm will
    assemble to a bit-for-bit exact copy of the original binary using
-   RA78K0.  This has been tested using several real firmware binaries.
+   as78k0.  This has been tested using several real firmware binaries.
 
  - Code / Data Separation.  Starting from the vectors at the bottom of memory,
    k0dasm uses recursive traversal disassembly to separate code from data.
