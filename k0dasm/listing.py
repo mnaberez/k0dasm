@@ -33,13 +33,10 @@ class Printer(object):
                     msg = "Unhandled location type %r at 0x%04x" % (
                         self.memory.types[address], address)
                     raise NotImplementedError(msg) # always a bug
-        self.print_footer()
 
     def print_header(self):
-        print('    org 0%04xh\n' % self.start_address)
-
-    def print_footer(self):
-        print('    end')
+        print('    .area CODE1 (ABS)')
+        print('    .org 0x%04x\n' % self.start_address)
 
     def print_symbols(self):
         symbol_addresses = set(self.symbol_table.symbols.keys())
