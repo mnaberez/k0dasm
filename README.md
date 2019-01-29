@@ -3,7 +3,7 @@
 ## Overview
 
 k0dasm is a disassembler for NEC 78K0 binaries that generates output
-compatible with NEC's commercial [RA78K0 assembler](https://web.archive.org/web/20180604213218/https://www.renesas.com/en-us/products/software-tools/tools/compiler-assembler/assembler-package-for-78k0-ra78k0.html).  It can be used to disassemble firmware for many 8-bit NEC 78K0 microcontrollers.  Note that NEC has several microcontroller families with similar names, such as 78K0S, that use different instruction sets.  These are not supported.
+compatible with the [as78k0](http://shop-pdp.net/ashtml/as78k0.htm) assembler.  It can be used to disassemble firmware for many 8-bit NEC 78K0 microcontrollers.  Note that NEC has several microcontroller families with similar names, such as 78K0S, that use different instruction sets.  These are not supported.
 
 k0dasm was developed to disassemble the firmware of the [Volkswagen Premium V](https://github.com/mnaberez/vwradio) car radios made by Delco.  These radios use the
 undocumented NEC µPD78F0831Y microcontroller, which is similar to the [µPD78F0833Y](https://web.archive.org/web/20180328161019/https://www.renesas.com/en-us/doc/DocumentServer/021/U13892EJ2V0UM00.pdf).
