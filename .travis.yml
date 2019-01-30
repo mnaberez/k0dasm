@@ -1,5 +1,4 @@
 dist: trusty
-sudo: required
 
 language: python
 matrix:
@@ -11,10 +10,12 @@ matrix:
     - python: 3.6
       env: TOXENV=py36
 
-before_install:
-  # srec_cat
-  - sudo apt-get install -qq -y srecord
+addons:
+  apt:
+    packages:
+      - srecord
 
+before_install:
   # asxxxx
   - git clone https://github.com/mnaberez/asxxxx.git
   - make -C asxxxx/asxv5pxx/asxmak/linux/build all
