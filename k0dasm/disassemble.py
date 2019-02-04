@@ -1811,38 +1811,57 @@ class Instruction(object):
         return 1 + len(self.operands)
 
     def __str__(self):
+        return self.to_string()
+
+    def to_string(self, symbols=None):
+        if symbols is None:
+            symbols = {}  # address: (name, comment)
         disasm = self.template
         if self.saddrp is not None:
-            disasm = disasm.replace('{saddrp}', '0x%04x' % self.saddrp)
+            disasm = disasm.replace('{saddrp}', self._format_ext_address(self.saddrp, symbols))
         if self.saddr is not None:
-            disasm = disasm.replace('{saddr}', '0x%04x' % self.saddr)
+            disasm = disasm.replace('{saddr}', self._format_ext_address(self.saddr, symbols))
         if self.reltarget is not None:
-            disasm = disasm.replace('{reltarget}', '0x%04x' % self.reltarget)
+            disasm = disasm.replace('{reltarget}', self._format_ext_address(self.reltarget, symbols))
         if self.addr5 is not None:
             disasm = disasm.replace('{addr5}', '[0x%04x]' % self.addr5)
         if self.addr11 is not None:
-            disasm = disasm.replace('{addr11}', '!0x%04x' % self.addr11)
+            disasm = disasm.replace('{addr11}', '!' + self._format_ext_address(self.addr11, symbols))
         if self.addr16 is not None:
-            disasm = disasm.replace('{addr16}', '!0x%04x' % self.addr16)
+            disasm = disasm.replace('{addr16}', '!' + self._format_ext_address(self.addr16, symbols))
         if self.addr16p is not None:
-            disasm = disasm.replace('{addr16p}', '!0x%04x' % self.addr16p)
+            disasm = disasm.replace('{addr16p}', '!' + self._format_ext_address(self.addr16p, symbols))
         if self.offset is not None:
             disasm = disasm.replace('{offset}', '0x%02x' % self.offset)
         if self.bit is not None:
             disasm = disasm.replace('{bit}', '%d' % self.bit)
         if self.imm8 is not None:
-            disasm = disasm.replace('{imm8}', '#0x%02x' % self.imm8)
+            disasm = disasm.replace('{imm8}', '#' + '0x%02x' % self.imm8)
         if self.imm16 is not None:
-            disasm = disasm.replace('{imm16}', '#0x%04x' % self.imm16)
+            disasm = disasm.replace('{imm16}', '#' + self._format_imm16(self.imm16, symbols))
         if self.reg is not None:
             disasm = disasm.replace('{reg}', self.reg)
         if self.regpair is not None:
             disasm = disasm.replace('{regpair}', self.regpair)
         if self.sfr is not None:
-            disasm = disasm.replace('{sfr}', '0x%04x' % self.sfr)
+            disasm = disasm.replace('{sfr}', self._format_ext_address(self.sfr, symbols))
         if self.sfrp is not None:
-            disasm = disasm.replace('{sfrp}', '0x%04x' % self.sfrp)
+            disasm = disasm.replace('{sfrp}', self._format_ext_address(self.sfrp, symbols))
         return disasm
+
+    def _format_imm16(self, imm16, symbols):
+        if imm16 < 0x007f: # skip vector area
+            pass
+        elif imm16 in symbols:
+            name, comment = symbols[imm16]
+            return name
+        return '0x%04x' % imm16
+
+    def _format_ext_address(self, address, symbols):
+        if address in symbols:
+            name, comment = symbols[address]
+            return name
+        return '0x%04x' % address
 
     @property
     def all_bytes(self):
