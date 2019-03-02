@@ -88,12 +88,13 @@ class Printer(object):
             return "0x%02x" % b
 
     def print_vector_line(self, address):
-        target = struct.unpack('<H', self.memory[address:address+2])[0]
-        target = '0x%04x' % address
+        target_address = struct.unpack('<H', self.memory[address:address+2])[0]
 
-        if address in self.symbol_table.symbols:
-            name, comment = self.symbol_table.symbols[address]
+        if target_address in self.symbol_table.symbols:
+            name, comment = self.symbol_table.symbols[target_address]
             target = name
+        else:
+            target = '0x%04x' % target
 
         line = ('    .word %s' % target).ljust(28)
         line += ';%04x  %02x %02x       VECTOR' % (address, self.memory[address], self.memory[address+1])
