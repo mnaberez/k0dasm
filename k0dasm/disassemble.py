@@ -1503,7 +1503,8 @@ def disassemble(mem, pc):
                                flow_type=FlowTypes.ConditionalJump,)
             return inst
         else:
-            raise IllegalInstructionError("Illegal byte follows opcode 0x31: 0x%02x" % mem[pc+1])
+            msg = "Illegal byte 0x%02x follows opcode 0x31 at 0x%04x" % (mem[pc+1], pc)
+            raise IllegalInstructionError(msg)
 
     elif mem[pc+0] == 0x61:
         bit = _bit(mem[pc+1])
@@ -1607,7 +1608,8 @@ def disassemble(mem, pc):
                                flow_type=FlowTypes.Continue,)
             return inst
         else:
-            raise IllegalInstructionError("Illegal byte follows opcode 0x61: 0x%02x" % mem[pc+1])
+            msg = "Illegal byte 0x%02x follows opcode 0x61 at 0x%04x" % (mem[pc+1], pc)
+            raise IllegalInstructionError(msg)
 
     elif mem[pc+0] == 0x71:
         if mem[pc+1] == 0x00:
@@ -1728,10 +1730,12 @@ def disassemble(mem, pc):
                                    flow_type=FlowTypes.Continue,)
                 return inst
         else:
-            raise IllegalInstructionError("Illegal byte follows opcode 0x71: 0x%02x" % mem[pc+1])
+            msg = "Illegal byte 0x%02x follows opcode 0x71 at 0x%04x" % (mem[pc+1], pc)
+            raise IllegalInstructionError(msg)
 
     else:
-        raise IllegalInstructionError("Illegal opcode 0x%02x" % mem[pc+0])
+        msg = "Illegal opcode 0x%02x at 0x%04x" % (mem[pc], pc)
+        raise IllegalInstructionError(msg)
 
 
 def _reg(opcode):
