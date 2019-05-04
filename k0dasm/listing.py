@@ -94,7 +94,7 @@ class Printer(object):
             name, comment = self.symbol_table.symbols[target_address]
             target = name
         else:
-            target = '0x%04x' % target
+            target = '0x%04x' % target_address
 
         line = ('    .word %s' % target).ljust(28)
         line += ';%04x  %02x %02x       VECTOR' % (address, self.memory[address], self.memory[address+1])
