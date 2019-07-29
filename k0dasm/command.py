@@ -1,3 +1,8 @@
+'''
+Usage: k0dasm <filename.bin>
+
+'''
+
 import sys
 
 from k0dasm.disassemble import disassemble
@@ -7,6 +12,10 @@ from k0dasm.listing import Printer
 from k0dasm.symbols import SymbolTable, D78F0831Y_SYMBOLS
 
 def main():
+    if len(sys.argv) != 2:
+        sys.stderr.write(__doc__)
+        sys.exit(1)
+
     with open(sys.argv[1], 'rb') as f:
         rom = bytearray(f.read())
     memory = Memory(rom)
