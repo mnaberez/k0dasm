@@ -7,6 +7,7 @@ compatible with the [as78k0](http://shop-pdp.net/ashtml/as78k0.htm) assembler.  
 
 k0dasm was developed to disassemble the firmware of the [Volkswagen Premium V](https://github.com/mnaberez/vwradio) car radios made by Delco.  These radios use the
 undocumented NEC µPD78F0831Y microcontroller, which is similar to the [µPD78F0833Y](https://web.archive.org/web/20180328161019/https://www.renesas.com/en-us/doc/DocumentServer/021/U13892EJ2V0UM00.pdf).
+A companion program, [k0emu](https://github.com/mnaberez/k0emu), is a 78K0 emulator developed for the same project.
 
 ## Features
 
