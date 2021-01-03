@@ -1,0 +1,38 @@
+name: Run all tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.4, 3.5, 3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install asxxxx
+      run: |
+        wget -q -U github http://6502.org/tools/asm/asxv5p31.zip
+        unzip -q asxv5p31.zip
+        make -C asxv5pxx/asxmak/linux/build all
+        echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
+
+    - name: Install srecord
+      run: sudo apt-get install -y srecord
+
+    - name: Assemble the test program with asxxxx
+      run: make -C docs/testprog
+
+    - name: Show Python version
+      run: python -V
+
+    - name: Run the tests
+      run: python setup.py test -q
