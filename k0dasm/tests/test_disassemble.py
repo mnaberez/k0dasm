@@ -301,7 +301,7 @@ class disassemble_tests(unittest.TestCase):
         self.assertEqual(len(inst), len(mem))
         self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
-    def test_2d_a_imm8(self):
+    def test_2d_addc_imm8(self):
         mem = [0x2d, 0xab]
         inst = disassemble(mem, pc=0)
         self.assertEqual(str(inst), "addc a,#0xab")
@@ -316,6 +316,13 @@ class disassemble_tests(unittest.TestCase):
             self.assertEqual(str(inst), 'addc a,0x%04x' % saddr)
             self.assertEqual(len(inst), len(mem))
             self.assertEqual(inst.flow_type, FlowTypes.Continue)
+
+    def test_2f_addc_hl(self):
+        mem = [0x2f]
+        inst = disassemble(mem, pc=0)
+        self.assertEqual(str(inst), "addc a,[hl]")
+        self.assertEqual(len(inst), len(mem))
+        self.assertEqual(inst.flow_type, FlowTypes.Continue)
 
     def test_30_37_xch_a_reg(self):
         d = {0x30: 'xch a,x',                  0x32: 'xch a,c',

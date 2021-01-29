@@ -396,15 +396,15 @@ def disassemble(mem, pc):
                            flow_type=FlowTypes.Continue,)
         return inst
 
-    # 0x27: 'ADDC A,[HL]'
+    # 0x2f: 'ADDC A,[HL]'
     elif mem[pc+0] == 0x2f:
         inst = Instruction('addc a,[hl]',
                            opcode=mem[pc+0],
-                           operands=(mem[pc+1],),
+                           operands=(),
                            flow_type=FlowTypes.Continue,)
         return inst
 
-    # ADDC A,[HL+0abh]            ;29 AB
+    # ADDC A,[HL+0abh]
     elif mem[pc+0] == 0x29:
         offset = mem[pc+1]
         inst = Instruction('addc a,[hl+{offset}]',
