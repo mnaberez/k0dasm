@@ -1,0 +1,6 @@
+*.bin
+*.hlr 
+*.ihx 
+*.lst 
+*.rel
+reassembled.asm

@@ -1,7 +1,14 @@
     .area CODE1 (ABS)
-    .org 0
 
-    nop                         ;00             two nops are also reset vector
+;Hardware Vectors ===========================================================
+
+    .org 0
+    .word start
+
+;Instructions ===============================================================
+
+    .org 0x0100
+start:
     nop                         ;00
     not1 cy                     ;01
     movw ax,!0xabce             ;02 ce ab       addr16p
@@ -81,7 +88,6 @@ label0:
     divuw c                     ;31 82
     ror4 [hl]                   ;31 90
     rol4 [hl]                   ;31 80
-    br ax                       ;31 98
 
 label24:
     bt *0xfffe.0,label24        ;31 06 fe fc    sfr
@@ -816,9 +822,6 @@ label127:
     clr1 [hl].6                 ;71 e3
     clr1 [hl].7                 ;71 f3
 
-    halt                        ;71 10
-    stop                        ;71 00
-
     mov c,a                     ;72
     mov b,a                     ;73
     mov e,a                     ;74
@@ -862,7 +865,6 @@ label9:
 label3:
     bc label3                  ;8d fe
     mov a,!0xabcd               ;8e cd ab
-    reti                        ;8f
     decw ax                     ;90
     dec 0xfe20                  ;91 20          saddr
     decw bc                     ;92
@@ -875,7 +877,6 @@ label3:
     movw @0xfe20,ax             ;99 20          saddrp
     movw sp,ax                  ;99 1c
     call !0xabcd                ;9a cd ab
-    br !0xabcd                  ;9b cd ab
 label10:
     bt @0xfe20.1,label10        ;9c 20 fd       saddr
 label11:
@@ -883,7 +884,6 @@ label11:
 label4:
     bnc label4                  ;9d fe
     mov !0xabcd,a               ;9e cd ab
-    retb                        ;9f
     mov x,#0xab                 ;a0 ab
     mov a,#0xab                 ;a1 ab
     mov c,#0xab                 ;a2 ab
@@ -904,7 +904,6 @@ label13:
 label5:
     bz label5                   ;ad fe
     mov a,[hl+0xab]             ;ae ab
-    ret                         ;af
     pop ax                      ;b0
     push ax                     ;b1
     pop bc                      ;b2
@@ -924,7 +923,6 @@ label15:
 label6:
     bnz label6                 ;bd fe
     mov [hl+0xab],a             ;be ab
-    brk                         ;bf
     callt [0x0040]               ;c1
     movw ax,bc                  ;c2
     callt [0x0042]               ;c3
@@ -992,13 +990,48 @@ label23:
     callt [0x0076]              ;f7
     xor @0xfe20,#0xab           ;f8 20 ab       saddr
     callt [0x0078]              ;f9
-label7:
-   br label7                    ;fa fe
-   callt [0x007a]               ;fb
+    callt [0x007a]               ;fb
 label18:
-   bt @0xfe20.7,label18         ;fc 20 fd       saddr
+    bt @0xfe20.7,label18         ;fc 20 fd       saddr
 label19:
-   bt psw.7,label19             ;fc 1e fd
-   callt [0x007c]               ;fd
-   movw *0xfffe,#0xabcd         ;fe fe cd ab    sfrp
-   callt [0x007e]               ;ff
+    bt psw.7,label19             ;fc 1e fd
+    callt [0x007c]               ;fd
+    movw *0xfffe,#0xabcd         ;fe fe cd ab    sfrp
+    callt [0x007e]               ;ff
+
+;"Stop" Instructions ========================================================
+
+    ;These CALLs are used to force the tracer into disassembling these
+    ;addresses as code.
+
+    call inst_31_98
+    call inst_71_00
+    call inst_71_10
+    call inst_8f
+    call inst_9b
+    call inst_9f
+    call inst_af
+    call inst_bf
+    call inst_fa
+
+    ;Each of the instructions below would cause the tracer stop and
+    ;not treat the next byte(s) as code.
+
+inst_31_98:
+    br ax                       ;31 98
+inst_71_00:
+    stop                        ;71 00
+inst_71_10:
+    halt                        ;71 10
+inst_8f:
+    reti                        ;8f
+inst_9b:
+    br !0xabcd                  ;9b cd ab
+inst_9f:
+    retb                        ;9f
+inst_af:
+    ret                         ;af
+inst_bf:
+    brk                         ;bf
+inst_fa:
+    br inst_fa                  ;fa fe

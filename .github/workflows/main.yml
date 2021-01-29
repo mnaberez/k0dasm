@@ -18,6 +18,15 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Show Python version
+      run: python -V
+
+    - name: Run the tests
+      run: python setup.py test -q
+
+    - name: Install it
+      run: python setup.py install
+
     - name: Install asxxxx
       run: |
         wget -q -U github http://6502.org/tools/asm/asxv5p31.zip
@@ -28,11 +37,6 @@ jobs:
     - name: Install srecord
       run: sudo apt-get install -y srecord
 
-    - name: Assemble the test program with asxxxx
-      run: make -C docs/testprog
-
-    - name: Show Python version
-      run: python -V
-
-    - name: Run the tests
-      run: python setup.py test -q
+    - name: Disassemble and reassemble the test program
+      run: |
+        make -C k0dasm/tests/end_to_end all
