@@ -9,7 +9,7 @@ clean:
 
 testprog.bin:
 	as78k0 -l -o testprog.asm
-	aslink testprog -i
+	aslink -i testprog
 	srec_cat testprog.ihx -intel -o testprog.bin -binary
 
 reassembled.bin: testprog.bin
