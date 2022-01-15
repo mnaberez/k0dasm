@@ -984,7 +984,7 @@ label23:
     mov 0xfe20,a                ;f2 20          saddr
     mov psw,a                   ;f2 1e
     callt [0x0072]              ;f3
-    mov a,*0x0fffe              ;f4 ff          sfr
+    mov a,*0x0fffe              ;f4 fe          sfr
     callt [0x0074]              ;f5
     mov *0xfffe,a               ;f6 fe          sfr
     callt [0x0076]              ;f7
