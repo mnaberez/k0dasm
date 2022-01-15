@@ -15,5 +15,5 @@ testprog.bin:
 reassembled.bin: testprog.bin
 	k0dasm testprog.bin > reassembled.asm
 	as78k0 -l -o reassembled.asm
-	aslink reassembled -i
+	aslink -i reassembled
 	srec_cat reassembled.ihx -intel -o reassembled.bin -binary
