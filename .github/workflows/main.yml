@@ -29,8 +29,8 @@ jobs:
 
     - name: Install asxxxx
       run: |
-        wget --no-verbose --content-disposition https://github.com/6502org/6502.org/blob/849e49b56798da9f81d5f0a6c0a40f84668a5d6d/public/tools/asm/asxv5p40_20211216.zip?raw=true
-        unzip -q asxv5p40_20211216.zip
+        wget --no-verbose --content-disposition https://github.com/6502org/6502.org/blob/b4a4f243d9ae3ea78fc14a487bac650b5a3f7a12/public/tools/asm/asxv5p40_20220112.zip?raw=true
+        unzip -q asxv5p40_20220112.zip
         make -C asxv5pxx/asxmak/linux/build all
         echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
 
