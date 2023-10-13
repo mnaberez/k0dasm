@@ -10,10 +10,10 @@ clean:
 testprog.bin:
 	as78k0 -l -o testprog.asm
 	aslink -i testprog
-	srec_cat testprog.ihx -intel -o testprog.bin -binary
+	srec_cat testprog.hex -intel -o testprog.bin -binary
 
 reassembled.bin: testprog.bin
 	k0dasm testprog.bin > reassembled.asm
 	as78k0 -l -o reassembled.asm
 	aslink -i reassembled
-	srec_cat reassembled.ihx -intel -o reassembled.bin -binary
+	srec_cat reassembled.hex -intel -o reassembled.bin -binary
