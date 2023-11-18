@@ -3,10 +3,93 @@ name: Run all tests
 on: [push, pull_request]
 
 env:
-  PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP: "env PIP_DISABLE_PIP_VERSION_CHECK=1 
+            PYTHONWARNINGS=ignore:DEPRECATION
+            pip --no-cache-dir"
 
 jobs:
-  build:
+  build_py34:
+    runs-on: ubuntu-20.04
+    container: python:3.4
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install asxxxx
+      run: |
+        wget --no-verbose https://github.com/6502org/6502.org/raw/74f5d0c0f9b73d5e353bde7b3b25ea7f43b527a1/public/tools/asm/asxs5p50.zip
+        unzip -q asxs5p50.zip
+        make -C asxv5pxx/asxmak/linux/build all
+        echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
+
+    - name: Install srecord
+      run: |
+        cat /etc/issue # Debian 9 (Stretch) expected
+        dpkg -r --force-all libgcrypt20
+        wget --no-verbose http://ftp.us.debian.org/debian/pool/main/libg/libgcrypt20/libgcrypt20_1.8.4-5+deb10u1_amd64.deb
+        dpkg -i libgcrypt20_1.8.4-5+deb10u1_amd64.deb
+        wget --no-verbose http://ftp.us.debian.org/debian/pool/main/s/srecord/libsrecord0_1.64-1_amd64.deb
+        dpkg -i libsrecord0_1.64-1_amd64.deb
+        wget --no-verbose http://ftp.us.debian.org/debian/pool/main/s/srecord/srecord_1.64-1_amd64.deb
+        dpkg -i srecord_1.64-1_amd64.deb
+
+    - name: Show Python version
+      run: python -V
+
+    - name: Install dependencies
+      run: $PIP install setuptools
+
+    - name: Run the tests
+      run: python setup.py test -q
+
+    - name: Install it
+      run: python setup.py install
+
+    - name: Disassemble and reassemble the test program
+      run: |
+        make -C k0dasm/tests/end_to_end all
+
+  build_py35:
+    runs-on: ubuntu-20.04
+    container: python:3.5
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install asxxxx
+      run: |
+        wget --no-verbose https://github.com/6502org/6502.org/raw/74f5d0c0f9b73d5e353bde7b3b25ea7f43b527a1/public/tools/asm/asxs5p50.zip
+        unzip -q asxs5p50.zip
+        make -C asxv5pxx/asxmak/linux/build all
+        echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
+
+    - name: Install srecord
+      run: |
+        cat /etc/issue # Debian 10 (Buster) expected
+        apt update
+        apt install -y srecord
+
+    - name: Show Python version
+      run: python -V
+
+    - name: Install dependencies
+      run: $PIP install setuptools
+
+    - name: Run the tests
+      run: python setup.py test -q
+
+    - name: Install it
+      run: python setup.py install
+
+    - name: Disassemble and reassemble the test program
+      run: |
+        make -C k0dasm/tests/end_to_end all
+
+  build_py3x:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -21,27 +104,29 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install asxxxx
+      run: |
+        wget --no-verbose https://github.com/6502org/6502.org/raw/74f5d0c0f9b73d5e353bde7b3b25ea7f43b527a1/public/tools/asm/asxs5p50.zip
+        unzip -q asxs5p50.zip
+        make -C asxv5pxx/asxmak/linux/build all
+        echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
+
+    - name: Install srecord
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y srecord
+
     - name: Show Python version
       run: python -V
 
     - name: Install dependencies
-      run: pip install setuptools
+      run: $PIP install setuptools
 
     - name: Run the tests
       run: python setup.py test -q
 
     - name: Install it
       run: python setup.py install
-
-    - name: Install asxxxx
-      run: |
-        wget --no-verbose --content-disposition https://github.com/6502org/6502.org/raw/74f5d0c0f9b73d5e353bde7b3b25ea7f43b527a1/public/tools/asm/asxs5p50.zip
-        unzip -q asxs5p50.zip
-        make -C asxv5pxx/asxmak/linux/build all
-        echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
-
-    - name: Install srecord
-      run: sudo apt-get install -y srecord
 
     - name: Disassemble and reassemble the test program
       run: |

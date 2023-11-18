@@ -4,8 +4,8 @@ import os
 import sys
 from setuptools import setup, find_packages
 
-if sys.version_info[:2] < (3, 6):
-    raise RuntimeError('k0dasm requires Python 3.6 or later')
+if sys.version_info[:2] < (3, 4):
+    raise RuntimeError('k0dasm requires Python 3.4 or later')
 
 DESC = "Renesas (NEC) 78K0 disassembler"
 here = os.path.abspath(os.path.dirname(__file__))
@@ -22,6 +22,8 @@ CLASSIFIERS = [
     'Operating System :: POSIX',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
