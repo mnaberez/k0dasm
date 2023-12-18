@@ -3,25 +3,35 @@ Usage: k0dasm <filename.bin>
 
 '''
 
-import sys
+import argparse
 
 from k0dasm.disassemble import disassemble
 from k0dasm.memory import Memory
 from k0dasm.trace import Tracer
 from k0dasm.listing import Printer
-from k0dasm.symbols import SymbolTable, D78F0831Y_SYMBOLS
+from k0dasm.symbols import SymbolTable, D78F0831Y_SYMBOLS, D78F05xx_SYMBOLS
+
+def parse_entrypoint(v):
+    try:
+        return int(v, 0)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f'invalid entry point "{v}"')
+
 
 def main():
-    if len(sys.argv) != 2:
-        sys.stderr.write(__doc__)
-        sys.exit(1)
+    default_MCU = 'D78F0831Y'
+    parser = argparse.ArgumentParser(description='k0dasm - disassembler for NEC/Renesas 78k0 MCUs')
+    parser.add_argument('filename')
+    parser.add_argument('-e', '--entrypoint', action='append', type=parse_entrypoint, help='indicate (multiple) entry points', metavar='ENTRY_POINT')
+    parser.add_argument('-m', '--mcu', choices=[default_MCU, 'D78F05xx'], default=default_MCU, help=f'select MCU type (default={default_MCU})')
+    args = parser.parse_args()
 
-    with open(sys.argv[1], 'rb') as f:
+    with open(args.filename, 'rb') as f:
         rom = bytearray(f.read())
     memory = Memory(rom)
 
     start_address = 0
-    entry_points = []
+    entry_points = args.entrypoint if args.entrypoint else []
     hardware_vectors = [ # TODO these are uPD78F0831Y specific
         0x0000, # RST
         0x0002, # (unused)
@@ -64,7 +74,11 @@ def main():
     tracer = Tracer(memory, entry_points, all_vectors, traceable_range)
     tracer.trace(disassemble)
 
-    symbol_table = SymbolTable(D78F0831Y_SYMBOLS)
+    if args.mcu == 'D78F0831Y':
+        symbol_table = SymbolTable(D78F0831Y_SYMBOLS)
+    elif args.mcu == 'D78F05xx':
+        symbol_table = SymbolTable(D78F05xx_SYMBOLS)
+
     symbol_table.generate(memory, start_address) # xxx should pass traceable_range
 
     printer = Printer(memory,
