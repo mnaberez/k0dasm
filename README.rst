@@ -4,9 +4,9 @@ k0dasm
 Overview
 --------
 
-k0dasm is a disassembler for NEC 78K0 binaries that generates output compatible with the `as78k0 <http://shop-pdp.net/ashtml/as78k0.htm>`_ assembler.  It can be used to disassemble firmware for many 8-bit NEC 78K0 microcontrollers.  Note that NEC has several microcontroller families with similar names, such as 78K0S, that use different instruction sets.  These are not supported.
+k0dasm is a disassembler for NEC 78K0 binaries that generates output compatible with the `as78k0 <http://shop-pdp.net/ashtml/as78k0.htm>`_ assembler.  It was developed to disassemble the firmware of the `Volkswagen Premium V <https://github.com/mnaberez/vwradio>`_ car radios made by Delco.  These radios use the undocumented NEC µPD78F0831Y microcontroller, which is similar to the `µPD78F0833Y <https://web.archive.org/web/20180328161019/https://www.renesas.com/en-us/doc/DocumentServer/021/U13892EJ2V0UM00.pdf>`_.  A companion program, `k0emu <https://github.com/mnaberez/k0emu>`_, is a 78K0 emulator developed for the same project.
 
-k0dasm was developed to disassemble the firmware of the `Volkswagen Premium V <https://github.com/mnaberez/vwradio>`_ car radios made by Delco.  These radios use the undocumented NEC µPD78F0831Y microcontroller, which is similar to the `µPD78F0833Y <https://web.archive.org/web/20180328161019/https://www.renesas.com/en-us/doc/DocumentServer/021/U13892EJ2V0UM00.pdf>`_.  A companion program, `k0emu <https://github.com/mnaberez/k0emu>`_, is a 78K0 emulator developed for the same project.
+This disassembler only supports the µPD78F0831Y.  It may be able to disassemble binaries for other 8-bit NEC 78K0 microcontrollers but this has not been tested and the source code would need to be modified to do so.  Note that NEC has several microcontroller families with similar names, such as 78K0S, that use different instruction sets and are not compatible.
 
 Features
 --------
