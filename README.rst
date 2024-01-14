@@ -4,14 +4,14 @@ k0dasm
 Overview
 --------
 
-k0dasm is a disassembler for NEC 78K0 binaries that generates output compatible with the `as78k0 <http://shop-pdp.net/ashtml/as78k0.htm>`_ assembler.  It was developed to disassemble the firmware of the `Volkswagen Premium V <https://github.com/mnaberez/vwradio>`_ car radios made by Delco.  These radios use the undocumented NEC µPD78F0831Y microcontroller, which is similar to the `µPD78F0833Y <https://web.archive.org/web/20180328161019/https://www.renesas.com/en-us/doc/DocumentServer/021/U13892EJ2V0UM00.pdf>`_.  A companion program, `k0emu <https://github.com/mnaberez/k0emu>`_, is a 78K0 emulator developed for the same project.
+k0dasm is a disassembler for a very small number of NEC 78K0 binaries for one specific microcontroller.  It was only developed to disassemble the firmware of the `Volkswagen Premium V <https://github.com/mnaberez/vwradio>`_ car radios made by Delco.  These radios use the undocumented NEC µPD78F0831Y microcontroller, which is similar to the `µPD78F0833Y <https://web.archive.org/web/20180328161019/https://www.renesas.com/en-us/doc/DocumentServer/021/U13892EJ2V0UM00.pdf>`_.  A companion program, `k0emu <https://github.com/mnaberez/k0emu>`_, is a 78K0 emulator developed for the same project.
 
-This disassembler only supports the µPD78F0831Y.  It may be able to disassemble binaries for other 8-bit NEC 78K0 microcontrollers but this has not been tested and the source code would need to be modified to do so.  Note that NEC has several microcontroller families with similar names, such as 78K0S, that use different instruction sets and are not compatible.
+This disassembler only supports the µPD78F0831Y microcontroller.  It is unlikely to work with other microcontrollers without significant modifications to the source code.  There are no plans to add support for any other microcontrollers.  No assistance of any kind is available for using or modifying this disassembler.
 
 Features
 --------
 
-- Identical Reassembly.  The assembly language output of k0dasm will assemble to a bit-for-bit exact copy of the original binary using as78k0.  This has been tested using several real firmware binaries.
+- Identical Reassembly.  The assembly language output of k0dasm will assemble to a bit-for-bit exact copy of the original binary using `as78k0 <http://shop-pdp.net/ashtml/as78k0.htm>`_.  This has been tested using several real firmware binaries.
 
 - Code / Data Separation.  Starting from the vectors at the bottom of memory, k0dasm uses recursive traversal disassembly to separate code from data.  This automates much of the disassembly process but indirect jumps (``br ax``) will still need to be resolved manually.
 
