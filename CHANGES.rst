@@ -1,6 +1,7 @@
-1.0.2 (Next Release)
---------------------
+2.0.0.dev0 (Next Release)
+-------------------------
 
+- Dropped support for Python versions below 3.8.
 
 1.0.1 (2021-01-29)
 ------------------

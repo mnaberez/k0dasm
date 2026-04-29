@@ -20,7 +20,7 @@ Features
 Installation
 ------------
 
-k0dasm is written in Python and requires Python 3.4 or later.  Packages are `available <https://pypi.org/project/k0dasm/>`_ on the Python Package Index (PyPI).  You can download them from there or you can use ``pip`` to install ``k0dasm``::
+k0dasm is written in Python and requires Python 3.8 or later.  Packages are `available <https://pypi.org/project/k0dasm/>`_ on the Python Package Index (PyPI).  You can download them from there or you can use ``pip`` to install ``k0dasm``::
 
     $ pip install setuptools k0dasm
 
