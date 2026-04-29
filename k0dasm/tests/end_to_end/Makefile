@@ -4,7 +4,7 @@ compare: testprog.bin reassembled.bin
 	diff testprog.bin reassembled.bin
 
 clean:
-	rm -f *.bin *.hlr *.ihx *.lst *.rel
+	rm -f *.bin *.hex *.hlr *.lst *.rel
 	rm -f reassembled.asm
 
 testprog.bin:
