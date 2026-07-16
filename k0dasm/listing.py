@@ -1,7 +1,7 @@
 import struct
 
 
-class Printer(object):
+class Printer:
     def __init__(self, memory, start_address, end_address, symbol_table):
         self.memory = memory
         self.start_address = start_address

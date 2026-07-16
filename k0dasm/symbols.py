@@ -1,5 +1,5 @@
 
-class SymbolTable(object):
+class SymbolTable:
     def __init__(self, initial_symbols=None):
         if initial_symbols is None:
             initial_symbols = {}

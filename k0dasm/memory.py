@@ -1,5 +1,5 @@
 
-class Memory(object):
+class Memory:
     def __init__(self, rom):
         self.contents = bytearray(rom) + bytearray(0x10000 - len(rom))
         self.instructions = {}
@@ -140,7 +140,7 @@ class Memory(object):
         return LocationAnnotations.IllegalInstruction in self.annotations[address]
 
 
-class LocationTypes(object):
+class LocationTypes:
     '''A memory location has exactly one type'''
     Unknown = 0
     Data = 1
@@ -150,7 +150,7 @@ class LocationTypes(object):
     VectorContinuation = 5
 
 
-class LocationAnnotations(object):
+class LocationAnnotations:
     '''A memory location can have zero or more annotations'''
     EntryPoint = 0
     JumpTarget = 1

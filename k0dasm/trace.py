@@ -2,7 +2,7 @@ import os
 from operator import attrgetter
 from k0dasm.disassemble import FlowTypes, IllegalInstructionError
 
-class Tracer(object):
+class Tracer:
     def __init__(self, memory, entry_points, vectors, traceable_range):
         self.memory = memory
         self.traceable_range = traceable_range
@@ -149,7 +149,7 @@ class Tracer(object):
                 self.memory.set_data(address)
 
 
-class TraceQueue(object):
+class TraceQueue:
     '''A queue for holding processor states that need to be traced.  States may
     be pushed in any order but are always popped sorted by the program counter.
     A state that was pushed will be ignored if it is pushed again, even if it
@@ -175,7 +175,7 @@ class TraceQueue(object):
         raise KeyError("pop from empty trace queue")
 
 
-class SortedSet(object):
+class SortedSet:
     '''A set-like object where pop() returns items in sorted order'''
 
     def __init__(self, items=None, key=None):
@@ -218,7 +218,7 @@ class SortedSet(object):
 Unknown = object()
 
 
-class ProcessorState(object):
+class ProcessorState:
     __slots__ = ('pc')
 
     def __init__(self, pc=Unknown):

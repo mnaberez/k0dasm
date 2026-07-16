@@ -1784,7 +1784,7 @@ def _resolve_rel(pc, displacement):
 
 
 
-class Instruction(object):
+class Instruction:
     def __init__(self, template, saddrp=None, saddr=None, reltarget=None, addr5target=None,
                                  addr5=None, addr11=None, addr16=None, addr16p=None,
                                  offset=None, bit=None, imm8=None, imm16=None,
@@ -1905,7 +1905,7 @@ class IllegalInstructionError(Exception):
     pass
 
 
-class FlowTypes(object):
+class FlowTypes:
     Continue = 0
     Stop = 1
     UnconditionalJump = 2
